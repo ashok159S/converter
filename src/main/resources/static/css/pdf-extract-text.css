@@ -1,0 +1,686 @@
+/* ===========================
+   PAGE
+=========================== */
+
+body{
+
+    background:#f5f7fb;
+
+    font-family:'Segoe UI',sans-serif;
+
+}
+
+/* ===========================
+   NAVBAR
+=========================== */
+
+.navbar{
+
+    background:white;
+
+}
+
+/* ===========================
+   MAIN CARD
+=========================== */
+
+.converter-card{
+
+    max-width:1200px;
+
+    margin:auto;
+
+    background:white;
+
+    border-radius:25px;
+
+    padding:40px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+}
+
+/* ===========================
+   TITLE
+=========================== */
+
+h1{
+
+    font-size:46px;
+
+    font-weight:700;
+
+    color:#2563eb;
+
+}
+
+/* ===========================
+   SUMMARY CARD
+=========================== */
+
+.summary-card{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    background:#f8fafc;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:15px;
+
+    padding:20px 25px;
+
+    margin-bottom:20px;
+
+    font-size:18px;
+
+}
+
+/* ===========================
+   FILE LIST
+=========================== */
+
+#fileListContainer .card{
+
+    border:none;
+
+    border-radius:15px;
+
+    margin-bottom:12px;
+
+    box-shadow:0 2px 10px rgba(0,0,0,.05);
+
+}
+
+#fileListContainer .card-body{
+
+    padding:18px 25px;
+
+}
+
+.file-row-name{
+
+    font-size:18px;
+
+    font-weight:600;
+
+}
+
+.file-row-name i{
+
+    color:#2563eb;
+
+    margin-right:10px;
+
+    font-size:24px;
+
+}
+
+/* ===========================
+   UPLOAD AREA
+=========================== */
+
+.upload-area{
+
+    border:2px dashed #2563eb;
+
+    border-radius:20px;
+
+    background:#f8fbff;
+
+    text-align:center;
+
+    padding:60px 20px;
+
+    margin-top:25px;
+
+    transition:.3s;
+
+}
+
+.upload-area:hover{
+
+    background:#eef6ff;
+
+}
+
+.upload-icon{
+
+    font-size:80px;
+
+    color:#2563eb;
+
+    margin-bottom:15px;
+
+}
+
+.upload-area h3{
+
+    font-size:24px;
+
+    font-weight:700;
+
+}
+
+.upload-area p{
+
+    color:#6b7280;
+
+}
+
+/* ===========================
+   TOOL SECTION
+=========================== */
+
+.tool-section{
+
+    margin-top:25px;
+
+    padding:25px;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:15px;
+
+    background:white;
+
+}
+
+.tool-section h4{
+
+    margin-bottom:20px;
+
+    font-weight:700;
+
+    color:#1f2937;
+
+}
+
+.form-check{
+
+    margin-bottom:12px;
+
+}
+
+/* ===========================
+   INPUTS
+=========================== */
+
+.form-control{
+
+    border-radius:12px;
+
+    min-height:48px;
+
+}
+
+#pageRange{
+
+    font-size:16px;
+
+}
+
+/* ===========================
+   BUTTONS
+=========================== */
+
+.btn-primary{
+
+    background:linear-gradient(
+        90deg,
+        #2563eb,
+        #7c3aed
+    );
+
+    border:none;
+
+}
+
+.btn-primary:hover{
+
+    opacity:.9;
+
+}
+
+.btn-secondary{
+
+    border-radius:12px;
+
+}
+
+/* ===========================
+   RESULT
+=========================== */
+
+.result-summary{
+
+    margin-top:20px;
+
+    padding:15px;
+
+    background:#f8fafc;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:15px;
+
+    text-align:center;
+
+    font-size:16px;
+
+    font-weight:600;
+
+}
+
+#resultFilesContainer .card{
+
+    border:none;
+
+    border-radius:15px;
+
+    margin-bottom:12px;
+
+    box-shadow:0 2px 10px rgba(0,0,0,.05);
+
+}
+
+#resultFilesContainer .card-body{
+
+    padding:18px 25px;
+
+}
+
+/* ===========================
+   TEXT PREVIEW MODAL
+=========================== */
+
+.modal-content{
+
+    border:none;
+
+    border-radius:20px;
+
+}
+
+.modal-header{
+
+    border-bottom:1px solid #e5e7eb;
+
+}
+
+#previewTextArea{
+
+    min-height:650px;
+
+    resize:none;
+
+    font-family:Consolas,monospace;
+
+    font-size:15px;
+
+    line-height:1.6;
+
+}
+
+/* ===========================
+   DARK MODE
+=========================== */
+
+.dark-mode{
+
+    background:#111827;
+
+    color:white;
+
+}
+
+.dark-mode .converter-card{
+
+    background:#1f2937;
+
+    color:white;
+
+}
+
+.dark-mode .summary-card{
+
+    background:#374151;
+
+    border-color:#4b5563;
+
+}
+
+.dark-mode .upload-area{
+
+    background:#374151;
+
+    border-color:#60a5fa;
+
+}
+
+.dark-mode .tool-section{
+
+    background:#374151;
+
+    border-color:#4b5563;
+
+}
+
+.dark-mode .tool-section h4{
+
+    color:white;
+
+}
+
+.dark-mode .form-control{
+
+    background:#111827;
+
+    color:white;
+
+    border-color:#4b5563;
+
+}
+
+.dark-mode .result-summary{
+
+    background:#374151;
+
+    border-color:#4b5563;
+
+}
+
+.dark-mode .card{
+
+    background:#374151;
+
+    color:white;
+
+}
+
+.dark-mode .modal-content{
+
+    background:#1f2937;
+
+    color:white;
+
+}
+/* ===================================
+   TABLET (768px - 991px)
+=================================== */
+
+@media (max-width:991px){
+
+    .converter-card{
+        padding:30px;
+        margin-bottom:70px;
+    }
+
+    h1{
+        font-size:38px;
+        text-align:center;
+    }
+
+    .summary-card{
+        font-size:16px;
+        padding:16px 20px;
+    }
+
+    .upload-area{
+        padding:40px 20px;
+    }
+
+    .upload-icon{
+        font-size:60px;
+    }
+
+    .upload-area h3{
+        font-size:22px;
+    }
+
+    .tool-section{
+        padding:20px;
+    }
+
+    .tool-section h4{
+        font-size:22px;
+    }
+
+    .form-control{
+        font-size:15px;
+    }
+
+    #previewTextArea{
+        min-height:500px;
+        font-size:14px;
+    }
+
+    #fileListContainer .card-body,
+    #resultFilesContainer .card-body{
+        padding:16px;
+    }
+
+    #extractBtn,
+    #extractMoreBtn{
+        width:100%;
+    }
+}
+
+/* ===================================
+   MOBILE (576px - 767px)
+=================================== */
+
+@media (max-width:767px){
+
+    .container{
+        padding-left:15px;
+        padding-right:15px;
+    }
+
+    .converter-card{
+        padding:20px 15px;
+        border-radius:18px;
+        margin-bottom:70px;
+    }
+
+    h1{
+        font-size:30px;
+        text-align:center;
+    }
+
+    .summary-card{
+        flex-direction:column;
+        gap:10px;
+        text-align:center;
+        font-size:15px;
+        padding:15px;
+    }
+
+    .upload-area{
+        padding:30px 15px;
+        border-radius:16px;
+    }
+
+    .upload-icon{
+        font-size:50px;
+    }
+
+    .upload-area h3{
+        font-size:20px;
+    }
+
+    .upload-area p{
+        font-size:14px;
+    }
+
+    .upload-area .btn{
+        width:100%;
+    }
+
+    .tool-section{
+        padding:18px;
+        border-radius:14px;
+    }
+
+    .tool-section h4{
+        font-size:20px;
+        margin-bottom:15px;
+    }
+
+    .form-check-label{
+        font-size:15px;
+    }
+
+    .form-control{
+        font-size:15px;
+    }
+
+    #pageRange{
+        font-size:15px;
+    }
+
+    #extractBtn,
+    #extractMoreBtn{
+        width:100%;
+    }
+
+    /* Upload File Card */
+
+    #fileListContainer .card{
+        border-radius:14px;
+    }
+
+    #fileListContainer .card-body{
+        padding:15px;
+        text-align:center;
+    }
+
+    .file-row-name{
+        font-size:15px;
+        margin-bottom:8px;
+        word-break:break-word;
+    }
+
+    /* Result Cards */
+
+    #resultFilesContainer .card{
+        border-radius:14px;
+        margin-bottom:15px;
+    }
+
+    #resultFilesContainer .card-body{
+        padding:15px;
+    }
+
+    .result-file-name{
+        font-size:15px;
+        font-weight:700;
+        text-align:center;
+        margin-bottom:12px;
+        word-break:break-word;
+    }
+
+    .result-actions{
+        display:flex;
+        gap:10px;
+    }
+
+    .result-actions .btn{
+        flex:1;
+    }
+
+    .result-summary{
+        font-size:14px;
+        line-height:1.7;
+    }
+
+    #previewTextArea{
+        min-height:400px;
+        font-size:13px;
+    }
+
+    .modal-dialog{
+        max-width:98%;
+        margin:10px auto;
+    }
+}
+
+/* ===================================
+   SMALL MOBILE (320px - 575px)
+=================================== */
+
+@media (max-width:575px){
+
+    .converter-card{
+        padding:15px 12px;
+        margin-bottom:70px;
+    }
+
+    h1{
+        font-size:26px;
+    }
+
+    .summary-card{
+        font-size:14px;
+        padding:12px;
+    }
+
+    .upload-area{
+        padding:25px 10px;
+    }
+
+    .upload-icon{
+        font-size:42px;
+    }
+
+    .upload-area h3{
+        font-size:18px;
+    }
+
+    .upload-area p{
+        font-size:13px;
+    }
+
+    .tool-section{
+        padding:15px;
+    }
+
+    .tool-section h4{
+        font-size:18px;
+    }
+
+    .form-check-label{
+        font-size:14px;
+    }
+
+    .file-row-name{
+        font-size:14px;
+    }
+
+    .btn-lg,
+    .btn-primary,
+    .btn-secondary{
+        font-size:14px;
+        padding:5px;
+    }
+
+    .result-actions{
+        flex-direction:column;
+    }
+
+    .result-actions .btn{
+        width:100%;
+    }
+
+    .result-summary{
+        font-size:13px;
+    }
+
+    #previewTextArea{
+        font-size:12px;
+    }
+}
