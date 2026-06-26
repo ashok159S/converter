@@ -1,8 +1,5 @@
 *.pdf
 *.zip
-*.jpeg
-*.jpg
-*.png
 
 target/
 temp-pdfs/
