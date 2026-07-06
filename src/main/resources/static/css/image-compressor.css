@@ -243,10 +243,9 @@ h1{
 }
 
 .preview-btn,
-.delete-btn{
-
-    width:100px;
-
+.delete-btn,
+.download-btn{
+    min-width:120px;
 }
 
 /* ===========================
@@ -269,20 +268,29 @@ h1{
    PROGRESS
 =========================== */
 
+#progressSection{
+    margin-top:30px;
+}
+
 .progress{
-
-    height:28px;
-
-    border-radius:50px;
-
+    height:30px;
+    border-radius:15px;
+    overflow:hidden;
 }
 
 .progress-bar{
-
     font-weight:600;
-
+    transition:width .4s ease;
 }
 
+button:disabled{
+    cursor:not-allowed;
+    opacity:.7;
+}
+
+.dark-mode .progress{
+    background:#444;
+}
 /* ===========================
    RESULT HEADER
 =========================== */
@@ -580,10 +588,6 @@ h1{
         color:#64748b;
     }
 
-    .preview-btn,
-    .delete-btn{
-        width:100%;
-    }
 
     /* Result Card */
 

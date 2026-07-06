@@ -1,4 +1,5 @@
 package com.converter.controller;
+
 import com.converter.service.PdfToImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,131 +19,219 @@ import java.io.File;
 @Controller
 public class PdfToImageController {
 
-    @Autowired
-    private  PdfToImageService pdfToImageService;
+        @Autowired
+        private PdfToImageService pdfToImageService;
 
-    @GetMapping("/pdf-to-image")
-    public String pdfToJpgPage() {
+        @GetMapping("/pdf-to-image")
+        public String pdfToJpgPage() {
 
-        return "pdf-to-image";
-
-    }
-
-    @PostMapping("/pdf-to-image-ajax")
-    @ResponseBody
-    public Map<String, Object> convertPdfToJpg(
-
-            @RequestParam("pdfFile")
-            MultipartFile pdfFile,
-
-            @RequestParam("quality")
-            String quality,
-
-            @RequestParam("outputFormat")
-            String outputFormat
-
-    ) {
-
-        return pdfToImageService.convertPdfToImages(
-                pdfFile,
-                quality,
-                outputFormat
-        );
-
-    }
-
-    @GetMapping("/download-image")
-    public ResponseEntity<Resource> downloadImage(
-
-            @RequestParam String fileName,
-
-            @RequestParam(required = false)
-            String downloadName
-
-    ) {
-
-        try {
-
-            File file =
-                    new File(
-                            "converted-images",
-                            fileName
-                    );
-
-            Resource resource =
-                    new FileSystemResource(file);
-
-            String finalName =
-                    (downloadName != null &&
-                    !downloadName.isEmpty())
-                    ? downloadName
-                    : file.getName();
-
-            return ResponseEntity.ok()
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\"" +
-                            finalName +
-                            "\""
-                    )
-                    .contentType(
-                            MediaType.APPLICATION_OCTET_STREAM
-                    )
-                    .body(resource);
-
-        } catch (Exception e) {
-
-            return ResponseEntity.notFound()
-                    .build();
+                return "pdf-to-image";
 
         }
 
-    }
+        @PostMapping("/pdf-to-image-ajax")
+        @ResponseBody
+        public Map<String, Object> convertPdfToJpg(
 
-    @GetMapping("/preview-image")
-    public ResponseEntity<Resource> previewImage(
-            @RequestParam String fileName
-    ) {
+                        @RequestParam("pdfFiles") MultipartFile[] pdfFiles,
 
-        try {
+                        @RequestParam("quality") String quality,
 
-            File file =
-                    new File(
-                            "converted-images",
-                            fileName
-                    );
+                        @RequestParam("outputFormat") String outputFormat
 
-            if(!file.exists()){
+        ) {
 
-                return ResponseEntity.notFound()
-                        .build();
+                if (
 
-            }
+                pdfFiles == null
+                                ||
+                                pdfFiles.length == 0
 
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
+                ) {
 
-            MediaType mediaType =
-                    fileName.toLowerCase().endsWith(".png")
-                            ? MediaType.IMAGE_PNG
-                            : MediaType.IMAGE_JPEG;
+                        return Map.of(
 
-            return ResponseEntity.ok()
-                    .contentType(
-                            mediaType
-                    )
-                    .body(
-                            resource
-                    );
+                                        "success", false,
 
-        } catch (Exception e) {
+                                        "message",
+                                        "Please select one or more PDF files."
 
-            return ResponseEntity.notFound()
-                    .build();
+                        );
+
+                }
+
+                for (
+
+                MultipartFile file : pdfFiles
+
+                ) {
+
+                        if (
+
+                        file.isEmpty()
+
+                        ) {
+
+                                return Map.of(
+
+                                                "success", false,
+
+                                                "message",
+                                                "One or more selected files are empty."
+
+                                );
+
+                        }
+
+                        String name = file.getOriginalFilename();
+
+                        if (
+
+                        name == null
+                                        ||
+                                        !name.toLowerCase().endsWith(".pdf")
+
+                        ) {
+
+                                return Map.of(
+
+                                                "success", false,
+
+                                                "message",
+                                                "Only PDF files are allowed."
+
+                                );
+
+                        }
+
+                }
+
+                return pdfToImageService.convertPdfToImages(
+
+                                pdfFiles,
+
+                                quality,
+
+                                outputFormat
+
+                );
 
         }
 
-    }
+        @GetMapping("/download-image")
+        public ResponseEntity<Resource> downloadImage(
+
+                        @RequestParam String fileName,
+
+                        @RequestParam(required = false) String downloadName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        "converted-images",
+                                        fileName);
+
+                        System.out.println("Requested fileName: " + fileName);
+                        System.out.println("Absolute path: " + file.getAbsolutePath());
+                        System.out.println("Exists: " + file.exists());
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(file);
+
+                        String finalName = (downloadName != null &&
+                                        !downloadName.isEmpty())
+                                                        ? downloadName
+                                                        : file.getName();
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "attachment; filename=\"" +
+                                                                        finalName +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_OCTET_STREAM)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity.notFound()
+                                        .build();
+
+                }
+
+        }
+
+        @GetMapping("/preview-image")
+        public ResponseEntity<Resource> previewImage(
+                        @RequestParam String fileName) {
+
+                try {
+
+                        File file = new File(
+                                        "converted-images",
+                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity.notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        MediaType mediaType = fileName.toLowerCase().endsWith(".png")
+                                        ? MediaType.IMAGE_PNG
+                                        : MediaType.IMAGE_JPEG;
+
+                        return ResponseEntity.ok()
+                                        .contentType(
+                                                        mediaType)
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity.notFound()
+                                        .build();
+
+                }
+
+        }
+
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
+
+        @PostMapping("/delete-pdf-to-image-files")
+        @ResponseBody
+        public ResponseEntity<Void> deletePdfToImageFiles() {
+
+                pdfToImageService.deleteTemporaryFiles();
+
+                return ResponseEntity
+                                .ok()
+                                .build();
+
+        }
 }

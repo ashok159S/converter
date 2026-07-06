@@ -17,132 +17,218 @@ import java.util.Map;
 @Service
 public class PdfSplitterService {
 
-    public Map<String, Object> splitPdf(
-            MultipartFile pdfFile
-    ) {
+        public Map<String, Object> splitPdf(
+                        MultipartFile pdfFile) {
 
-        Map<String, Object> response =
-                new HashMap<>();
+                Map<String, Object> response = new HashMap<>();
 
-        List<Map<String,String>> files =
-                new ArrayList<>();
+                List<Map<String, String>> files = new ArrayList<>();
 
-        try {
+                try {
 
-            File outputDir =
-                    new File(
-                            "split-pdfs"
-                    );
+                        File outputDir = new File(
+                                        "split-pdfs");
 
-            if(!outputDir.exists()){
+                        if (!outputDir.exists()) {
 
-                outputDir.mkdirs();
+                                outputDir.mkdirs();
 
-            }
+                        }
 
-            File tempPdf =
-                    File.createTempFile(
-                            "upload",
-                            ".pdf"
-                    );
+                        File tempPdf = null;
 
-            pdfFile.transferTo(
-                    tempPdf
-            );
+                        PDDocument document = null;
 
-            PDDocument document =
-                    Loader.loadPDF(
-                            tempPdf
-                    );
+                        try {
 
-            Splitter splitter =
-                    new Splitter();
+                                tempPdf = File.createTempFile(
+                                                "upload",
+                                                ".pdf");
 
-            List<PDDocument> pages =
-                    splitter.split(
-                            document
-                    );
+                                pdfFile.transferTo(
+                                                tempPdf);
 
-            int pageNumber = 1;
+                                document = Loader.loadPDF(
+                                                tempPdf);
 
-            for(PDDocument pageDoc : pages){
+                                Splitter splitter = new Splitter();
 
-                String fileName =
-                        "page-"
-                        + pageNumber
-                        + ".pdf";
+                                List<PDDocument> pages = splitter.split(
+                                                document);
 
-                File outputFile =
-                        new File(
-                                outputDir,
-                                fileName
-                        );
+                                int pageNumber = 1;
 
-                pageDoc.save(
-                        outputFile
-                );
+                                for (PDDocument pageDoc : pages) {
 
-                pageDoc.close();
+                                        try {
 
-                Map<String,String> fileInfo =
-                        new HashMap<>();
+                                                String fileName = "page-"
+                                                                + pageNumber
+                                                                + ".pdf";
 
-                fileInfo.put(
-                        "name",
-                        fileName
-                );
+                                                File outputFile = new File(
+                                                                outputDir,
+                                                                fileName);
 
-                fileInfo.put(
-                        "size",
-                        String.format(
-                                "%.2f MB",
-                                outputFile.length()
-                                        /1024.0
-                                        /1024.0
-                        )
-                );
+                                                pageDoc.save(
+                                                                outputFile);
 
-                files.add(
-                        fileInfo
-                );
+                                                Map<String, String> fileInfo = new HashMap<>();
 
-                pageNumber++;
+                                                fileInfo.put(
+                                                                "name",
+                                                                fileName);
 
-            }
+                                                fileInfo.put(
+                                                                "size",
+                                                                String.format(
+                                                                                "%.2f MB",
+                                                                                outputFile.length()
+                                                                                                / 1024.0
+                                                                                                / 1024.0));
 
-            document.close();
+                                                files.add(
+                                                                fileInfo);
 
-            tempPdf.delete();
+                                                pageNumber++;
 
-            response.put(
-                    "success",
-                    true
-            );
+                                        } finally {
 
-            response.put(
-                    "files",
-                    files
-            );
+                                                pageDoc.close();
+
+                                        }
+
+                                }
+
+                        } catch (Exception e) {
+
+                                throw new RuntimeException(
+
+                                                pdfFile.getOriginalFilename(),
+
+                                                e
+
+                                );
+
+                        } finally {
+
+                                if (
+
+                                document != null
+
+                                ) {
+
+                                        document.close();
+
+                                }
+
+                                if (
+
+                                tempPdf != null
+                                                &&
+                                                tempPdf.exists()
+
+                                ) {
+
+                                        tempPdf.delete();
+
+                                }
+
+                        }
+                        response.put(
+                                        "success",
+                                        true);
+
+                        response.put(
+                                        "files",
+                                        files);
+
+                } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        response.put(
+                                        "success",
+                                        false);
+
+                        String fileName = "Unknown PDF";
+
+                        if (
+
+                        e.getMessage() != null
+                                        &&
+
+                                        !e.getMessage().isBlank()
+
+                        ) {
+
+                                fileName = e.getMessage();
+
+                        }
+
+                        response.put(
+                                        "message",
+                                        "The following PDF file(s) are corrupted, damaged, or invalid and cannot be processed:\n\n• "
+                                                        +
+                                                        fileName);
+
+                }
+
+                return response;
 
         }
-        catch(Exception e){
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
 
-            e.printStackTrace();
+        public void deleteTemporaryFiles() {
 
-            response.put(
-                    "success",
-                    false
-            );
+                File folder = new File(
+                                "split-pdfs");
 
-            response.put(
-                    "message",
-                    e.getMessage()
-            );
+                if (
+
+                folder.exists()
+                                &&
+
+                                folder.isDirectory()
+
+                ) {
+
+                        File[] files = folder.listFiles();
+
+                        if (
+
+                        files != null
+
+                        ) {
+
+                                for (
+
+                                File file :
+
+                                files
+
+                                ) {
+
+                                        if (
+
+                                        file.isFile()
+
+                                        ) {
+
+                                                file.delete();
+
+                                        }
+
+                                }
+
+                        }
+
+                }
 
         }
-
-        return response;
-
-    }
 
 }

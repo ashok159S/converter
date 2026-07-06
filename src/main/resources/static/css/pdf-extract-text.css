@@ -684,3 +684,77 @@ h1{
         font-size:12px;
     }
 }
+
+/* ===========================
+   PROGRESS BAR
+=========================== */
+
+.progress{
+
+    height:28px;
+
+    border-radius:50px;
+
+    overflow:hidden;
+
+}
+
+.progress-bar{
+
+    font-weight:600;
+
+    font-size:15px;
+
+}
+
+/* ===========================
+   RESULT HEADER
+=========================== */
+
+.result-header{
+
+    background:#f8fafc;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:15px;
+
+    padding:18px;
+
+    margin-bottom:15px;
+
+}
+
+.dark-mode .navbar{
+
+    background:#1f2937 !important;
+
+}
+
+.dark-mode .text-muted{
+
+    color:#d1d5db !important;
+
+}
+
+.dark-mode .btn-outline-dark{
+
+    color:white;
+
+    border-color:white;
+
+}
+
+.dark-mode .btn-outline-dark:hover{
+
+    background:white;
+
+    color:#111827;
+
+}
+
+.dark-mode .progress{
+
+    background:#374151;
+
+}

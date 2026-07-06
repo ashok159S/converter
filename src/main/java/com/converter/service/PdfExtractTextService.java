@@ -18,294 +18,252 @@ import java.util.Map;
 @Service
 public class PdfExtractTextService {
 
-    public Map<String,Object> extractText(
+        public Map<String, Object> extractText(
 
-            MultipartFile[] pdfFiles,
+                        MultipartFile[] pdfFiles,
 
-            String extractType,
+                        String extractType,
 
-            String pageRange,
+                        String pageRange,
 
-            String outputFormat
+                        String outputFormat
 
-    ){
+        ) {
 
-        Map<String,Object> result =
-                new HashMap<>();
+                Map<String, Object> result = new HashMap<>();
 
-        try{
+                try {
 
-            List<Map<String,String>> files =
-                    new ArrayList<>();
+                        List<Map<String, String>> files = new ArrayList<>();
 
-            File uploadFolder =
-                    new File(
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "uploaded-pdfs"
-                    );
+                        File uploadFolder = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "uploaded-pdfs");
 
-            if(!uploadFolder.exists()){
+                        if (!uploadFolder.exists()) {
 
-                uploadFolder.mkdirs();
+                                uploadFolder.mkdirs();
 
-            }
+                        }
 
-            File outputFolder =
-                    new File(
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "extracted-text"
-                    );
+                        File outputFolder = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "extracted-text");
 
-            if(!outputFolder.exists()){
+                        if (!outputFolder.exists()) {
 
-                outputFolder.mkdirs();
+                                outputFolder.mkdirs();
 
-            }
+                        }
 
-            for(
-                    MultipartFile pdfFile
-                    :
-                    pdfFiles
-            ){
+                        for (MultipartFile pdfFile : pdfFiles) {
 
-                String originalName =
-                        pdfFile.getOriginalFilename();
+                                String originalName = pdfFile.getOriginalFilename();
 
-                if(
-                        originalName == null
-                        ||
-                        originalName.isBlank()
-                ){
+                                if (originalName == null
+                                                ||
+                                                originalName.isBlank()) {
 
-                    originalName =
-                            "document.pdf";
+                                        originalName = "document.pdf";
+
+                                }
+
+                                File uploadedPdf = new File(
+                                                uploadFolder,
+                                                originalName);
+
+                                pdfFile.transferTo(
+                                                uploadedPdf);
+
+                                PDDocument document = Loader.loadPDF(
+                                                uploadedPdf);
+
+                                PDFTextStripper stripper = new PDFTextStripper();
+
+                                String extractedText = "";
+
+                                if ("RANGE".equalsIgnoreCase(
+                                                extractType)) {
+
+                                        extractedText = extractPageRangeText(
+                                                        document,
+                                                        pageRange);
+
+                                } else {
+
+                                        extractedText = stripper.getText(
+                                                        document);
+
+                                }
+
+                                String txtFileName = originalName.replace(
+                                                ".pdf",
+                                                "")
+                                                +
+                                                ".txt";
+
+                                File outputFile = new File(
+                                                outputFolder,
+                                                txtFileName);
+
+                                FileWriter writer = new FileWriter(
+                                                outputFile);
+
+                                writer.write(
+                                                extractedText);
+
+                                writer.close();
+
+                                Map<String, String> fileInfo = new HashMap<>();
+
+                                fileInfo.put(
+                                                "name",
+                                                txtFileName);
+
+                                fileInfo.put(
+                                                "pages",
+                                                String.valueOf(
+                                                                document.getNumberOfPages()));
+
+                                fileInfo.put(
+                                                "size",
+                                                String.format(
+                                                                "%.2f KB",
+                                                                outputFile.length()
+                                                                                /
+                                                                                1024.0));
+
+                                files.add(
+                                                fileInfo);
+
+                                document.close();
+
+                                uploadedPdf.delete();
+
+                        }
+
+                        result.put(
+                                        "success",
+                                        true);
+
+                        result.put(
+                                        "files",
+                                        files);
+
+                } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        result.put(
+                                        "success",
+                                        false);
+
+                        result.put(
+                                        "message",
+                                        e.getMessage());
 
                 }
 
-                File uploadedPdf =
-                        new File(
-                                uploadFolder,
-                                originalName
-                        );
+                return result;
 
-                pdfFile.transferTo(
-                        uploadedPdf
-                );
+        }
 
-                PDDocument document =
-                        Loader.loadPDF(
-                                uploadedPdf
-                        );
+        private String extractPageRangeText(
 
-                PDFTextStripper stripper =
-                        new PDFTextStripper();
+                        PDDocument document,
 
-                String extractedText =
-                        "";
+                        String pageRange
 
-                if(
-                        "RANGE".equalsIgnoreCase(
-                                extractType
-                        )
-                ){
+        ) throws Exception {
 
-                    extractedText =
-                            extractPageRangeText(
-                                    document,
-                                    pageRange
-                            );
+                PDFTextStripper stripper = new PDFTextStripper();
+
+                StringBuilder text = new StringBuilder();
+
+                String[] parts = pageRange.split(",");
+
+                for (String part : parts) {
+
+                        part = part.trim();
+
+                        if (part.contains("-")) {
+
+                                String[] range = part.split("-");
+
+                                int start = Integer.parseInt(
+                                                range[0]);
+
+                                int end = Integer.parseInt(
+                                                range[1]);
+
+                                stripper.setStartPage(
+                                                start);
+
+                                stripper.setEndPage(
+                                                end);
+
+                                text.append(
+                                                stripper.getText(
+                                                                document));
+
+                        } else {
+
+                                int page = Integer.parseInt(
+                                                part);
+
+                                stripper.setStartPage(
+                                                page);
+
+                                stripper.setEndPage(
+                                                page);
+
+                                text.append(
+                                                stripper.getText(
+                                                                document));
+
+                        }
 
                 }
-                else{
 
-                    extractedText =
-                            stripper.getText(
-                                    document
-                            );
+                return text.toString();
+
+        }
+
+        public void deleteExtractedFiles() {
+
+                File folder = new File(
+                                System.getProperty("user.dir")
+                                                +
+                                                File.separator
+                                                +
+                                                "extracted-text");
+
+                if (folder.exists()) {
+
+                        File[] files = folder.listFiles();
+
+                        if (files != null) {
+
+                                for (File file : files) {
+
+                                        if (file.isFile()) {
+
+                                                file.delete();
+
+                                        }
+
+                                }
+
+                        }
 
                 }
 
-                String txtFileName =
-                        originalName.replace(
-                                ".pdf",
-                                ""
-                        )
-                        +
-                        ".txt";
-
-                File outputFile =
-                        new File(
-                                outputFolder,
-                                txtFileName
-                        );
-
-                FileWriter writer =
-                        new FileWriter(
-                                outputFile
-                        );
-
-                writer.write(
-                        extractedText
-                );
-
-                writer.close();
-
-                Map<String,String> fileInfo =
-                        new HashMap<>();
-
-                fileInfo.put(
-                        "name",
-                        txtFileName
-                );
-
-                fileInfo.put(
-                        "pages",
-                        String.valueOf(
-                                document.getNumberOfPages()
-                        )
-                );
-
-                fileInfo.put(
-                        "size",
-                        String.format(
-                                "%.2f KB",
-                                outputFile.length()
-                                /
-                                1024.0
-                        )
-                );
-
-                files.add(
-                        fileInfo
-                );
-
-                document.close();
-
-            }
-
-            result.put(
-                    "success",
-                    true
-            );
-
-            result.put(
-                    "files",
-                    files
-            );
-
         }
-        catch(Exception e){
-
-            e.printStackTrace();
-
-            result.put(
-                    "success",
-                    false
-            );
-
-            result.put(
-                    "message",
-                    e.getMessage()
-            );
-
-        }
-
-        return result;
-
-    }
-
-    private String extractPageRangeText(
-
-            PDDocument document,
-
-            String pageRange
-
-    ) throws Exception{
-
-        PDFTextStripper stripper =
-                new PDFTextStripper();
-
-        StringBuilder text =
-                new StringBuilder();
-
-        String[] parts =
-                pageRange.split(",");
-
-        for(
-                String part
-                :
-                parts
-        ){
-
-            part =
-                    part.trim();
-
-            if(
-                    part.contains("-")
-            ){
-
-                String[] range =
-                        part.split("-");
-
-                int start =
-                        Integer.parseInt(
-                                range[0]
-                        );
-
-                int end =
-                        Integer.parseInt(
-                                range[1]
-                        );
-
-                stripper.setStartPage(
-                        start
-                );
-
-                stripper.setEndPage(
-                        end
-                );
-
-                text.append(
-                        stripper.getText(
-                                document
-                        )
-                );
-
-            }
-            else{
-
-                int page =
-                        Integer.parseInt(
-                                part
-                        );
-
-                stripper.setStartPage(
-                        page
-                );
-
-                stripper.setEndPage(
-                        page
-                );
-
-                text.append(
-                        stripper.getText(
-                                document
-                        )
-                );
-
-            }
-
-        }
-
-        return text.toString();
-
-    }
 
 }
-

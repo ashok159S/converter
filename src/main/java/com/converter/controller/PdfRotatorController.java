@@ -26,178 +26,250 @@ import java.util.Map;
 @Controller
 public class PdfRotatorController {
 
-    @Autowired
-    private PdfRotatorService pdfRotatorService;
+        @Autowired
+        private PdfRotatorService pdfRotatorService;
 
-    /* ===========================
-       PAGE
-    =========================== */
+        /*
+         * ===========================
+         * PAGE
+         * ===========================
+         */
 
-    @GetMapping("/pdf-rotator")
-    public String pdfRotatorPage(){
+        @GetMapping("/pdf-rotator")
+        public String pdfRotatorPage() {
 
-        return "pdf-rotator";
+                return "pdf-rotator";
 
-    }
+        }
 
-    /* ===========================
-       ROTATE PDF
-    =========================== */
+        /*
+         * ===========================
+         * ROTATE PDF
+         * ===========================
+         */
 
-    @PostMapping("/pdf-rotator-ajax")
-    @ResponseBody
-    public Map<String,Object> rotatePdf(
+        @PostMapping("/pdf-rotator-ajax")
+        @ResponseBody
+        public Map<String, Object> rotatePdf(
 
-            @RequestParam("pdfFiles")
-            MultipartFile[] pdfFiles,
+                        @RequestParam("pdfFiles") MultipartFile[] pdfFiles,
 
-            @RequestParam("rotation")
-            int rotation
+                        @RequestParam("rotation") int rotation
 
-    ){
+        ) {
 
-        return pdfRotatorService.rotatePdf(
+                if (
 
-                pdfFiles,
+                pdfFiles == null
+                                ||
+                                pdfFiles.length == 0
 
-                rotation
+                ) {
 
-        );
+                        return Map.of(
 
-    }
+                                        "success", false,
 
-    /* ===========================
-       DOWNLOAD ROTATED PDF
-    =========================== */
+                                        "message",
+                                        "Please select one or more PDF files."
 
-    @GetMapping("/download-rotated-pdf")
-    public ResponseEntity<Resource> downloadRotatedPdf(
+                        );
 
-            @RequestParam("fileName")
-            String fileName
+                }
 
-    ){
+                for (
 
-        try{
+                MultipartFile file : pdfFiles
 
-            File file =
-                    new File(
-                            "rotated-pdfs",
-                            fileName
-                    );
+                ) {
 
-            if(!file.exists()){
+                        if (
+
+                        file.isEmpty()
+
+                        ) {
+
+                                return Map.of(
+
+                                                "success", false,
+
+                                                "message",
+                                                "One or more selected files are empty."
+
+                                );
+
+                        }
+
+                        String name =
+
+                                        file.getOriginalFilename();
+
+                        if (
+
+                        name == null
+                                        ||
+
+                                        !name.toLowerCase().endsWith(".pdf")
+
+                        ) {
+
+                                return Map.of(
+
+                                                "success", false,
+
+                                                "message",
+                                                "Only PDF files are allowed."
+
+                                );
+
+                        }
+
+                }
+
+                return pdfRotatorService.rotatePdf(
+
+                                pdfFiles,
+
+                                rotation
+
+                );
+
+        }
+
+        /*
+         * ===========================
+         * DOWNLOAD ROTATED PDF
+         * ===========================
+         */
+
+        @GetMapping("/download-rotated-pdf")
+        public ResponseEntity<Resource> downloadRotatedPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        "rotated-pdfs",
+                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "attachment; filename=\""
+                                                                        +
+                                                                        fileName
+                                                                        +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
+
+        }
+
+        /*
+         * ===========================
+         * PREVIEW ROTATED PDF
+         * ===========================
+         */
+
+        @GetMapping("/preview-rotated-pdf")
+        public ResponseEntity<Resource> previewRotatedPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        "rotated-pdfs",
+                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "inline; filename=\""
+                                                                        +
+                                                                        fileName
+                                                                        +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
+
+        }
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
+
+        @PostMapping("/delete-rotated-pdf-files")
+        @ResponseBody
+        public ResponseEntity<Void> deleteRotatedPdfFiles() {
+
+                pdfRotatorService
+                                .deleteTemporaryFiles();
 
                 return ResponseEntity
-                        .notFound()
-                        .build();
-
-            }
-
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
-
-            return ResponseEntity.ok()
-
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\""
-                                    +
-                                    fileName
-                                    +
-                                    "\""
-                    )
-
-                    .contentLength(
-                            file.length()
-                    )
-
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
-
-                    .body(
-                            resource
-                    );
+                                .ok()
+                                .build();
 
         }
-        catch(Exception e){
-
-            return ResponseEntity
-                    .notFound()
-                    .build();
-
-        }
-
-    }
-
-    /* ===========================
-       PREVIEW ROTATED PDF
-    =========================== */
-
-    @GetMapping("/preview-rotated-pdf")
-    public ResponseEntity<Resource> previewRotatedPdf(
-
-            @RequestParam("fileName")
-            String fileName
-
-    ){
-
-        try{
-
-            File file =
-                    new File(
-                            "rotated-pdfs",
-                            fileName
-                    );
-
-            if(!file.exists()){
-
-                return ResponseEntity
-                        .notFound()
-                        .build();
-
-            }
-
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
-
-            return ResponseEntity.ok()
-
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "inline; filename=\""
-                                    +
-                                    fileName
-                                    +
-                                    "\""
-                    )
-
-                    .contentLength(
-                            file.length()
-                    )
-
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
-
-                    .body(
-                            resource
-                    );
-
-        }
-        catch(Exception e){
-
-            return ResponseEntity
-                    .notFound()
-                    .build();
-
-        }
-
-    }
 
 }

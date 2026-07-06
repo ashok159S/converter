@@ -118,6 +118,187 @@ h1{
 
 }
 
+.settings-card{
+
+    margin-top:25px;
+
+    background:white;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:15px;
+
+    padding:25px;
+
+}
+
+.progress{
+
+    height:28px;
+
+    border-radius:50px;
+
+}
+
+.progress-bar{
+
+    font-weight:600;
+
+}
+
+.result-header{
+
+    background:#f8fafc;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:12px;
+
+    padding:15px;
+
+    margin-bottom:15px;
+
+}
+
+.result-summary{
+
+    margin-top:20px;
+
+    text-align:center;
+
+    font-size:18px;
+
+    font-weight:600;
+
+}
+
+#croppedFilesContainer .card{
+
+    border:none;
+
+    border-radius:12px;
+
+    box-shadow:0 2px 8px rgba(0,0,0,.05);
+
+}
+
+#croppedFilesContainer .card-body{
+
+    padding:18px 25px;
+
+}
+
+/* ===========================
+   DARK MODE
+=========================== */
+
+.dark-mode{
+    background:#111827;
+    color:white;
+}
+
+.dark-mode .navbar{
+    background:#1f2937 !important;
+}
+
+.dark-mode .converter-card{
+    background:#1f2937;
+    color:white;
+}
+
+.dark-mode h1{
+    color:white;
+}
+
+.dark-mode .text-muted{
+    color:#d1d5db !important;
+}
+
+.dark-mode .summary-card{
+    background:#374151;
+    border-color:#4b5563;
+}
+
+.dark-mode .upload-area{
+    background:#374151;
+    border-color:#60a5fa;
+}
+
+
+.dark-mode .form-check-label{
+    color:white;
+}
+
+.dark-mode .result-header{
+    background:#374151;
+    border-color:#4b5563;
+}
+
+.dark-mode .result-summary{
+    color:white;
+}
+
+.dark-mode .card{
+    background:#374151;
+    color:white;
+}
+
+.dark-mode .modal-content{
+    background:#1f2937;
+    color:white;
+}
+
+.dark-mode .btn-outline-dark{
+    color:white;
+    border-color:white;
+}
+
+.dark-mode .btn-outline-dark:hover{
+    background:white;
+    color:#111827;
+}
+
+.dark-mode .tool-section{
+    background:#374151;
+    border:1px solid #4b5563;
+    color:white;
+}
+/* ===========================
+   PREVIEW MODAL
+=========================== */
+
+#previewFrame{
+
+    width:100%;
+
+    height:700px;
+
+    border:none;
+
+}
+
+
+/* Result Cards */
+
+#croppedFilesContainer .card{
+
+    border-radius:14px;
+
+    margin-bottom:15px;
+
+}
+
+#croppedFilesContainer .card-body{
+
+    padding:15px;
+
+}
+
+.result-summary{
+
+    font-size:15px;
+
+}
 /* ===========================
    UPLOAD AREA
 =========================== */
@@ -240,63 +421,6 @@ h1{
 
 }
 
-/* ===========================
-   DARK MODE
-=========================== */
-
-.dark-mode{
-
-    background:#111827;
-
-    color:white;
-
-}
-
-.dark-mode .converter-card{
-
-    background:#1f2937;
-
-    color:white;
-
-}
-
-.dark-mode .summary-card{
-
-    background:#374151;
-
-    border-color:#4b5563;
-
-}
-
-.dark-mode .upload-area{
-
-    background:#312e81;
-
-    border-color:#a855f7;
-
-}
-
-.dark-mode .tool-section{
-
-    background:#374151;
-
-    border-color:#4b5563;
-
-}
-
-.dark-mode .tool-section h4{
-
-    color:white;
-
-}
-
-.dark-mode .card{
-
-    background:#374151;
-
-    color:white;
-
-}
 /* ===================================
    TABLET (768px - 991px)
 =================================== */

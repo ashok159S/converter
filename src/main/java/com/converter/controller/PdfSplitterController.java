@@ -26,139 +26,200 @@ import java.util.Map;
 @Controller
 public class PdfSplitterController {
 
-    @Autowired
-    private PdfSplitterService pdfSplitterService;
+        @Autowired
+        private PdfSplitterService pdfSplitterService;
 
-    @GetMapping("/pdf-splitter")
-    public String pdfSplitterPage() {
+        @GetMapping("/pdf-splitter")
+        public String pdfSplitterPage() {
 
-        return "pdf-splitter";
-
-    }
-
-    @PostMapping("/pdf-splitter-ajax")
-    @ResponseBody
-    public Map<String, Object> splitPdf(
-
-            @RequestParam("pdfFile")
-            MultipartFile pdfFile
-
-    ) {
-
-        return pdfSplitterService.splitPdf(
-                pdfFile
-        );
-
-    }
-
-@GetMapping("/download-split-pdf")
-public ResponseEntity<Resource> downloadSplitPdf(
-
-        @RequestParam String fileName,
-
-        @RequestParam(required = false)
-        String downloadName
-
-) {
-
-    try {
-
-        File file =
-                new File(
-                        "split-pdfs",
-                        fileName
-                );
-
-        if(!file.exists()){
-
-            return ResponseEntity.notFound()
-                    .build();
+                return "pdf-splitter";
 
         }
 
-        Resource resource =
-                new FileSystemResource(
-                        file
-                );
+        @PostMapping("/pdf-splitter-ajax")
+        @ResponseBody
+        public Map<String, Object> splitPdf(
 
-        String finalName =
-                (downloadName != null &&
-                 !downloadName.isEmpty())
-                ? downloadName
-                : file.getName();
+                        @RequestParam("pdfFile") MultipartFile pdfFile
 
-        return ResponseEntity.ok()
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" +
-                        finalName +
-                        "\""
-                )
-                .contentType(
-                        MediaType.APPLICATION_PDF
-                )
-                .body(
-                        resource
-                );
+        ) {
 
-    } catch (Exception e) {
+                if (
 
-        return ResponseEntity.notFound()
-                .build();
+                pdfFile == null
 
-    }
+                ) {
 
-}
+                        return Map.of(
 
+                                        "success", false,
 
-    @GetMapping("/preview-split-pdf")
-    public ResponseEntity<Resource> previewSplitPdf(
+                                        "message",
+                                        "Please select a PDF file."
 
-            @RequestParam String fileName
+                        );
 
-    ) {
+                }
 
-        try {
+                if (
 
-            File file =
-                    new File(
-                            "split-pdfs",
-                            fileName
-                    );
+                pdfFile.isEmpty()
 
-            if (!file.exists()) {
+                ) {
 
-                return ResponseEntity.notFound()
-                        .build();
+                        return Map.of(
 
-            }
+                                        "success", false,
 
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
+                                        "message",
+                                        "The selected PDF file is empty."
 
-            return ResponseEntity.ok()
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "inline; filename=\"" +
-                                    file.getName() +
-                                    "\""
-                    )
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
-                    .body(
-                            resource
-                    );
+                        );
 
-        } catch (Exception e) {
+                }
 
-            return ResponseEntity.notFound()
-                    .build();
+                String name = pdfFile.getOriginalFilename();
+
+                if (
+
+                name == null
+                                ||
+
+                                !name.toLowerCase().endsWith(".pdf")
+
+                ) {
+
+                        return Map.of(
+
+                                        "success", false,
+
+                                        "message",
+                                        "Only PDF files are allowed."
+
+                        );
+
+                }
+
+                return pdfSplitterService.splitPdf(
+                                pdfFile);
 
         }
 
-    }
+        @GetMapping("/download-split-pdf")
+        public ResponseEntity<Resource> downloadSplitPdf(
+
+                        @RequestParam String fileName,
+
+                        @RequestParam(required = false) String downloadName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        "split-pdfs",
+                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity.notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        String finalName = (downloadName != null &&
+                                        !downloadName.isEmpty())
+                                                        ? downloadName
+                                                        : file.getName();
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "attachment; filename=\"" +
+                                                                        finalName +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity.notFound()
+                                        .build();
+
+                }
+
+        }
+
+        @GetMapping("/preview-split-pdf")
+        public ResponseEntity<Resource> previewSplitPdf(
+
+                        @RequestParam String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        "split-pdfs",
+                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity.notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "inline; filename=\"" +
+                                                                        file.getName() +
+                                                                        "\"")
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity.notFound()
+                                        .build();
+
+                }
+
+        }
+
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
+
+        @PostMapping("/delete-split-pdf-files")
+        @ResponseBody
+        public ResponseEntity<Void> deleteSplitPdfFiles() {
+
+                pdfSplitterService.deleteTemporaryFiles();
+
+                return ResponseEntity
+                                .ok()
+                                .build();
+
+        }
 
 }

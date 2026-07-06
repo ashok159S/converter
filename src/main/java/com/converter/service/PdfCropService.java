@@ -18,264 +18,250 @@ import java.util.Map;
 @Service
 public class PdfCropService {
 
-    public Map<String,Object> cropPdf(
+        public Map<String, Object> cropPdf(
 
-            MultipartFile[] pdfFiles,
+                        MultipartFile[] pdfFiles,
 
-            String cropAmount,
+                        String cropAmount,
 
-            String applyTo
+                        String applyTo
 
-    ){
+        ) {
 
-        Map<String,Object> result =
-                new HashMap<>();
+                Map<String, Object> result = new HashMap<>();
 
-        try{
+                try {
 
-            List<Map<String,String>> files =
-                    new ArrayList<>();
+                        List<Map<String, String>> files = new ArrayList<>();
 
-            File uploadFolder =
-                    new File(
+                        File uploadFolder = new File(
 
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "uploaded-pdfs"
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "uploaded-pdfs"
 
-                    );
+                        );
 
-            if(!uploadFolder.exists()){
+                        if (!uploadFolder.exists()) {
 
-                uploadFolder.mkdirs();
+                                uploadFolder.mkdirs();
 
-            }
+                        }
 
-            File outputFolder =
-                    new File(
+                        File outputFolder = new File(
 
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "cropped-pdfs"
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "cropped-pdfs"
 
-                    );
+                        );
 
-            if(!outputFolder.exists()){
+                        if (!outputFolder.exists()) {
 
-                outputFolder.mkdirs();
+                                outputFolder.mkdirs();
 
-            }
+                        }
 
-            int cropValue = 20;
+                        int cropValue = 20;
 
-            if(
-                    "SMALL".equalsIgnoreCase(
-                            cropAmount
-                    )
-            ){
+                        if ("SMALL".equalsIgnoreCase(
+                                        cropAmount)) {
 
-                cropValue = 10;
+                                cropValue = 10;
 
-            }
-            else if(
-                    "MEDIUM".equalsIgnoreCase(
-                            cropAmount
-                    )
-            ){
+                        } else if ("MEDIUM".equalsIgnoreCase(
+                                        cropAmount)) {
 
-                cropValue = 20;
+                                cropValue = 20;
 
-            }
-            else if(
-                    "LARGE".equalsIgnoreCase(
-                            cropAmount
-                    )
-            ){
+                        } else if ("LARGE".equalsIgnoreCase(
+                                        cropAmount)) {
 
-                cropValue = 40;
+                                cropValue = 40;
 
-            }
+                        }
 
-            for(
+                        for (
 
-                    MultipartFile pdfFile
-                    :
-                    pdfFiles
+                        MultipartFile pdfFile : pdfFiles
 
-            ){
+                        ) {
 
-                String originalName =
-                        pdfFile.getOriginalFilename();
+                                String originalName = pdfFile.getOriginalFilename();
 
-                if(
-                        originalName == null
-                        ||
-                        originalName.isBlank()
-                ){
+                                if (originalName == null
+                                                ||
+                                                originalName.isBlank()) {
 
-                    originalName =
-                            "document.pdf";
+                                        originalName = "document.pdf";
+
+                                }
+
+                                File uploadedFile = new File(
+                                                uploadFolder,
+                                                originalName);
+
+                                pdfFile.transferTo(
+                                                uploadedFile);
+
+                                PDDocument document = Loader.loadPDF(
+                                                uploadedFile);
+
+                                for (
+
+                                                int i = 0; i < document.getNumberOfPages(); i++
+
+                                                ) {
+
+                                        if (
+
+                                        "FIRST".equalsIgnoreCase(
+                                                        applyTo)
+                                                        &&
+                                                        i > 0
+
+                                        ) {
+
+                                                continue;
+
+                                        }
+
+                                        PDPage page = document.getPage(i);
+
+                                        PDRectangle mediaBox = page.getMediaBox();
+
+                                        float width = mediaBox.getWidth();
+
+                                        float height = mediaBox.getHeight();
+
+                                        PDRectangle cropBox = new PDRectangle(
+
+                                                        cropValue,
+
+                                                        cropValue,
+
+                                                        width
+                                                                        -
+                                                                        (cropValue * 2),
+
+                                                        height
+                                                                        -
+                                                                        (cropValue * 2)
+
+                                        );
+
+                                        page.setCropBox(
+                                                        cropBox);
+
+                                }
+
+                                String outputName = originalName.replace(
+                                                ".pdf",
+                                                "")
+                                                +
+                                                "-cropped.pdf";
+
+                                File outputFile = new File(
+                                                outputFolder,
+                                                outputName);
+
+                                int pageCount = document.getNumberOfPages();
+
+                                document.save(
+                                                outputFile);
+
+                                document.close();
+
+                                uploadedFile.delete();
+
+                                Map<String, String> fileInfo = new HashMap<>();
+
+                                fileInfo.put(
+                                                "name",
+                                                outputName);
+
+                                fileInfo.put(
+                                                "size",
+                                                String.format(
+                                                                "%.2f MB",
+                                                                outputFile.length()
+                                                                                /
+                                                                                1024.0
+                                                                                /
+                                                                                1024.0));
+
+                                fileInfo.put(
+                                                "pages",
+                                                String.valueOf(
+                                                                pageCount));
+
+                                fileInfo.put(
+                                                "cropAmount",
+                                                cropAmount);
+
+                                files.add(
+                                                fileInfo);
+                        }
+
+                        result.put(
+                                        "success",
+                                        true);
+
+                        result.put(
+                                        "files",
+                                        files);
+
+                } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        result.put(
+                                        "success",
+                                        false);
+
+                        result.put(
+                                        "message",
+                                        e.getMessage());
 
                 }
 
-                File uploadedFile =
-                        new File(
-                                uploadFolder,
-                                originalName
-                        );
+                return result;
 
-                pdfFile.transferTo(
-                        uploadedFile
-                );
+        }
 
-                PDDocument document =
-                        Loader.loadPDF(
-                                uploadedFile
-                        );
+        public void deleteCroppedPdfs() {
 
-                for(
+                File folder = new File(
+                                System.getProperty("user.dir")
+                                                +
+                                                File.separator
+                                                +
+                                                "cropped-pdfs");
 
-                        int i = 0;
-                        i < document.getNumberOfPages();
-                        i++
+                if (folder.exists()) {
 
-                ){
+                        File[] files = folder.listFiles();
 
-                    if(
+                        if (files != null) {
 
-                            "FIRST".equalsIgnoreCase(
-                                    applyTo
-                            )
-                            &&
-                            i > 0
+                                for (File file : files) {
 
-                    ){
+                                        if (file.isFile()) {
 
-                        continue;
+                                                file.delete();
 
-                    }
+                                        }
 
-                    PDPage page =
-                            document.getPage(i);
+                                }
 
-                    PDRectangle mediaBox =
-                            page.getMediaBox();
-
-                    float width =
-                            mediaBox.getWidth();
-
-                    float height =
-                            mediaBox.getHeight();
-
-                    PDRectangle cropBox =
-                            new PDRectangle(
-
-                                    cropValue,
-
-                                    cropValue,
-
-                                    width
-                                    -
-                                    (cropValue * 2),
-
-                                    height
-                                    -
-                                    (cropValue * 2)
-
-                            );
-
-                    page.setCropBox(
-                            cropBox
-                    );
+                        }
 
                 }
 
-                String outputName =
-                        originalName.replace(
-                                ".pdf",
-                                ""
-                        )
-                        +
-                        "-cropped.pdf";
-
-                File outputFile =
-                        new File(
-                                outputFolder,
-                                outputName
-                        );
-
-                document.save(
-                        outputFile
-                );
-
-                document.close();
-
-                Map<String,String> fileInfo =
-                        new HashMap<>();
-
-                fileInfo.put(
-                        "name",
-                        outputName
-                );
-
-                fileInfo.put(
-
-                        "size",
-
-                        String.format(
-
-                                "%.2f MB",
-
-                                outputFile.length()
-                                /
-                                1024.0
-                                /
-                                1024.0
-
-                        )
-
-                );
-
-                files.add(
-                        fileInfo
-                );
-
-            }
-
-            result.put(
-                    "success",
-                    true
-            );
-
-            result.put(
-                    "files",
-                    files
-            );
-
         }
-        catch(Exception e){
-
-            e.printStackTrace();
-
-            result.put(
-                    "success",
-                    false
-            );
-
-            result.put(
-                    "message",
-                    e.getMessage()
-            );
-
-        }
-
-        return result;
-
-    }
 
 }
-

@@ -7,6 +7,11 @@ const imageFiles =
         "imageFiles"
     );
 
+const compressionLevel =
+    document.getElementById(
+        "compressionLevel"
+    );
+
 const dropZone =
     document.getElementById(
         "dropZone"
@@ -57,6 +62,11 @@ const qualityValue =
         "qualityValue"
     );
 
+const settingsSection =
+    document.getElementById(
+        "settingsSection"
+    );
+
 let selectedFiles = [];
 
 /* ===========================
@@ -65,7 +75,7 @@ let selectedFiles = [];
 
 quality.addEventListener(
     "input",
-    function(){
+    function () {
 
         qualityValue.innerHTML =
             this.value + "%";
@@ -76,17 +86,96 @@ quality.addEventListener(
 /* ===========================
    FILE SELECT
 =========================== */
-
 imageFiles.addEventListener(
     "change",
-    function(){
+    function () {
 
-        selectedFiles =
+        const newFiles =
             Array.from(
                 this.files
             );
 
+        const duplicateNames = [];
+        const invalidFiles = [];
+        const filesToAdd = [];
+
+        newFiles.forEach(
+            file => {
+
+                if (
+                    !file.type.startsWith(
+                        "image/"
+                    )
+                ) {
+
+                    invalidFiles.push(
+                        file.name
+                    );
+
+                    return;
+                }
+
+                const alreadyExists =
+                    selectedFiles.some(
+                        existingFile =>
+                            existingFile.name === file.name
+                    );
+
+                if (
+                    alreadyExists
+                ) {
+
+                    duplicateNames.push(
+                        file.name
+                    );
+
+                }
+                else {
+
+                    filesToAdd.push(
+                        file
+                    );
+
+                }
+
+            }
+        );
+
+        selectedFiles.push(
+            ...filesToAdd
+        );
+
+        if (
+            invalidFiles.length > 0
+        ) {
+
+            alert(
+                "Invalid files:\n\n"
+                +
+                invalidFiles.join(
+                    "\n"
+                )
+            );
+
+        }
+
+        if (
+            duplicateNames.length > 0
+        ) {
+
+            alert(
+                "Duplicate files:\n\n"
+                +
+                duplicateNames.join(
+                    "\n"
+                )
+            );
+
+        }
+
         showFiles();
+
+        this.value = "";
 
     }
 );
@@ -97,7 +186,7 @@ imageFiles.addEventListener(
 
 dropZone.addEventListener(
     "dragover",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
@@ -110,7 +199,7 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "dragleave",
-    function(){
+    function () {
 
         dropZone.classList.remove(
             "drag-active"
@@ -121,7 +210,7 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "drop",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
@@ -129,12 +218,96 @@ dropZone.addEventListener(
             "drag-active"
         );
 
-        selectedFiles =
+        const newFiles =
             Array.from(
                 e.dataTransfer.files
             );
 
-        showFiles();
+        const duplicateNames = [];
+        const invalidFiles = [];
+        const filesToAdd = [];
+
+        newFiles.forEach(
+            file => {
+
+                if (
+                    !file.type.startsWith(
+                        "image/"
+                    )
+                ) {
+
+                    invalidFiles.push(
+                        file.name
+                    );
+
+                    return;
+                }
+
+                const alreadyExists =
+                    selectedFiles.some(
+                        existingFile =>
+                            existingFile.name === file.name
+                    );
+
+                if (
+                    alreadyExists
+                ) {
+
+                    duplicateNames.push(
+                        file.name
+                    );
+
+                }
+                else {
+
+                    filesToAdd.push(
+                        file
+                    );
+
+                }
+
+            }
+        );
+
+        selectedFiles.push(
+            ...filesToAdd
+        );
+
+        if (
+            invalidFiles.length > 0
+        ) {
+
+            alert(
+                "Invalid files:\n\n"
+                +
+                invalidFiles.join(
+                    "\n"
+                )
+            );
+
+        }
+
+        if (
+            duplicateNames.length > 0
+        ) {
+
+            alert(
+                "Duplicate files:\n\n"
+                +
+                duplicateNames.join(
+                    "\n"
+                )
+            );
+
+        }
+
+        if (
+            filesToAdd.length > 0
+        ) {
+
+            showFiles();
+
+        }
 
     }
 );
@@ -143,7 +316,7 @@ dropZone.addEventListener(
    SHOW FILES
 =========================== */
 
-function showFiles(){
+function showFiles() {
 
     summaryCard.style.display =
         "flex";
@@ -240,16 +413,16 @@ function showFiles(){
    DELETE FILE
 =========================== */
 
-function deleteFile(index){
+function deleteFile(index) {
 
     selectedFiles.splice(
         index,
         1
     );
 
-    if(
+    if (
         selectedFiles.length === 0
-    ){
+    ) {
 
         summaryCard.style.display =
             "none";
@@ -272,7 +445,7 @@ function deleteFile(index){
    PREVIEW ORIGINAL IMAGE
 =========================== */
 
-function previewImage(index){
+function previewImage(index) {
 
     const file =
         selectedFiles[index];
@@ -303,7 +476,7 @@ function previewImage(index){
 
 function previewCompressedImage(
     fileName
-){
+) {
 
     document.getElementById(
         "previewImage"
@@ -331,18 +504,18 @@ function previewCompressedImage(
 
 compressForm.addEventListener(
     "submit",
-    function(e){
+    function (e) {
         e.preventDefault();
 
-         if(
+        if (
             !validateFiles(selectedFiles)
-        ){
+        ) {
             return;
         }
 
-        if(
+        if (
             selectedFiles.length === 0
-        ){
+        ) {
 
             alert(
                 "Please select images"
@@ -377,6 +550,43 @@ compressForm.addEventListener(
             "quality",
             quality.value
         );
+        /* Freeze UI */
+
+        imageFiles.disabled =
+            true;
+
+        quality.disabled =
+            true;
+
+        document
+            .querySelectorAll(
+                ".btn-danger"
+            )
+            .forEach(
+                btn =>
+                    btn.disabled =
+                    true
+            );
+
+        document
+            .querySelectorAll(
+                ".btn-primary"
+            )
+            .forEach(
+                btn =>
+                    btn.disabled =
+                    true
+            );
+
+        document.getElementById(
+            "dropZone"
+        ).style.display =
+            "none";
+
+        document.getElementById(
+            "uploadSection"
+        ).style.display =
+            "none";
 
         progressSection.style.display =
             "block";
@@ -386,11 +596,11 @@ compressForm.addEventListener(
 
         xhr.upload.addEventListener(
             "progress",
-            function(event){
+            function (event) {
 
-                if(
+                if (
                     event.lengthComputable
-                ){
+                ) {
 
                     const percent =
                         Math.round(
@@ -413,40 +623,105 @@ compressForm.addEventListener(
         );
 
         xhr.onreadystatechange =
-            function(){
+            function () {
 
-                if(
+                if (
                     xhr.readyState === 4
                     &&
                     xhr.status === 200
-                ){
+                ) {
 
                     const result =
                         JSON.parse(
                             xhr.responseText
                         );
 
-                    if(
+                    if (
                         result.success
-                    ){
+                    ) {
+
 
                         document.getElementById(
                             "uploadSection"
                         ).style.display =
                             "none";
+                        progressBar.style.width =
+                            "100%";
 
-                        document.getElementById(
-                            "resultCard"
-                        ).style.display =
-                            "block";
+                        progressBar.innerHTML =
+                            "100%";
+
+                        setTimeout(() => {
+
+                            progressSection.style.display =
+                                "none";
+
+                            progressBar.style.width =
+                                "0%";
+
+                            progressBar.innerHTML =
+                                "0%";
+
+                            document.getElementById(
+                                "resultCard"
+                            ).style.display =
+                                "block";
+
+                        }, 500);
 
                         buildResultTable(
                             result
                         );
 
                     }
-                    else{
+                    else {
 
+                        imageFiles.disabled =
+                            false;
+
+                        quality.disabled =
+                            false;
+
+                        document.getElementById(
+                            "dropZone"
+                        ).style.display =
+                            "block";
+
+                        summaryCard.style.display =
+                            "flex";
+
+                        fileListContainer.style.display =
+                            "block";
+                        settingsSection.style.display =
+                            "block";
+
+                        document
+                            .querySelectorAll(
+                                ".btn-danger"
+                            )
+                            .forEach(
+                                btn =>
+                                    btn.disabled =
+                                    false
+                            );
+
+                        document
+                            .querySelectorAll(
+                                ".btn-primary"
+                            )
+                            .forEach(
+                                btn =>
+                                    btn.disabled =
+                                    false
+                            );
+
+                        progressSection.style.display =
+                            "none";
+                        progressBar.style.width =
+                            "0%";
+
+                        progressBar.innerHTML =
+                            "0%";
                         alert(
                             result.message
                         );
@@ -454,6 +729,63 @@ compressForm.addEventListener(
                     }
 
                 }
+
+            };
+
+        xhr.onerror =
+            function () {
+
+                imageFiles.disabled =
+                    false;
+
+                quality.disabled =
+                    false;
+
+                document.getElementById(
+                    "dropZone"
+                ).style.display =
+                    "block";
+
+                summaryCard.style.display =
+                    "flex";
+
+                fileListContainer.style.display =
+                    "block";
+                fileListContainer.style.display =
+                    "block";
+
+                document
+                    .querySelectorAll(
+                        ".btn-danger"
+                    )
+                    .forEach(
+                        btn =>
+                            btn.disabled =
+                            false
+                    );
+
+                document
+                    .querySelectorAll(
+                        ".btn-primary"
+                    )
+                    .forEach(
+                        btn =>
+                            btn.disabled =
+                            false
+                    );
+
+                progressSection.style.display =
+                    "none";
+
+                progressBar.style.width =
+                    "0%";
+
+                progressBar.innerHTML =
+                    "0%";
+
+                alert(
+                    "Compression failed. Please try again."
+                );
 
             };
 
@@ -467,6 +799,8 @@ compressForm.addEventListener(
         );
 
     }
+
+
 );
 
 /* ===========================
@@ -475,7 +809,7 @@ compressForm.addEventListener(
 
 function buildResultTable(
     result
-){
+) {
 
     const container =
         document.getElementById(
@@ -581,11 +915,13 @@ function buildResultTable(
         totalCompressed;
 
     const reduction =
-        (
-            saved
-            /
-            totalOriginal
-        ) * 100;
+        totalOriginal > 0
+            ? (
+                saved
+                /
+                totalOriginal
+            ) * 100
+            : 0;
 
     document.getElementById(
         "resultFiles"
@@ -621,18 +957,28 @@ function buildResultTable(
 /* ===========================
    COMPRESS MORE
 =========================== */
-
 document.getElementById(
     "compressMoreBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
-        location.reload();
+        fetch(
+            "/delete-image-temp-files",
+            {
+                method: "POST"
+            }
+        )
+            .finally(
+                () => {
+
+                    location.reload();
+
+                }
+            );
 
     }
 );
-
 /* ===========================
    DARK MODE
 =========================== */
@@ -641,10 +987,21 @@ document.getElementById(
     "darkModeBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
         document.body.classList.toggle(
             "dark-mode"
+        );
+
+    }
+);
+
+window.addEventListener(
+    "beforeunload",
+    function () {
+
+        navigator.sendBeacon(
+            "/delete-image-temp-files"
         );
 
     }

@@ -20,270 +20,281 @@ import java.util.UUID;
 @Service
 public class ImageResizerService {
 
-    public Map<String,Object> resizeImages(
+        public Map<String, Object> resizeImages(
 
-            MultipartFile[] imageFiles,
+                        MultipartFile[] imageFiles,
 
-            int width,
+                        int width,
 
-            int height,
+                        int height,
 
-            boolean maintainAspectRatio
+                        boolean maintainAspectRatio
 
-    ){
+        ) {
 
-        Map<String,Object> result =
-                new HashMap<>();
+                if (width <= 0
+                                ||
+                                height <= 0) {
 
-        try{
+                        Map<String, Object> result = new HashMap<>();
 
-            List<Map<String,String>> files =
-                    new ArrayList<>();
+                        result.put(
+                                        "success",
+                                        false);
 
-            File outputFolder =
-                    new File(
-                            "resized-images"
-                    );
+                        result.put(
+                                        "message",
+                                        "Width and Height must be greater than 0.");
 
-            if(!outputFolder.exists()){
-
-                outputFolder.mkdirs();
-
-            }
-
-            for(
-                    MultipartFile imageFile
-                    :
-                    imageFiles
-            ){
-
-                String originalName =
-                        imageFile.getOriginalFilename();
-
-                if(
-                        originalName == null
-                        ||
-                        originalName.isBlank()
-                ){
-
-                    originalName =
-                            "image.jpg";
+                        return result;
 
                 }
 
-                String extension =
-                        originalName.substring(
-                                originalName.lastIndexOf(".") + 1
-                        );
+                Map<String, Object> result = new HashMap<>();
 
-                String baseName =
-                        originalName.substring(
-                                0,
-                                originalName.lastIndexOf(".")
-                        );
+                try {
 
-                File tempInput =
-                        File.createTempFile(
-                                UUID.randomUUID().toString(),
-                                "." + extension
-                        );
+                        List<Map<String, String>> files = new ArrayList<>();
 
-                imageFile.transferTo(
-                        tempInput
-                );
+                        File outputFolder = new File(
+                                        "resized-images");
 
-                BufferedImage originalImage =
-                        ImageIO.read(
-                                tempInput
-                        );
+                        if (!outputFolder.exists()) {
 
-                if(
-                        originalImage == null
-                ){
+                                outputFolder.mkdirs();
 
-                    throw new RuntimeException(
-                            "Unsupported image format: "
-                            + originalName
-                    );
+                        }
+
+                        for (MultipartFile imageFile : imageFiles) {
+
+                                if (imageFile.isEmpty()) {
+
+                                        throw new RuntimeException(
+                                                        "Empty file detected.");
+
+                                }
+
+                                String originalName = imageFile.getOriginalFilename();
+
+                                if (originalName == null
+                                                ||
+                                                originalName.isBlank()) {
+
+                                        originalName = "image.jpg";
+
+                                }
+
+                                String extension = originalName.substring(
+                                                originalName.lastIndexOf(".") + 1);
+
+                                String baseName = originalName.substring(
+                                                0,
+                                                originalName.lastIndexOf("."));
+
+                                File tempInput = null;
+
+                                try {
+
+                                        tempInput = File.createTempFile(
+                                                        UUID.randomUUID().toString(),
+                                                        "." + extension);
+
+                                        imageFile.transferTo(
+                                                        tempInput);
+
+                                        BufferedImage originalImage = ImageIO.read(
+                                                        tempInput);
+
+                                        if (originalImage == null) {
+
+                                                throw new RuntimeException(
+                                                                "Corrupted or unsupported image: "
+                                                                                + originalName);
+
+                                        }
+
+                                        int targetWidth = width;
+
+                                        int targetHeight = height;
+
+                                        if (maintainAspectRatio) {
+
+                                                double ratio = (double) originalImage.getWidth()
+                                                                /
+                                                                originalImage.getHeight();
+
+                                                targetHeight = (int) (targetWidth
+                                                                /
+                                                                ratio);
+
+                                        }
+
+                                        BufferedImage resizedImage = new BufferedImage(
+                                                        targetWidth,
+                                                        targetHeight,
+                                                        BufferedImage.TYPE_INT_RGB);
+
+                                        Graphics2D graphics = resizedImage.createGraphics();
+
+                                        graphics.setRenderingHint(
+                                                        RenderingHints.KEY_INTERPOLATION,
+                                                        RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+                                        graphics.setRenderingHint(
+                                                        RenderingHints.KEY_RENDERING,
+                                                        RenderingHints.VALUE_RENDER_QUALITY);
+
+                                        graphics.setRenderingHint(
+                                                        RenderingHints.KEY_ANTIALIASING,
+                                                        RenderingHints.VALUE_ANTIALIAS_ON);
+
+                                        graphics.drawImage(
+                                                        originalImage,
+                                                        0,
+                                                        0,
+                                                        targetWidth,
+                                                        targetHeight,
+                                                        null);
+
+                                        graphics.dispose();
+
+                                        File outputFile = new File(
+                                                        outputFolder,
+                                                        baseName
+                                                                        +
+                                                                        "-resized."
+                                                                        +
+                                                                        extension);
+
+                                        String writeFormat = extension;
+
+                                        if (extension.equalsIgnoreCase("jpg")
+                                                        ||
+                                                        extension.equalsIgnoreCase("jpeg")) {
+
+                                                writeFormat = "jpg";
+
+                                        }
+
+                                        ImageIO.write(
+                                                        resizedImage,
+                                                        writeFormat,
+                                                        outputFile);
+
+                                        double originalSize = imageFile.getSize()
+                                                        /
+                                                        1024.0
+                                                        /
+                                                        1024.0;
+
+                                        double resizedSize = outputFile.length()
+                                                        /
+                                                        1024.0
+                                                        /
+                                                        1024.0;
+
+                                        Map<String, String> fileInfo = new HashMap<>();
+
+                                        fileInfo.put(
+                                                        "name",
+                                                        outputFile.getName());
+
+                                        fileInfo.put(
+                                                        "originalSize",
+                                                        String.format(
+                                                                        "%.2f",
+                                                                        originalSize));
+
+                                        fileInfo.put(
+                                                        "resizedSize",
+                                                        String.format(
+                                                                        "%.2f",
+                                                                        resizedSize));
+
+                                        fileInfo.put(
+                                                        "dimensions",
+                                                        targetWidth
+                                                                        +
+                                                                        " × "
+                                                                        +
+                                                                        targetHeight);
+
+                                        files.add(
+                                                        fileInfo);
+
+                                } finally {
+
+                                        if (tempInput != null
+                                                        &&
+                                                        tempInput.exists()) {
+
+                                                tempInput.delete();
+
+                                        }
+
+                                }
+
+                        }
+
+                        result.put(
+                                        "success",
+                                        true);
+
+                        result.put(
+                                        "files",
+                                        files);
+
+                } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        result.put(
+                                        "success",
+                                        false);
+
+                        result.put(
+                                        "message",
+                                        e.getMessage());
 
                 }
 
-                int targetWidth =
-                        width;
-
-                int targetHeight =
-                        height;
-
-                if(
-                        maintainAspectRatio
-                ){
-
-                    double ratio =
-                            (double)
-                            originalImage.getWidth()
-                            /
-                            originalImage.getHeight();
-
-                    targetHeight =
-                            (int)
-                            (
-                                targetWidth
-                                /
-                                ratio
-                            );
-
-                }
-
-                BufferedImage resizedImage =
-                        new BufferedImage(
-                                targetWidth,
-                                targetHeight,
-                                BufferedImage.TYPE_INT_RGB
-                        );
-
-                Graphics2D graphics =
-                        resizedImage.createGraphics();
-
-                graphics.setRenderingHint(
-                        RenderingHints.KEY_INTERPOLATION,
-                        RenderingHints.VALUE_INTERPOLATION_BILINEAR
-                );
-
-                graphics.setRenderingHint(
-                        RenderingHints.KEY_RENDERING,
-                        RenderingHints.VALUE_RENDER_QUALITY
-                );
-
-                graphics.setRenderingHint(
-                        RenderingHints.KEY_ANTIALIASING,
-                        RenderingHints.VALUE_ANTIALIAS_ON
-                );
-
-                graphics.drawImage(
-                        originalImage,
-                        0,
-                        0,
-                        targetWidth,
-                        targetHeight,
-                        null
-                );
-
-                graphics.dispose();
-
-                File outputFile =
-                        new File(
-                                outputFolder,
-                                baseName
-                                +
-                                "-resized."
-                                +
-                                extension
-                        );
-
-                String writeFormat =
-                        extension;
-
-                if(
-                        extension.equalsIgnoreCase("jpg")
-                        ||
-                        extension.equalsIgnoreCase("jpeg")
-                ){
-
-                    writeFormat =
-                            "jpg";
-
-                }
-
-                ImageIO.write(
-                        resizedImage,
-                        writeFormat,
-                        outputFile
-                );
-
-                double originalSize =
-                        imageFile.getSize()
-                        /
-                        1024.0
-                        /
-                        1024.0;
-
-                double resizedSize =
-                        outputFile.length()
-                        /
-                        1024.0
-                        /
-                        1024.0;
-
-                Map<String,String> fileInfo =
-                        new HashMap<>();
-
-                fileInfo.put(
-                        "name",
-                        outputFile.getName()
-                );
-
-                fileInfo.put(
-                        "originalSize",
-                        String.format(
-                                "%.2f",
-                                originalSize
-                        )
-                );
-
-                fileInfo.put(
-                        "resizedSize",
-                        String.format(
-                                "%.2f",
-                                resizedSize
-                        )
-                );
-
-                fileInfo.put(
-                        "dimensions",
-                        targetWidth
-                        +
-                        " × "
-                        +
-                        targetHeight
-                );
-
-                files.add(
-                        fileInfo
-                );
-
-                tempInput.delete();
-
-            }
-
-            result.put(
-                    "success",
-                    true
-            );
-
-            result.put(
-                    "files",
-                    files
-            );
-
-        }
-        catch(Exception e){
-
-            e.printStackTrace();
-
-            result.put(
-                    "success",
-                    false
-            );
-
-            result.put(
-                    "message",
-                    e.getMessage()
-            );
+                return result;
 
         }
 
-        return result;
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
 
-    }
+        public void deleteTempFiles() {
+
+                File outputFolder = new File(
+                                "resized-images");
+
+                if (outputFolder.exists()
+                                &&
+                                outputFolder.isDirectory()) {
+
+                        File[] files = outputFolder.listFiles();
+
+                        if (files != null) {
+
+                                for (File file : files) {
+
+                                        if (file.isFile()) {
+
+                                                file.delete();
+
+                                        }
+
+                                }
+
+                        }
+
+                }
+
+        }
 
 }

@@ -70,25 +70,113 @@ let selectedFiles = [];
 
 imageFiles.addEventListener(
     "change",
-    function(){
+    function () {
 
-        selectedFiles =
+        const newFiles =
             Array.from(
                 this.files
             );
 
-        showFiles();
+        const duplicateNames = [];
+
+        const invalidFiles = [];
+
+        const filesToAdd = [];
+
+        newFiles.forEach(
+            file => {
+
+                if (
+                    !file.type.startsWith(
+                        "image/"
+                    )
+                ) {
+
+                    invalidFiles.push(
+                        file.name
+                    );
+
+                    return;
+
+                }
+
+                const alreadyExists =
+                    selectedFiles.some(
+                        existingFile =>
+                            existingFile.name === file.name
+                    );
+
+                if (
+                    alreadyExists
+                ) {
+
+                    duplicateNames.push(
+                        file.name
+                    );
+
+                }
+                else {
+
+                    filesToAdd.push(
+                        file
+                    );
+
+                }
+
+            }
+        );
+
+        selectedFiles.push(
+            ...filesToAdd
+        );
+
+        if (
+            invalidFiles.length > 0
+        ) {
+
+            alert(
+                "Invalid files:\n\n"
+                +
+                invalidFiles.join(
+                    "\n"
+                )
+            );
+
+        }
+
+        if (
+            duplicateNames.length > 0
+        ) {
+
+            alert(
+                "Duplicate files:\n\n"
+                +
+                duplicateNames.join(
+                    "\n"
+                )
+            );
+
+        }
+
+        if (
+            filesToAdd.length > 0
+        ) {
+
+            showFiles();
+
+        }
+
+        this.value = "";
 
     }
 );
-
 /* ===========================
    DRAG & DROP
 =========================== */
 
 dropZone.addEventListener(
     "dragover",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
@@ -101,7 +189,7 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "dragleave",
-    function(){
+    function () {
 
         dropZone.classList.remove(
             "drag-active"
@@ -112,7 +200,7 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "drop",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
@@ -120,24 +208,119 @@ dropZone.addEventListener(
             "drag-active"
         );
 
-        selectedFiles =
+        const newFiles =
             Array.from(
                 e.dataTransfer.files
             );
 
-        showFiles();
+        const duplicateNames = [];
+
+        const invalidFiles = [];
+
+        const filesToAdd = [];
+
+        newFiles.forEach(
+            file => {
+
+                if (
+                    !file.type.startsWith(
+                        "image/"
+                    )
+                ) {
+
+                    invalidFiles.push(
+                        file.name
+                    );
+
+                    return;
+
+                }
+
+                const alreadyExists =
+                    selectedFiles.some(
+                        existingFile =>
+                            existingFile.name === file.name
+                    );
+
+                if (
+                    alreadyExists
+                ) {
+
+                    duplicateNames.push(
+                        file.name
+                    );
+
+                }
+                else {
+
+                    filesToAdd.push(
+                        file
+                    );
+
+                }
+
+            }
+        );
+
+        selectedFiles.push(
+            ...filesToAdd
+        );
+
+        if (
+            invalidFiles.length > 0
+        ) {
+
+            alert(
+                "Invalid files:\n\n"
+                +
+                invalidFiles.join(
+                    "\n"
+                )
+            );
+
+        }
+
+        if (
+            duplicateNames.length > 0
+        ) {
+
+            alert(
+                "Duplicate files:\n\n"
+                +
+                duplicateNames.join(
+                    "\n"
+                )
+            );
+
+        }
+
+        if (
+            filesToAdd.length > 0
+        ) {
+
+            showFiles();
+
+        }
 
     }
 );
-
 /* ===========================
    SHOW FILES
 =========================== */
 
-function showFiles(){
+function showFiles() {
 
-    summaryCard.style.display =
-        "flex";
+    if (selectedFiles.length === 0) {
+
+        summaryCard.style.display = "none";
+
+        fileListContainer.innerHTML = "";
+
+        return;
+
+    }
+
+    summaryCard.style.display = "flex";
 
     fileListContainer.innerHTML =
         "";
@@ -232,16 +415,16 @@ function showFiles(){
    DELETE FILE
 =========================== */
 
-function deleteFile(index){
+function deleteFile(index) {
 
     selectedFiles.splice(
         index,
         1
     );
 
-    if(
+    if (
         selectedFiles.length === 0
-    ){
+    ) {
 
         summaryCard.style.display =
             "none";
@@ -264,7 +447,7 @@ function deleteFile(index){
    PREVIEW ORIGINAL IMAGE
 =========================== */
 
-function previewImage(index){
+function previewImage(index) {
 
     const file =
         selectedFiles[index];
@@ -296,7 +479,7 @@ function previewImage(index){
 
 function previewResizedImage(
     fileName
-){
+) {
 
     document.getElementById(
         "previewImage"
@@ -328,11 +511,11 @@ let originalHeight = 0;
 
 imageFiles.addEventListener(
     "change",
-    function(){
+    function () {
 
-        if(
+        if (
             this.files.length > 0
-        ){
+        ) {
 
             const file =
                 this.files[0];
@@ -341,7 +524,7 @@ imageFiles.addEventListener(
                 new Image();
 
             image.onload =
-                function(){
+                function () {
 
                     originalWidth =
                         image.width;
@@ -363,21 +546,21 @@ imageFiles.addEventListener(
 
 widthInput.addEventListener(
     "input",
-    function(){
+    function () {
 
-        if(
+        if (
             !maintainAspectRatio.checked
-        ){
+        ) {
 
             return;
 
         }
 
-        if(
+        if (
             originalWidth === 0
             ||
             originalHeight === 0
-        ){
+        ) {
 
             return;
 
@@ -400,21 +583,21 @@ widthInput.addEventListener(
 
 heightInput.addEventListener(
     "input",
-    function(){
+    function () {
 
-        if(
+        if (
             !maintainAspectRatio.checked
-        ){
+        ) {
 
             return;
 
         }
 
-        if(
+        if (
             originalWidth === 0
             ||
             originalHeight === 0
-        ){
+        ) {
 
             return;
 
@@ -435,29 +618,28 @@ heightInput.addEventListener(
     }
 );
 
-
 /* ===========================
    RESIZE IMAGES
 =========================== */
 
 resizeForm.addEventListener(
     "submit",
-    function(e){
+    function (e) {
 
         e.preventDefault();
-        
-         if(
+
+        if (
             !validateFiles(selectedFiles)
-        ){
+        ) {
             return;
         }
 
-        if(
+        if (
             selectedFiles.length === 0
-        ){
+        ) {
 
             alert(
-                "Please select images"
+                "Please select images."
             );
 
             return;
@@ -493,6 +675,45 @@ resizeForm.addEventListener(
             maintainAspectRatio.checked
         );
 
+        /* Freeze UI */
+
+        imageFiles.disabled =
+            true;
+
+        widthInput.disabled =
+            true;
+
+        heightInput.disabled =
+            true;
+
+        maintainAspectRatio.disabled =
+            true;
+
+        document
+            .querySelectorAll(
+                ".btn-danger"
+            )
+            .forEach(
+                btn =>
+                    btn.disabled =
+                    true
+            );
+
+        document
+            .querySelectorAll(
+                ".btn-primary"
+            )
+            .forEach(
+                btn =>
+                    btn.disabled =
+                    true
+            );
+
+        document.getElementById(
+            "uploadSection"
+        ).style.display =
+            "none";
+
         progressSection.style.display =
             "block";
 
@@ -507,11 +728,11 @@ resizeForm.addEventListener(
 
         xhr.upload.addEventListener(
             "progress",
-            function(event){
+            function (event) {
 
-                if(
+                if (
                     event.lengthComputable
-                ){
+                ) {
 
                     const percent =
                         Math.round(
@@ -534,39 +755,102 @@ resizeForm.addEventListener(
         );
 
         xhr.onreadystatechange =
-            function(){
+            function () {
 
-                if(
+                if (
                     xhr.readyState === 4
                     &&
                     xhr.status === 200
-                ){
+                ) {
 
                     const result =
                         JSON.parse(
                             xhr.responseText
                         );
 
-                    if(
+                    if (
                         result.success
-                    ){
+                    ) {
+
+                        progressBar.style.width =
+                            "100%";
+
+                        progressBar.innerHTML =
+                            "100%";
+
+                        setTimeout(
+                            () => {
+
+                                progressSection.style.display =
+                                    "none";
+
+                                progressBar.style.width =
+                                    "0%";
+
+                                progressBar.innerHTML =
+                                    "0%";
+
+                                document.getElementById(
+                                    "resultCard"
+                                ).style.display =
+                                    "block";
+
+                                buildResultTable(
+                                    result
+                                );
+
+                            },
+                            500
+                        );
+
+                    }
+                    else {
+
+                        imageFiles.disabled =
+                            false;
+
+                        widthInput.disabled =
+                            false;
+
+                        heightInput.disabled =
+                            false;
+
+                        maintainAspectRatio.disabled =
+                            false;
 
                         document.getElementById(
                             "uploadSection"
                         ).style.display =
-                            "none";
-
-                        document.getElementById(
-                            "resultCard"
-                        ).style.display =
                             "block";
 
-                        buildResultTable(
-                            result
-                        );
+                        document
+                            .querySelectorAll(
+                                ".btn-danger"
+                            )
+                            .forEach(
+                                btn =>
+                                    btn.disabled =
+                                    false
+                            );
 
-                    }
-                    else{
+                        document
+                            .querySelectorAll(
+                                ".btn-primary"
+                            )
+                            .forEach(
+                                btn =>
+                                    btn.disabled =
+                                    false
+                            );
+
+                        progressSection.style.display =
+                            "none";
+
+                        progressBar.style.width =
+                            "0%";
+
+                        progressBar.innerHTML =
+                            "0%";
 
                         alert(
                             result.message
@@ -575,6 +859,61 @@ resizeForm.addEventListener(
                     }
 
                 }
+
+            };
+
+        xhr.onerror =
+            function () {
+
+                imageFiles.disabled =
+                    false;
+
+                widthInput.disabled =
+                    false;
+
+                heightInput.disabled =
+                    false;
+
+                maintainAspectRatio.disabled =
+                    false;
+
+                document.getElementById(
+                    "uploadSection"
+                ).style.display =
+                    "block";
+
+                document
+                    .querySelectorAll(
+                        ".btn-danger"
+                    )
+                    .forEach(
+                        btn =>
+                            btn.disabled =
+                            false
+                    );
+
+                document
+                    .querySelectorAll(
+                        ".btn-primary"
+                    )
+                    .forEach(
+                        btn =>
+                            btn.disabled =
+                            false
+                    );
+
+                progressSection.style.display =
+                    "none";
+
+                progressBar.style.width =
+                    "0%";
+
+                progressBar.innerHTML =
+                    "0%";
+
+                alert(
+                    "Image resizing failed. Please try again."
+                );
 
             };
 
@@ -589,14 +928,13 @@ resizeForm.addEventListener(
 
     }
 );
-
 /* ===========================
    RESULT TABLE
 =========================== */
 
 function buildResultTable(
     result
-){
+) {
 
     const container =
         document.getElementById(
@@ -718,9 +1056,36 @@ document.getElementById(
     "resizeMoreBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
-        location.reload();
+        fetch(
+            "/delete-image-resizer-temp-files",
+            {
+                method: "POST"
+            }
+        )
+            .finally(
+                () => {
+
+                    location.reload();
+
+                }
+            );
+
+    }
+);
+
+/* ===========================
+   DELETE TEMP FILES
+=========================== */
+
+window.addEventListener(
+    "beforeunload",
+    function () {
+
+        navigator.sendBeacon(
+            "/delete-image-resizer-temp-files"
+        );
 
     }
 );
@@ -733,7 +1098,7 @@ document.getElementById(
     "darkModeBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
         document.body.classList.toggle(
             "dark-mode"

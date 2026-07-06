@@ -3,41 +3,123 @@
 =========================== */
 
 const pdfFiles =
-document.getElementById(
-    "pdfFiles"
-);
+    document.getElementById(
+        "pdfFiles"
+    );
+
+const pdfPreviewFrame =
+    document.getElementById(
+        "pdfPreviewFrame"
+    );
 
 const dropZone =
-document.getElementById(
-    "dropZone"
-);
+    document.getElementById(
+        "dropZone"
+    );
+
+const addFilesBtn =
+    document.getElementById(
+        "addFilesBtn"
+    );
+
+const uploadSection =
+    document.getElementById(
+        "uploadSection"
+    );
+
+const toolOptions =
+    document.getElementById(
+        "toolOptions"
+    );
 
 const summaryCard =
-document.getElementById(
-    "summaryCard"
-);
+    document.getElementById(
+        "summaryCard"
+    );
 
 const fileListContainer =
-document.getElementById(
-    "fileListContainer"
-);
+    document.getElementById(
+        "fileListContainer"
+    );
 
 const totalFiles =
-document.getElementById(
-    "totalFiles"
-);
+    document.getElementById(
+        "totalFiles"
+    );
 
 const totalSize =
-document.getElementById(
-    "totalSize"
-);
+    document.getElementById(
+        "totalSize"
+    );
 
 const pageNumberForm =
-document.getElementById(
-    "pageNumberForm"
-);
+    document.getElementById(
+        "pageNumberForm"
+    );
+
+const addPageNumbersBtn =
+    document.getElementById(
+        "addPageNumbersBtn"
+    );
+
+const progressSection =
+    document.getElementById(
+        "progressSection"
+    );
+
+const progressBar =
+    document.getElementById(
+        "progressBar"
+    );
+
+const resultCard =
+    document.getElementById(
+        "resultCard"
+    );
+
+const pdfName =
+    document.getElementById(
+        "pdfName"
+    );
+
+const pdfSize =
+    document.getElementById(
+        "pdfSize"
+    );
+
+const previewBtn =
+    document.getElementById(
+        "previewBtn"
+    );
+
+const downloadBtn =
+    document.getElementById(
+        "downloadBtn"
+    );
+
+const convertMoreBtn =
+    document.getElementById(
+        "convertMoreBtn"
+    );
 
 let selectedFiles = [];
+
+/* ===========================
+   ADD MORE
+=========================== */
+
+addFilesBtn.addEventListener(
+    "click",
+    () => {
+
+        pdfFiles.value = "";
+
+        pdfFiles.click();
+
+    }
+);
+
+
 
 /* ===========================
    FILE SELECT
@@ -45,14 +127,81 @@ let selectedFiles = [];
 
 pdfFiles.addEventListener(
     "change",
-    function(){
+    function () {
 
-        selectedFiles =
-        Array.from(
-            this.files
-        );
+        const incoming =
+            Array.from(this.files);
+
+        let duplicateFiles = [];
+
+        let invalidFiles = [];
+
+        incoming.forEach(file => {
+
+            if (
+                file.type !== "application/pdf"
+            ) {
+
+                invalidFiles.push(
+                    file.name
+                );
+
+                return;
+
+            }
+
+            const duplicate =
+                selectedFiles.some(
+                    existingFile =>
+
+                        existingFile.name === file.name &&
+                        existingFile.size === file.size
+                );
+
+            if (duplicate) {
+
+                duplicateFiles.push(
+                    file.name
+                );
+
+            } else {
+
+                selectedFiles.push(
+                    file
+                );
+
+            }
+
+        });
+
+        if (invalidFiles.length > 0) {
+
+            alert(
+                "Only PDF files are allowed.\n\n"
+                +
+                invalidFiles.join("\n")
+            );
+
+        }
+
+        if (duplicateFiles.length > 0) {
+
+            alert(
+                "Duplicate file(s) skipped:\n\n"
+                +
+                duplicateFiles.join("\n")
+            );
+
+        }
 
         renderFiles();
+
+        addFilesBtn.style.display =
+            selectedFiles.length > 0
+                ? "inline-block"
+                : "none";
+
+        pdfFiles.value = "";
 
     }
 );
@@ -63,54 +212,163 @@ pdfFiles.addEventListener(
 
 dropZone.addEventListener(
     "dragover",
-    function(e){
+    e => {
 
         e.preventDefault();
+
+        dropZone.classList.add(
+            "drag-active"
+        );
+
+    }
+);
+
+dropZone.addEventListener(
+    "dragleave",
+    () => {
+
+        dropZone.classList.remove(
+            "drag-active"
+        );
 
     }
 );
 
 dropZone.addEventListener(
     "drop",
-    function(e){
+    e => {
 
         e.preventDefault();
 
-        selectedFiles =
-        Array.from(
-            e.dataTransfer.files
+        dropZone.classList.remove(
+            "drag-active"
         );
+
+        const incoming =
+            Array.from(
+                e.dataTransfer.files
+            );
+
+        let duplicateFiles = [];
+
+        let invalidFiles = [];
+
+        incoming.forEach(file => {
+
+            if (
+                file.type !== "application/pdf"
+            ) {
+
+                invalidFiles.push(
+                    file.name
+                );
+
+                return;
+
+            }
+
+            const duplicate =
+                selectedFiles.some(
+                    existingFile =>
+
+                        existingFile.name === file.name &&
+                        existingFile.size === file.size
+                );
+
+            if (duplicate) {
+
+                duplicateFiles.push(
+                    file.name
+                );
+
+            } else {
+
+                selectedFiles.push(
+                    file
+                );
+
+            }
+
+        });
+
+        if (invalidFiles.length > 0) {
+
+            alert(
+                "Only PDF files are allowed.\n\n"
+                +
+                invalidFiles.join("\n")
+            );
+
+        }
+
+        if (duplicateFiles.length > 0) {
+
+            alert(
+                "Duplicate file(s) skipped:\n\n"
+                +
+                duplicateFiles.join("\n")
+            );
+
+        }
 
         renderFiles();
 
+        addFilesBtn.style.display =
+            selectedFiles.length > 0
+                ? "inline-block"
+                : "none";
+
     }
 );
-
 /* ===========================
    RENDER FILES
 =========================== */
 
-function renderFiles(){
+function renderFiles() {
 
-    if(selectedFiles.length === 0){
+    fileListContainer.innerHTML = "";
 
-        summaryCard.style.display =
-        "none";
+    if (selectedFiles.length === 0) {
 
-        fileListContainer.innerHTML =
-        "";
+        summaryCard.classList.add(
+            "d-none"
+        );
+
+        addFilesBtn.style.display =
+            "none";
 
         return;
 
     }
 
-    summaryCard.style.display =
-    "flex";
+    summaryCard.classList.remove(
+        "d-none"
+    );
+
+    addFilesBtn.style.display =
+        "inline-block";
+
+    totalFiles.innerHTML =
+        selectedFiles.length;
 
     let totalBytes = 0;
 
-    fileListContainer.innerHTML =
-    "";
+    selectedFiles.forEach(
+        file => {
+
+            totalBytes +=
+                file.size;
+
+        }
+    );
+
+    totalSize.innerHTML =
+        (
+            totalBytes /
+            1024 /
+            1024
+        ).toFixed(2)
+        + " MB";
 
     selectedFiles.forEach(
         (
@@ -118,81 +376,64 @@ function renderFiles(){
             index
         ) => {
 
-            totalBytes +=
-            file.size;
-
             fileListContainer.innerHTML += `
 
-            <div class="card">
+<div class="card mb-2 file-row">
 
-                <div class="card-body">
+    <div class="card-body">
 
-                    <div class="row align-items-center">
+        <div class="row align-items-center text-center">
 
-                        <div class="col-md-5 file-row-name">
+            <div class="col-md-5 text-start file-row-name">
 
-                            <i class="bi bi-file-earmark-pdf-fill"></i>
+                <i class="bi bi-file-earmark-pdf-fill"></i>
 
-                            ${file.name}
-
-                        </div>
-
-                        <div class="col-md-2 text-center">
-
-                            ${(file.size / 1024 / 1024).toFixed(2)} MB
-
-                        </div>
-
-                        <div class="col-md-2 text-center">
-
-                            <button
-                                type="button"
-                                class="btn btn-primary btn-sm"
-                                onclick="previewPdf(${index})">
-
-                                Preview
-
-                            </button>
-
-                        </div>
-
-                        <div class="col-md-3 text-center">
-
-                            <button
-                                type="button"
-                                class="btn btn-danger btn-sm"
-                                onclick="deleteFile(${index})">
-
-                                Delete
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
+                ${file.name}
 
             </div>
 
-            `;
+            <div class="col-md-2">
+
+                ${(file.size / 1024 / 1024).toFixed(2)} MB
+
+            </div>
+
+            <div class="col-md-2">
+
+                <button
+                    type="button"
+                    class="btn btn-primary preview-btn"
+                    onclick="previewPdf(${index})">
+
+                    Preview
+
+                </button>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <button
+                    type="button"
+                    class="btn btn-danger delete-btn"
+                    onclick="deleteFile(${index})">
+
+                    Delete
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+`;
 
         }
     );
-
-    totalFiles.innerHTML =
-    selectedFiles.length;
-
-    totalSize.innerHTML =
-    (
-        totalBytes
-        /
-        1024
-        /
-        1024
-    ).toFixed(2)
-    +
-    " MB";
 
 }
 
@@ -200,7 +441,7 @@ function renderFiles(){
    DELETE FILE
 =========================== */
 
-function deleteFile(index){
+function deleteFile(index) {
 
     selectedFiles.splice(
         index,
@@ -215,27 +456,27 @@ function deleteFile(index){
    PDF PREVIEW
 =========================== */
 
-function previewPdf(index){
+function previewPdf(index) {
 
     const file =
-    selectedFiles[index];
+        selectedFiles[index];
 
     const fileURL =
-    URL.createObjectURL(
-        file
-    );
+        URL.createObjectURL(
+            file
+        );
 
     document.getElementById(
         "pdfPreviewFrame"
     ).src =
-    fileURL;
+        fileURL;
 
     const modal =
-    new bootstrap.Modal(
-        document.getElementById(
-            "pdfPreviewModal"
-        )
-    );
+        new bootstrap.Modal(
+            document.getElementById(
+                "pdfPreviewModal"
+            )
+        );
 
     modal.show();
 
@@ -247,30 +488,30 @@ function previewPdf(index){
 
 pageNumberForm.addEventListener(
     "submit",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
-        
-        if(
-            !validateFiles(selectedFiles)
-        ){
-            return;
-        }
-        if(
-            selectedFiles.length === 0
-        ){
+        if (selectedFiles.length === 0) {
 
             alert(
-                "Please select PDF files"
+                "Please upload PDF files."
             );
 
             return;
 
         }
 
+        if (
+            !validateFiles(selectedFiles)
+        ) {
+
+            return;
+
+        }
+
         const formData =
-        new FormData();
+            new FormData();
 
         selectedFiles.forEach(
             file => {
@@ -311,45 +552,175 @@ pageNumberForm.addEventListener(
             ).value
         );
 
-        fetch(
-            "/page-numbers-pdf-ajax",
-            {
-                method:"POST",
-                body:formData
-            }
-        )
-        .then(
-            response =>
-            response.json()
-        )
-        .then(
-            result => {
+        /* Freeze UI */
 
-                if(result.success){
+        document.body.classList.add(
+            "conversion-active"
+        );
 
-                    buildResult(
-                        result
-                    );
+        uploadSection.style.display =
+            "none";
+
+        progressSection.style.display =
+            "block";
+
+        progressBar.style.width =
+            "0%";
+
+        progressBar.innerHTML =
+            "0%";
+
+        addPageNumbersBtn.disabled =
+            true;
+
+        addPageNumbersBtn.innerHTML =
+            '<span class="spinner-border spinner-border-sm"></span> Processing...';
+
+        const xhr =
+            new XMLHttpRequest();
+
+        xhr.upload.addEventListener(
+            "progress",
+            function (event) {
+
+                if (
+                    event.lengthComputable
+                ) {
+
+                    const percent =
+                        Math.round(
+                            (
+                                event.loaded /
+                                event.total
+                            ) * 100
+                        );
+
+                    progressBar.style.width =
+                        percent + "%";
+
+                    progressBar.innerHTML =
+                        percent + "%";
 
                 }
-                else{
 
-                    alert(
-                        result.message
-                    );
+            }
+        );
+
+        let progress = 0;
+
+        const fakeProgress =
+            setInterval(() => {
+
+                if (progress < 90) {
+
+                    progress += 10;
+
+                    progressBar.style.width =
+                        progress + "%";
+
+                    progressBar.innerHTML =
+                        progress + "%";
 
                 }
 
-            }
-        )
-        .catch(
-            error => {
+            }, 200);
 
-                alert(
-                    "Something went wrong"
+        xhr.onreadystatechange =
+            function () {
+
+                if (
+                    xhr.readyState !== 4
+                ) {
+
+                    return;
+
+                }
+
+                clearInterval(
+                    fakeProgress
                 );
 
-            }
+                addPageNumbersBtn.disabled =
+                    false;
+
+                addPageNumbersBtn.innerHTML =
+                    "Add Page Numbers";
+
+                document.body.classList.remove(
+                    "conversion-active"
+                );
+
+                if (
+                    xhr.status === 200
+                ) {
+
+                    const result =
+                        JSON.parse(
+                            xhr.responseText
+                        );
+
+                    if (
+                        result.success
+                    ) {
+
+                        progressBar.style.width =
+                            "100%";
+
+                        progressBar.innerHTML =
+                            "100%";
+
+                        setTimeout(() => {
+
+                            progressSection.style.display =
+                                "none";
+
+                            resultCard.style.display =
+                                "block";
+
+                            buildResult(
+                                result
+                            );
+
+                        }, 500);
+
+                    } else {
+
+                        alert(
+                            result.message ||
+                            "Failed to add page numbers."
+                        );
+
+                        uploadSection.style.display =
+                            "block";
+
+                        progressSection.style.display =
+                            "none";
+
+                    }
+
+                } else {
+
+                    alert(
+                        "Server error while processing PDF."
+                    );
+
+                    uploadSection.style.display =
+                        "block";
+
+                    progressSection.style.display =
+                        "none";
+
+                }
+
+            };
+
+        xhr.open(
+            "POST",
+            "/page-numbers-pdf-ajax"
+        );
+
+        xhr.send(
+            formData
         );
 
     }
@@ -359,111 +730,110 @@ pageNumberForm.addEventListener(
    RESULT
 =========================== */
 
-function buildResult(result){
-
-    document.getElementById(
-        "uploadSection"
-    ).style.display =
-    "none";
-
-    document.getElementById(
-        "resultCard"
-    ).style.display =
-    "block";
+function buildResult(result) {
 
     const container =
-    document.getElementById(
-        "resultFilesContainer"
-    );
+        document.getElementById(
+            "resultFilesContainer"
+        );
 
-    container.innerHTML =
-    "";
+    container.innerHTML = "";
+
+    document.getElementById(
+        "resultFiles"
+    ).innerHTML =
+        result.files.length;
+
+    document.getElementById(
+        "resultSuccess"
+    ).innerHTML =
+        result.files.length;
 
     result.files.forEach(
         file => {
 
             container.innerHTML += `
 
-            <div class="card">
+<div class="card mb-3">
 
-                <div class="card-body">
+    <div class="card-body">
 
-                    <div class="row text-center align-items-center">
+        <div class="row align-items-center text-center">
 
-                        <div class="col-md-4">
+            <div class="col-md-4 file-row-name">
 
-                            ${file.name}
+                <i class="bi bi-file-earmark-pdf-fill"></i>
 
-                        </div>
-
-                        <div class="col-md-2">
-
-                            ${file.size}
-
-                        </div>
-
-                        <div class="col-md-3">
-
-                            <a
-                              href="/preview-numbered-pdf?fileName=${file.name}"
-                              class="btn btn-primary btn-sm"
-                              target="_blank">
-
-                              Preview
-
-                            </a>
-
-                        </div>
-
-                        <div class="col-md-3">
-
-                            <a
-                              href="/download-numbered-pdf?fileName=${file.name}"
-                              class="btn btn-success btn-sm">
-
-                              Download
-
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
+                ${file.name}
 
             </div>
 
-            `;
+            <div class="col-md-2">
+
+                ${file.size}
+
+            </div>
+
+            <div class="col-md-3">
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+
+                    onclick="previewResultPdf('${file.name}')">
+
+                    Preview
+
+                </button>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <a
+                    href="/download-numbered-pdf?downloadName=${encodeURIComponent(file.name)}"
+                    class="btn btn-success">
+
+                    Download
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+`;
 
         }
     );
 
-    document.getElementById(
-        "resultFiles"
-    ).innerHTML =
-    result.files.length;
-
-    document.getElementById(
-        "resultSuccess"
-    ).innerHTML =
-    result.files.length;
-
 }
 
-/* ===========================
-   ADD MORE
-=========================== */
+function previewResultPdf(fileName) {
 
-document.getElementById(
-    "addMoreBtn"
-).addEventListener(
-    "click",
-    function(){
+    document.getElementById(
+        "pdfPreviewFrame"
+    ).src =
+        "/preview-numbered-pdf?fileName="
+        +
+        encodeURIComponent(
+            fileName
+        );
 
-        location.reload();
+    const modal =
+        new bootstrap.Modal(
+            document.getElementById(
+                "pdfPreviewModal"
+            )
+        );
 
-    }
-);
+    modal.show();
+
+}
 
 /* ===========================
    DARK MODE
@@ -473,7 +843,7 @@ document.getElementById(
     "darkModeBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
         document.body.classList.toggle(
             "dark-mode"
@@ -482,3 +852,40 @@ document.getElementById(
     }
 );
 
+/* ===========================
+   CONVERT MORE
+=========================== */
+
+convertMoreBtn.addEventListener(
+    "click",
+    function () {
+
+        fetch(
+            "/delete-numbered-pdf",
+            {
+                method: "POST"
+            }
+        ).finally(() => {
+
+            location.reload();
+
+        });
+
+    }
+);
+
+/* ===========================
+   DELETE TEMP FILE
+   ON RELOAD / TAB CLOSE
+=========================== */
+
+window.addEventListener(
+    "beforeunload",
+    function () {
+
+        navigator.sendBeacon(
+            "/delete-numbered-pdf"
+        );
+
+    }
+);

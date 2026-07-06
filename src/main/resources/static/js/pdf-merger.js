@@ -28,6 +28,34 @@ const progressSection =
 const progressBar =
     document.getElementById("progressBar");
 
+
+    const uploadSection =
+    document.getElementById("uploadSection");
+
+const mergeButtonSection =
+    document.getElementById("mergeButtonSection");
+
+const resultCard =
+    document.getElementById("resultCard");
+
+const mergeBtn =
+    document.getElementById("mergeBtn");
+
+const convertMoreBtn =
+    document.getElementById("convertMoreBtn");
+
+const downloadBtn =
+    document.getElementById("downloadBtn");
+
+const previewBtn =
+    document.getElementById("previewBtn");
+
+const pdfName =
+    document.getElementById("pdfName");
+
+const pdfSize =
+    document.getElementById("pdfSize");
+
 let selectedFiles = [];
 
 /* ===========================
@@ -37,6 +65,8 @@ let selectedFiles = [];
 addMoreBtn.addEventListener(
     "click",
     () => {
+
+        fileInput.value = "";
 
         fileInput.click();
 
@@ -49,22 +79,71 @@ addMoreBtn.addEventListener(
 
 fileInput.addEventListener(
     "change",
-    function(){
+    function () {
 
         const incoming =
             Array.from(this.files);
 
+        let duplicateFiles = [];
+
+        let invalidFiles = [];
+
         incoming.forEach(file => {
 
-            selectedFiles.push(file);
+            if (
+                file.type !== "application/pdf"
+            ) {
+
+                invalidFiles.push(file.name);
+
+                return;
+
+            }
+
+            const duplicate =
+                selectedFiles.some(existingFile =>
+
+                    existingFile.name === file.name &&
+                    existingFile.size === file.size
+
+                );
+
+            if (duplicate) {
+
+                duplicateFiles.push(file.name);
+
+            } else {
+
+                selectedFiles.push(file);
+
+            }
 
         });
 
+        if (invalidFiles.length > 0) {
+
+            alert(
+                "Only PDF files are allowed.\n\n" +
+                invalidFiles.join("\n")
+            );
+
+        }
+
+        if (duplicateFiles.length > 0) {
+
+            alert(
+                "Duplicate file(s) skipped:\n\n" +
+                duplicateFiles.join("\n")
+            );
+
+        }
+
         renderFiles();
+
+        fileInput.value = "";
 
     }
 );
-
 /* ===========================
    DRAG DROP
 =========================== */
@@ -108,11 +187,59 @@ dropZone.addEventListener(
                 e.dataTransfer.files
             );
 
+        let duplicateFiles = [];
+
+        let invalidFiles = [];
+
         incoming.forEach(file => {
 
-            selectedFiles.push(file);
+            if (
+                file.type !== "application/pdf"
+            ) {
+
+                invalidFiles.push(file.name);
+
+                return;
+
+            }
+
+            const duplicate =
+                selectedFiles.some(existingFile =>
+
+                    existingFile.name === file.name &&
+                    existingFile.size === file.size
+
+                );
+
+            if (duplicate) {
+
+                duplicateFiles.push(file.name);
+
+            } else {
+
+                selectedFiles.push(file);
+
+            }
 
         });
+
+        if (invalidFiles.length > 0) {
+
+            alert(
+                "Only PDF files are allowed.\n\n" +
+                invalidFiles.join("\n")
+            );
+
+        }
+
+        if (duplicateFiles.length > 0) {
+
+            alert(
+                "Duplicate file(s) skipped:\n\n" +
+                duplicateFiles.join("\n")
+            );
+
+        }
 
         renderFiles();
 
@@ -123,11 +250,11 @@ dropZone.addEventListener(
    RENDER FILES
 =========================== */
 
-function renderFiles(){
+function renderFiles() {
 
     fileList.innerHTML = "";
 
-    if(selectedFiles.length === 0){
+    if (selectedFiles.length === 0) {
 
         summaryCard.classList.add(
             "d-none"
@@ -162,41 +289,59 @@ function renderFiles(){
         ).toFixed(2) + " MB";
 
     selectedFiles.forEach(
-        (file,index) => {
-fileList.innerHTML += `
+        (file, index) => {
+
+            fileList.innerHTML += `
 <div class="card mb-2 file-row">
+
     <div class="card-body">
 
         <div class="row align-items-center text-center">
 
             <div class="col-3 text-start file-row-name">
+
                 <i class="bi bi-file-earmark-pdf-fill"></i>
+
                 ${file.name}
+
             </div>
 
             <div class="col-3 file-row-size">
+
                 ${(file.size / 1024 / 1024).toFixed(2)} MB
+
             </div>
 
             <div class="col-3">
-                <button type="button"
-                        class="btn btn-primary preview-btn"
-                        onclick="previewSourcePdf(${index})">
+
+                <button
+                    type="button"
+                    class="btn btn-primary preview-btn"
+                    onclick="previewSourcePdf(${index})">
+
                     Preview
+
                 </button>
+
             </div>
 
             <div class="col-3">
-                <button type="button"
-                        class="btn btn-danger delete-btn"
-                        onclick="removeFile(${index})">
+
+                <button
+                    type="button"
+                    class="btn btn-danger delete-btn"
+                    onclick="removeFile(${index})">
+
                     Delete
+
                 </button>
+
             </div>
 
         </div>
 
     </div>
+
 </div>
 `;
 
@@ -205,7 +350,7 @@ fileList.innerHTML += `
 
 }
 
-function removeFile(index){
+function removeFile(index) {
 
     selectedFiles.splice(
         index,
@@ -214,30 +359,42 @@ function removeFile(index){
 
     renderFiles();
 
-}
-
-/* ===========================
+}/* ===========================
    MERGE
 =========================== */
 
 mergeForm.addEventListener(
     "submit",
-    function(e){
-        
-        e.preventDefault();
-        if(
-            !validateFiles(selectedFiles)
-        ){
-            return;
-        }
+    function (e) {
 
-        if(selectedFiles.length < 2){
+        e.preventDefault();
+
+        if (selectedFiles.length === 0) {
 
             alert(
-                "Please select at least 2 PDF files"
+                "Please upload PDF files."
             );
 
             return;
+
+        }
+
+        if (
+            !validateFiles(selectedFiles)
+        ) {
+
+            return;
+
+        }
+
+        if (selectedFiles.length < 2) {
+
+            alert(
+                "Please select at least 2 PDF files."
+            );
+
+            return;
+
         }
 
         const formData =
@@ -254,17 +411,45 @@ mergeForm.addEventListener(
             }
         );
 
+        /* Freeze UI */
+
+        document.body.classList.add(
+            "conversion-active"
+        );
+
+        uploadSection.style.display =
+            "none";
+
+        summaryCard.style.display =
+            "none";
+
+        fileList.style.display =
+            "none";
+
         progressSection.style.display =
             "block";
+
+        progressBar.style.width =
+            "0%";
+
+        progressBar.innerHTML =
+            "0%";
+
+        mergeBtn.disabled = true;
+
+        mergeBtn.innerHTML =
+            '<span class="spinner-border spinner-border-sm"></span> Merging...';
 
         const xhr =
             new XMLHttpRequest();
 
         xhr.upload.addEventListener(
             "progress",
-            function(event){
+            function (event) {
 
-                if(event.lengthComputable){
+                if (
+                    event.lengthComputable
+                ) {
 
                     const percent =
                         Math.round(
@@ -285,66 +470,125 @@ mergeForm.addEventListener(
             }
         );
 
-        xhr.onreadystatechange =
-            function(){
+        let progress = 0;
 
-                if(
-                    xhr.readyState === 4 &&
+        const fakeProgress =
+            setInterval(() => {
+
+                if (progress < 90) {
+
+                    progress += 10;
+
+                    progressBar.style.width =
+                        progress + "%";
+
+                    progressBar.innerHTML =
+                        progress + "%";
+
+                }
+
+            }, 200);
+
+        xhr.onreadystatechange =
+            function () {
+
+                if (
+                    xhr.readyState !== 4
+                ) {
+
+                    return;
+
+                }
+
+                clearInterval(
+                    fakeProgress
+                );
+
+                if (
                     xhr.status === 200
-                ){
+                ) {
 
                     const result =
                         JSON.parse(
                             xhr.responseText
                         );
 
-                    if(result.success){
+                    if (
+                        result.success
+                    ) {
 
-                        mergeBtn.disabled = false;
+                        progressBar.style.width =
+                            "100%";
 
-                        mergeBtn.innerHTML =
-                            "Merge PDFs";
-                        clearInterval(fakeProgress);
+                        progressBar.innerHTML =
+                            "100%";
 
-                        progressBar.style.width = "100%";
-                        progressBar.innerHTML = "100%";
-
-                        document.getElementById(
-                            "dropZone"
-                        ).style.display = "none";
-
-                        document.getElementById(
-                            "mergeBtn"
-                        ).style.display = "none";
-
-                        document.getElementById(
-                            "resultCard"
-                        ).style.display =
+                        resultCard.style.display =
                             "block";
 
-                        summaryCard.style.display = "none";
-
-                        fileList.style.display = "none";
-
-                        document.getElementById(
-                            "pdfName"
-                        ).value =
+                        pdfName.value =
                             result.fileName;
 
-                        document.getElementById(
-                            "pdfSize"
-                        ).innerHTML =
+                        pdfSize.innerHTML =
                             result.size;
 
                         setTimeout(() => {
 
-                            progressSection.style.display = "none";
+                            progressSection.style.display =
+                                "none";
 
                         }, 800);
 
+                    } else {
+
+                        alert(
+                            result.message ||
+                            "Merge failed."
+                        );
+
+                        uploadSection.style.display =
+                            "block";
+
+                        summaryCard.style.display =
+                            "";
+
+                        fileList.style.display =
+                            "";
+
+                        progressSection.style.display =
+                            "none";
+
                     }
 
+                } else {
+
+                    alert(
+                        "Server error while merging PDFs."
+                    );
+
+                    uploadSection.style.display =
+                        "block";
+
+                    summaryCard.style.display =
+                        "";
+
+                    fileList.style.display =
+                        "";
+
+                    progressSection.style.display =
+                        "none";
+
                 }
+
+                mergeBtn.disabled =
+                    false;
+
+                mergeBtn.innerHTML =
+                    "Merge PDFs";
+
+                document.body.classList.remove(
+                    "conversion-active"
+                );
 
             };
 
@@ -353,64 +597,29 @@ mergeForm.addEventListener(
             "/pdf-merger-ajax"
         );
 
-        let progress = 0;
-
-        progressSection.style.display = "block";
-
-        progressBar.style.width = "0%";
-        progressBar.innerHTML = "0%";
-
-        const fakeProgress = setInterval(() => {
-
-            if(progress < 90){
-
-                progress += 10;
-
-                progressBar.style.width =
-                    progress + "%";
-
-                progressBar.innerHTML =
-                    progress + "%";
-            }
-
-        }, 200);
-
-        const mergeBtn =
-                document.getElementById("mergeBtn");
-
-            mergeBtn.disabled = true;
-
-            mergeBtn.innerHTML =
-                '<span class="spinner-border spinner-border-sm"></span> Merging...';
         xhr.send(
             formData
         );
 
     }
 );
-
 /* ===========================
    DOWNLOAD
 =========================== */
 
-document
-.getElementById(
-    "downloadBtn"
-)
-.addEventListener(
+downloadBtn.addEventListener(
     "click",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
         const newName =
-            document.getElementById(
-                "pdfName"
-            ).value;
+            pdfName.value;
 
         window.location.href =
             "/download-merged-pdf?downloadName="
             + encodeURIComponent(newName);
+
     }
 );
 
@@ -418,13 +627,9 @@ document
    PREVIEW
 =========================== */
 
-document
-.getElementById(
-    "previewBtn"
-)
-.addEventListener(
+previewBtn.addEventListener(
     "click",
-    function(){
+    function () {
 
         document.getElementById(
             "previewFrame"
@@ -447,15 +652,36 @@ document
    MERGE MORE
 =========================== */
 
-document
-.getElementById(
-    "convertMoreBtn"
-)
-.addEventListener(
+convertMoreBtn.addEventListener(
     "click",
-    function(){
+    function () {
 
-        location.reload();
+        fetch(
+            "/delete-merged-pdf",
+            {
+                method: "POST"
+            }
+        ).finally(() => {
+
+            location.reload();
+
+        });
+
+    }
+);
+
+/* ===========================
+   DELETE TEMP FILE
+   ON RELOAD / TAB CLOSE
+=========================== */
+
+window.addEventListener(
+    "beforeunload",
+    function () {
+
+        navigator.sendBeacon(
+            "/delete-merged-pdf"
+        );
 
     }
 );
@@ -479,9 +705,12 @@ document
     }
 );
 
-function previewSourcePdf(index){
+/* ===========================
+   PREVIEW SOURCE PDF
+=========================== */
 
-    event.preventDefault();
+function previewSourcePdf(index) {
+
 
     const file =
         selectedFiles[index];
@@ -491,7 +720,8 @@ function previewSourcePdf(index){
 
     document.getElementById(
         "previewFrame"
-    ).src = url;
+    ).src =
+        url;
 
     const modal =
         new bootstrap.Modal(

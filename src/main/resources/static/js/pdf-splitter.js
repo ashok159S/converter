@@ -38,7 +38,25 @@ const progressBar =
         "progressBar"
     );
 
+const uploadAreaWrapper =
+    document.getElementById(
+        "uploadAreaWrapper"
+    );
+
+const splitBtn =
+    document.getElementById(
+        "splitBtn"
+    );
+
+const resultCard =
+    document.getElementById(
+        "resultCard"
+    );
+
 let currentFile = null;
+
+let conversionCompleted =
+    false;
 
 /* ===========================
    FILE SELECT
@@ -46,16 +64,34 @@ let currentFile = null;
 
 pdfFile.addEventListener(
     "change",
-    function(){
+    function () {
 
-        if(this.files.length > 0){
+        if (
+            this.files.length === 0
+        ) {
 
-            currentFile =
-                this.files[0];
-
-            showFileInfo();
+            return;
 
         }
+
+        if (
+            this.files[0].type
+            !==
+            "application/pdf"
+        ) {
+
+            alert(
+                "Only PDF files are allowed."
+            );
+
+            return;
+
+        }
+
+        currentFile =
+            this.files[0];
+
+        showFileInfo();
 
     }
 );
@@ -64,7 +100,7 @@ pdfFile.addEventListener(
    SHOW FILE
 =========================== */
 
-function showFileInfo(){
+function showFileInfo() {
 
     selectedFileCard.style.display =
         "block";
@@ -75,8 +111,8 @@ function showFileInfo(){
     selectedFileSize.innerHTML =
         (
             currentFile.size
-            /1024
-            /1024
+            / 1024
+            / 1024
         ).toFixed(2)
         + " MB";
 
@@ -88,7 +124,7 @@ function showFileInfo(){
 
 dropZone.addEventListener(
     "dragover",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
@@ -101,7 +137,7 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "dragleave",
-    function(){
+    function () {
 
         dropZone.classList.remove(
             "drag-active"
@@ -112,8 +148,8 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "drop",
-    function(e){
-    
+    function (e) {
+
 
         e.preventDefault();
 
@@ -121,15 +157,24 @@ dropZone.addEventListener(
             "drag-active"
         );
 
-        const file = e.dataTransfer.files[0];
+        if (
+            e.dataTransfer.files.length === 0
+        ) {
 
-if(file.type !== "application/pdf"){
-    alert("Please upload a PDF file.");
-    return;
-}
+            return;
 
-currentFile = file;
-showFileInfo();
+        }
+
+        const file =
+            e.dataTransfer.files[0];
+
+        if (file.type !== "application/pdf") {
+            alert("Please upload a PDF file.");
+            return;
+        }
+
+        currentFile = file;
+        showFileInfo();
 
     }
 );
@@ -139,75 +184,111 @@ showFileInfo();
 =========================== */
 
 document
-.getElementById(
-    "previewSourceBtn"
-)
-.addEventListener(
-    "click",
-    function(){
+    .getElementById(
+        "previewSourceBtn"
+    )
+    .addEventListener(
+        "click",
+        function () {
 
-        const url =
-            URL.createObjectURL(
-                currentFile
-            );
+            const url =
+                URL.createObjectURL(
+                    currentFile
+                );
 
-        document
-        .getElementById(
-            "previewFrame"
-        )
-        .src = url;
-
-        const modal =
-            new bootstrap.Modal(
-                document.getElementById(
-                    "pdfPreviewModal"
+            document
+                .getElementById(
+                    "previewFrame"
                 )
-            );
+                .src = url;
 
-        modal.show();
+            const modal =
+                new bootstrap.Modal(
+                    document.getElementById(
+                        "pdfPreviewModal"
+                    )
+                );
 
-    }
-);
+            modal.show();
+
+        }
+    );
 
 document
-.getElementById(
-    "selectedFileName"
-)
-.addEventListener(
-    "click",
-    function(e){
+    .getElementById(
+        "selectedFileName"
+    )
+    .addEventListener(
+        "click",
+        function (e) {
 
-        e.preventDefault();
+            e.preventDefault();
 
-        previewSelectedPdf();
+            previewSelectedPdf();
 
-    }
-);
-
+        }
+    );
 /* ===========================
    SPLIT PDF
 =========================== */
 
 splitForm.addEventListener(
     "submit",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
-       if(
-    !validateFiles([currentFile])
-){
-    return;
-}
-        if(currentFile == null){
+        if (
+            conversionCompleted
+        ) {
+
+            return;
+
+        }
+
+        if (
+            currentFile == null
+        ) {
 
             alert(
-                "Please select a PDF file"
+                "Please select a PDF file."
             );
 
             return;
 
         }
+
+        if (
+            !validateFiles([currentFile])
+        ) {
+
+            return;
+
+        }
+
+        splitBtn.disabled =
+            true;
+
+        splitForm.classList.add(
+            "converting"
+        );
+
+        uploadAreaWrapper.classList.add(
+            "hide-during-conversion"
+        );
+
+        selectedFileCard.classList.add(
+            "hide-during-conversion"
+        );
+
+        progressSection.style.display =
+            "block";
+
+        progressBar.style.width =
+            "0%";
+
+        progressBar.innerHTML =
+            "0%";
 
         const formData =
             new FormData();
@@ -217,19 +298,16 @@ splitForm.addEventListener(
             currentFile
         );
 
-        progressSection.style.display =
-            "block";
-
         const xhr =
             new XMLHttpRequest();
 
         xhr.upload.addEventListener(
             "progress",
-            function(event){
+            function (event) {
 
-                if(
+                if (
                     event.lengthComputable
-                ){
+                ) {
 
                     const percent =
                         Math.round(
@@ -252,30 +330,111 @@ splitForm.addEventListener(
         );
 
         xhr.onreadystatechange =
-            function(){
+            function () {
 
-                if(
-                    xhr.readyState === 4
-                    &&
-                    xhr.status === 200
-                ){
+                if (
+                    xhr.readyState !== 4
+                ) {
 
-                    const result =
-                        JSON.parse(
-                            xhr.responseText
-                        );
-
-                    if(
-                        result.success
-                    ){
-
-                        displayResults(
-                            result.files
-                        );
-
-                    }
+                    return;
 
                 }
+
+                splitBtn.disabled =
+                    false;
+
+                splitForm.classList.remove(
+                    "converting"
+                );
+
+                if (
+                    xhr.status !== 200
+                ) {
+
+                    uploadAreaWrapper.classList.remove(
+                        "hide-during-conversion"
+                    );
+
+                    selectedFileCard.classList.remove(
+                        "hide-during-conversion"
+                    );
+
+                    progressSection.style.display =
+                        "none";
+
+                    alert(
+                        "Conversion failed. Please try again."
+                    );
+
+                    return;
+
+                }
+
+                const result =
+                    JSON.parse(
+                        xhr.responseText
+                    );
+
+                if (
+                    result.success
+                ) {
+
+                    conversionCompleted =
+                        true;
+
+                    progressSection.style.display =
+                        "none";
+
+                    displayResults(
+                        result.files
+                    );
+
+                }
+                else {
+
+                    uploadAreaWrapper.classList.remove(
+                        "hide-during-conversion"
+                    );
+
+                    selectedFileCard.classList.remove(
+                        "hide-during-conversion"
+                    );
+
+                    progressSection.style.display =
+                        "none";
+
+                    alert(
+                        result.message
+                    );
+
+                }
+
+            };
+
+        xhr.onerror =
+            function () {
+
+                splitBtn.disabled =
+                    false;
+
+                splitForm.classList.remove(
+                    "converting"
+                );
+
+                uploadAreaWrapper.classList.remove(
+                    "hide-during-conversion"
+                );
+
+                selectedFileCard.classList.remove(
+                    "hide-during-conversion"
+                );
+
+                progressSection.style.display =
+                    "none";
+
+                alert(
+                    "Unable to connect to the server."
+                );
 
             };
 
@@ -290,26 +449,17 @@ splitForm.addEventListener(
 
     }
 );
-
 /* ===========================
    DISPLAY RESULTS
 =========================== */
 
-function displayResults(files){
-
-    document.getElementById(
-        "resultCard"
-    ).style.display =
+function displayResults(files) {
+    resultCard.style.display =
         "block";
-
-    document.getElementById(
-        "dropZone"
-    ).style.display =
+    uploadAreaWrapper.style.display =
         "none";
 
-    document.getElementById(
-        "splitBtn"
-    ).style.display =
+    splitBtn.style.display =
         "none";
 
     selectedFileCard.style.display =
@@ -342,7 +492,7 @@ function displayResults(files){
                                 type="text"
                                 class="form-control rename-file"
                                 value="${file.name}"
-                                id="rename_${file.name.replace('.pdf','')}">
+                                id="rename_${file.name.replace('.pdf', '')}">
 
                         </div>
 
@@ -395,13 +545,13 @@ function displayResults(files){
    PREVIEW SPLIT PDF
 =========================== */
 
-function previewPdf(fileName){
+function previewPdf(fileName) {
 
     document
-    .getElementById(
-        "previewFrame"
-    )
-    .src =
+        .getElementById(
+            "previewFrame"
+        )
+        .src =
         "/preview-split-pdf?fileName="
         +
         encodeURIComponent(
@@ -424,39 +574,75 @@ function previewPdf(fileName){
 =========================== */
 
 document
-.getElementById(
-    "splitMoreBtn"
-)
-.addEventListener(
-    "click",
-    function(){
+    .getElementById(
+        "splitMoreBtn"
+    )
+    .addEventListener(
+        "click",
+        function () {
 
-        location.reload();
+            fetch(
+                "/delete-split-pdf-files",
+                {
+                    method: "POST"
+                }
+            ).finally(
+                () => {
+
+                    currentFile = null;
+
+                    conversionCompleted = false;
+
+                    location.reload();
+
+                }
+            );
+
+        }
+    );
+
+
+/* ===========================
+PAGE CLEANUP
+=========================== */
+
+window.addEventListener(
+    "beforeunload",
+    function () {
+
+        if (
+            conversionCompleted
+        ) {
+
+            navigator.sendBeacon(
+                "/delete-split-pdf-files"
+            );
+
+        }
 
     }
 );
-
 /* ===========================
    DARK MODE
 =========================== */
 
 document
-.getElementById(
-    "darkModeBtn"
-)
-.addEventListener(
-    "click",
-    function(){
+    .getElementById(
+        "darkModeBtn"
+    )
+    .addEventListener(
+        "click",
+        function () {
 
-        document.body.classList.toggle(
-            "dark-mode"
-        );
+            document.body.classList.toggle(
+                "dark-mode"
+            );
 
-    }
-);
+        }
+    );
 
 
-function previewSelectedPdf(){
+function previewSelectedPdf() {
 
     const url =
         URL.createObjectURL(
@@ -479,36 +665,39 @@ function previewSelectedPdf(){
 }
 
 document
-.getElementById(
-    "deleteSourceBtn"
-)
-.addEventListener(
-    "click",
-    function(){
+    .getElementById(
+        "deleteSourceBtn"
+    )
+    .addEventListener(
+        "click",
+        function () {
 
-        currentFile = null;
+            currentFile = null;
 
-        pdfFile.value = "";
+            pdfFile.value = "";
 
-        selectedFileCard.style.display =
-            "none";
+            selectedFileCard.style.display =
+                "none";
 
-    }
-);
+            progressSection.style.display =
+                "none";
+
+        }
+    );
 
 
-function downloadPdf(fileName){
+function downloadPdf(fileName) {
 
     const input =
         document.getElementById(
             "rename_" +
-            fileName.replace(".pdf","")
+            fileName.replace(".pdf", "")
         );
 
     let newName =
         input.value.trim();
 
-    if(!newName.toLowerCase().endsWith(".pdf")){
+    if (!newName.toLowerCase().endsWith(".pdf")) {
 
         newName += ".pdf";
 

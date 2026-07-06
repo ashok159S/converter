@@ -1,379 +1,429 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>PDF Page Numbers</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <link rel="stylesheet"
-          th:href="@{/css/pdf-page-numbers.css}">
+    <link rel="stylesheet" th:href="@{/css/pdf-page-numbers.css}">
 
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
 
-    <div class="container">
+        <div class="container">
 
-        <a class="navbar-brand d-flex align-items-center"
-        href="/">
+            <a class="navbar-brand d-flex align-items-center" href="/">
 
-            <img src="/images/logo.png"
-                alt="ConvertNova"
-                height="50"
-                class="me-2">
+                <img src="/images/logo.png" alt="ConvertNova" height="50" class="me-2">
 
-        </a>
+            </a>
 
-        <button id="darkModeBtn"
-                class="btn btn-outline-dark">
+            <button id="darkModeBtn" class="btn btn-outline-dark">
 
-            🌙 Dark Mode
+                🌙 Dark Mode
 
-        </button>
+            </button>
 
-    </div>
+        </div>
 
-</nav>
+    </nav>
 
-<div class="container py-5">
+    <div class="container py-5">
 
-    <div class="converter-card">
+        <div class="converter-card">
 
-        <h1 class="text-center">
+            <h1 class="text-center">
 
-            PDF Page Numbers
+                PDF Page Numbers
 
-        </h1>
+            </h1>
 
-        <p class="text-center text-muted mb-4">
+            <p class="text-center text-muted mb-4">
 
-            Add page numbers to PDF files
+                Add page numbers to PDF files
 
-        </p>
+            </p>
 
-        <div id="uploadSection">
+            <div id="uploadSection">
 
-            <form id="pageNumberForm">
+                <form id="pageNumberForm">
 
-                <div id="summaryCard"
-                     class="summary-card"
-                     style="display:none;">
+                    <div id="summaryCard" class="summary-card d-none">
 
-                    <div>
+                        <div>
 
-                        <strong>Total Files:</strong>
+                            <strong>Total Files:</strong>
 
-                        <span id="totalFiles">0</span>
+                            <span id="totalFiles">0</span>
 
-                    </div>
+                        </div>
 
-                    <div>
+                        <div>
 
-                        <strong>Total Size:</strong>
+                            <strong>Total Size:</strong>
 
-                        <span id="totalSize">0 MB</span>
+                            <span id="totalSize">0 MB</span>
+
+                        </div>
 
                     </div>
 
-                </div>
+                    <div id="fileListContainer">
 
-                <div id="fileListContainer">
+                    </div>
 
-                </div>
+                    <div id="dropZone" class="upload-area">
 
-                <div id="dropZone"
-                     class="upload-area">
+                        <i class="bi bi-file-earmark-pdf-fill upload-icon"></i>
 
-                    <i class="bi bi-file-earmark-pdf-fill upload-icon"></i>
+                        <h3>
 
-                    <h3>
+                            Drag & Drop PDF Files Here
 
-                        Drag & Drop PDF Files Here
+                        </h3>
 
-                    </h3>
+                        <p>
 
-                    <p>
+                            PDF Files Only
 
-                        PDF Files Only
+                        </p>
 
-                    </p>
+                        <input type="file" id="pdfFiles" accept=".pdf" multiple hidden>
 
-                    <input type="file"
-                           id="pdfFiles"
-                           accept=".pdf"
-                           multiple
-                           hidden>
+                        <p class="text-muted">
 
-                       <p class="text-muted">
+                            Maximum file size:
+                            50 MB
 
-                    Maximum file size:
-                    50 MB
+                        </p>
 
-                    </p>
-
-                    <button type="button"
-                            class="btn btn-primary btn-lg"
+                        <button type="button" class="btn btn-primary btn-lg"
                             onclick="document.getElementById('pdfFiles').click()">
 
-                        Choose PDF Files
+                            Choose PDF Files
 
-                    </button>
+                        </button>
+                        <button type="button" id="addFilesBtn" class="btn btn-outline-primary btn-lg ms-2">
+
+                            + Add More Files
+
+                        </button>
+
+                    </div>
+                    <div id="toolOptions">
+
+                        <div class="tool-section">
+
+                            <h4>
+
+                                Page Number Position
+
+                            </h4>
+
+                            <div class="form-check">
+
+                                <input type="radio" class="form-check-input" name="position" value="BOTTOM_CENTER"
+                                    checked>
+
+                                <label class="form-check-label">
+
+                                    Bottom Center
+
+                                </label>
+
+                            </div>
+
+                            <div class="form-check">
+
+                                <input type="radio" class="form-check-input" name="position" value="BOTTOM_RIGHT">
+
+                                <label class="form-check-label">
+
+                                    Bottom Right
+
+                                </label>
+
+                            </div>
+
+                            <div class="form-check">
+
+                                <input type="radio" class="form-check-input" name="position" value="BOTTOM_LEFT">
+
+                                <label class="form-check-label">
+
+                                    Bottom Left
+
+                                </label>
+
+                            </div>
+
+                            <div class="form-check">
+
+                                <input type="radio" class="form-check-input" name="position" value="TOP_CENTER">
+
+                                <label class="form-check-label">
+
+                                    Top Center
+
+                                </label>
+
+                            </div>
+
+                            <div class="form-check">
+
+                                <input type="radio" class="form-check-input" name="position" value="TOP_RIGHT">
+
+                                <label class="form-check-label">
+
+                                    Top Right
+
+                                </label>
+
+                            </div>
+
+                            <div class="form-check">
+
+                                <input type="radio" class="form-check-input" name="position" value="TOP_LEFT">
+
+                                <label class="form-check-label">
+
+                                    Top Left
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                        <div class="tool-section">
+
+                            <label class="form-label">
+
+                                Starting Number
+
+                            </label>
+
+                            <input type="number" id="startNumber" class="form-control" value="1">
+
+                        </div>
+
+                        <div class="tool-section">
+
+                            <label class="form-label">
+
+                                Font Size
+
+                            </label>
+
+                            <input type="number" id="fontSize" class="form-control" value="12">
+
+                        </div>
+
+                        <div class="tool-section">
+
+                            <h4>
+
+                                Page Format
+
+                            </h4>
+
+                            <div class="form-check">
+
+                                <input type="radio" class="form-check-input" name="pageFormat" value="NUMBER" checked>
+
+                                <label class="form-check-label">
+
+                                    1
+
+                                </label>
+
+                            </div>
+
+                            <div class="form-check">
+
+                                <input type="radio" class="form-check-input" name="pageFormat" value="PAGE_NUMBER">
+
+                                <label class="form-check-label">
+
+                                    Page 1
+
+                                </label>
+
+                            </div>
+
+                            <div class="form-check">
+
+                                <input type="radio" class="form-check-input" name="pageFormat" value="PAGE_OF_TOTAL">
+
+                                <label class="form-check-label">
+
+                                    Page 1 of 10
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                        <div class="text-center mt-4">
+
+                            <button id="addPageNumbersBtn" type="submit" class="btn btn-primary btn-lg">
+
+                                Add Page Numbers
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div id="progressSection" class="mt-5" style="display:none;">
+
+                <div class="progress">
+
+                    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated"
+                        style="width:0%;">
+
+                        0%
+
+                    </div>
 
                 </div>
 
-                <div class="tool-section">
+            </div>
+
+            <!-- ===========================
+     RESULT
+=========================== -->
+
+            <div id="resultCard" style="display:none;" class="mt-5">
+
+                <div class="alert alert-success">
 
                     <h4>
 
-                        Page Number Position
+                        🎉 Page Numbers Added Successfully
 
                     </h4>
 
-                    <div class="form-check">
+                </div>
 
-                        <input type="radio"
-                               class="form-check-input"
-                               name="position"
-                               value="BOTTOM_CENTER"
-                               checked>
+                <!-- Result Summary -->
 
-                        <label class="form-check-label">
+                <div class="card result-summary">
 
-                            Bottom Center
+                    <div class="card-body">
 
-                        </label>
+                        <div class="row text-center">
 
-                    </div>
+                            <div class="col-6">
 
-                    <div class="form-check">
+                                <strong>
 
-                        <input type="radio"
-                               class="form-check-input"
-                               name="position"
-                               value="BOTTOM_RIGHT">
+                                    Total Files
 
-                        <label class="form-check-label">
+                                </strong>
 
-                            Bottom Right
+                                <br>
 
-                        </label>
+                                <span id="resultFiles">
 
-                    </div>
+                                    0
 
-                    <div class="form-check">
+                                </span>
 
-                        <input type="radio"
-                               class="form-check-input"
-                               name="position"
-                               value="BOTTOM_LEFT">
+                            </div>
 
-                        <label class="form-check-label">
+                            <div class="col-6">
 
-                            Bottom Left
+                                <strong>
 
-                        </label>
+                                    Successful
 
-                    </div>
+                                </strong>
 
-                    <div class="form-check">
+                                <br>
 
-                        <input type="radio"
-                               class="form-check-input"
-                               name="position"
-                               value="TOP_CENTER">
+                                <span id="resultSuccess">
 
-                        <label class="form-check-label">
+                                    0
 
-                            Top Center
+                                </span>
 
-                        </label>
+                            </div>
 
-                    </div>
-
-                    <div class="form-check">
-
-                        <input type="radio"
-                               class="form-check-input"
-                               name="position"
-                               value="TOP_RIGHT">
-
-                        <label class="form-check-label">
-
-                            Top Right
-
-                        </label>
-
-                    </div>
-
-                    <div class="form-check">
-
-                        <input type="radio"
-                               class="form-check-input"
-                               name="position"
-                               value="TOP_LEFT">
-
-                        <label class="form-check-label">
-
-                            Top Left
-
-                        </label>
+                        </div>
 
                     </div>
 
                 </div>
 
-                <div class="tool-section">
+                <!-- Converted Files -->
 
-                    <label class="form-label">
-
-                        Starting Number
-
-                    </label>
-
-                    <input type="number"
-                           id="startNumber"
-                           class="form-control"
-                           value="1">
+                <div id="resultFilesContainer" class="mt-4">
 
                 </div>
 
-                <div class="tool-section">
-
-                    <label class="form-label">
-
-                        Font Size
-
-                    </label>
-
-                    <input type="number"
-                           id="fontSize"
-                           class="form-control"
-                           value="12">
-
-                </div>
-
-                <div class="tool-section">
-
-                    <h4>
-
-                        Page Format
-
-                    </h4>
-
-                    <div class="form-check">
-
-                        <input type="radio"
-                               class="form-check-input"
-                               name="pageFormat"
-                               value="NUMBER"
-                               checked>
-
-                        <label class="form-check-label">
-
-                            1
-
-                        </label>
-
-                    </div>
-
-                    <div class="form-check">
-
-                        <input type="radio"
-                               class="form-check-input"
-                               name="pageFormat"
-                               value="PAGE_NUMBER">
-
-                        <label class="form-check-label">
-
-                            Page 1
-
-                        </label>
-
-                    </div>
-
-                    <div class="form-check">
-
-                        <input type="radio"
-                               class="form-check-input"
-                               name="pageFormat"
-                               value="PAGE_OF_TOTAL">
-
-                        <label class="form-check-label">
-
-                            Page 1 of 10
-
-                        </label>
-
-                    </div>
-
-                </div>
+                <!-- Convert More -->
 
                 <div class="text-center mt-4">
 
-                    <button type="submit"
-                            class="btn btn-primary btn-lg">
+                    <button id="convertMoreBtn" type="button" class="btn btn-secondary btn-lg">
 
-                        Add Page Numbers
+                        Convert More
 
                     </button>
 
                 </div>
 
-            </form>
+            </div>
 
         </div>
 
-        <div id="resultCard"
-             style="display:none;">
+    </div>
 
-            <div class="alert alert-success">
+    <!-- LARGE PREVIEW POPUP -->
 
-                <h4>
+    <div class="modal fade" id="pdfPreviewModal">
 
-                    ✅ PDF Page Numbers Added
+        <div class="modal-dialog modal-xl">
 
-                </h4>
+            <div class="modal-content">
 
-            </div>
+                <div class="modal-header">
 
-            <div id="resultFilesContainer">
+                    <h5 class="modal-title">
 
-            </div>
+                        PDF Preview
 
-            <div class="result-summary">
+                    </h5>
 
-                Files:
-                <span id="resultFiles">0</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    </button>
 
-                |
+                </div>
 
-                Processed Successfully:
-                <span id="resultSuccess">0</span>
+                <div class="modal-body p-0">
 
-            </div>
+                    <iframe id="pdfPreviewFrame" width="100%" height="750" style="border:none;">
+                    </iframe>
 
-            <div class="text-center mt-4">
-
-                <button id="addMoreBtn"
-                        class="btn btn-secondary">
-
-                    Add More Files
-
-                </button>
+                </div>
 
             </div>
 
@@ -381,55 +431,12 @@
 
     </div>
 
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- LARGE PREVIEW POPUP -->
+    <script th:src="@{/js/pdf-page-numbers.js}"></script>
 
-<div class="modal fade"
-     id="pdfPreviewModal">
-
-    <div class="modal-dialog modal-xl">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h5 class="modal-title">
-
-                    PDF Preview
-
-                </h5>
-
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
-
-            </div>
-
-            <div class="modal-body p-0">
-
-                <iframe id="pdfPreviewFrame"
-                        width="100%"
-                        height="750"
-                        style="border:none;">
-                </iframe>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-
-<script th:src="@{/js/pdf-page-numbers.js}"></script>
-
-<script src="/js/common-validation.js"></script>
+    <script src="/js/common-validation.js"></script>
 
 </body>
 
 </html>
-

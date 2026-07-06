@@ -4,33 +4,71 @@ import org.apache.pdfbox.multipdf.PDFMergerUtility;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import java.io.File;
 import java.util.*;
 
 @Service
 public class PdfMergerService {
 
-    public Map<String,Object> mergePdfFiles(
+    public Map<String, Object> mergePdfFiles(
             MultipartFile[] pdfFiles
     ) {
 
-        Map<String,Object> response =
+        Map<String, Object> response =
                 new HashMap<>();
+
+        List<File> tempFiles =
+                new ArrayList<>();
 
         try {
 
             PDFMergerUtility merger =
                     new PDFMergerUtility();
 
-            List<File> tempFiles =
-                    new ArrayList<>();
+            File mergedFile =
+                    new File("merged.pdf");
 
-            for(MultipartFile pdf : pdfFiles){
+            if (mergedFile.exists()) {
 
-                if(pdf.isEmpty()){
+                mergedFile.delete();
 
-                    continue;
+            }
+
+            for (MultipartFile pdf : pdfFiles) {
+
+                if (pdf == null || pdf.isEmpty()) {
+
+                    response.put(
+                            "success",
+                            false
+                    );
+
+                    response.put(
+                            "message",
+                            "One or more uploaded files are empty."
+                    );
+
+                    return response;
+
+                }
+
+                if (!"application/pdf".equalsIgnoreCase(
+                        pdf.getContentType()
+                )) {
+
+                    response.put(
+                            "success",
+                            false
+                    );
+
+                    response.put(
+                            "message",
+                            "Only PDF files are allowed."
+                    );
+
+                    return response;
 
                 }
 
@@ -43,6 +81,32 @@ public class PdfMergerService {
                 pdf.transferTo(
                         tempFile
                 );
+
+                try (
+                        PDDocument document =
+                                Loader.loadPDF(tempFile)
+                ) {
+
+                    // Valid PDF
+
+                } catch (Exception ex) {
+
+                    tempFile.delete();
+
+                    response.put(
+                            "success",
+                            false
+                    );
+
+                    response.put(
+                            "message",
+                            pdf.getOriginalFilename()
+                                    + " is corrupted or not a valid PDF."
+                    );
+
+                    return response;
+
+                }
 
                 merger.addSource(
                         tempFile
@@ -58,12 +122,9 @@ public class PdfMergerService {
                     "merged.pdf"
             );
 
-            merger.mergeDocuments(null);
-
-            File mergedPdf =
-                    new File(
-                            "merged.pdf"
-                    );
+            merger.mergeDocuments(
+                    null
+            );
 
             response.put(
                     "success",
@@ -79,20 +140,13 @@ public class PdfMergerService {
                     "size",
                     String.format(
                             "%.2f MB",
-                            mergedPdf.length()
-                                    /1024.0
-                                    /1024.0
+                            mergedFile.length()
+                                    / 1024.0
+                                    / 1024.0
                     )
             );
 
-            for(File temp : tempFiles){
-
-                temp.delete();
-
-            }
-
-        }
-        catch(Exception e){
+        } catch (Exception e) {
 
             e.printStackTrace();
 
@@ -103,8 +157,20 @@ public class PdfMergerService {
 
             response.put(
                     "message",
-                    e.getMessage()
+                    "Unable to merge PDF files."
             );
+
+        } finally {
+
+            for (File temp : tempFiles) {
+
+                if (temp.exists()) {
+
+                    temp.delete();
+
+                }
+
+            }
 
         }
 

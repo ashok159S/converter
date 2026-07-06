@@ -26,208 +26,297 @@ import java.util.Map;
 @Controller
 public class ExcelToPdfController {
 
-    @Autowired
-    private ExcelToPdfService excelToPdfService;
+        @Autowired
+        private ExcelToPdfService excelToPdfService;
 
-    /* ===========================
-       PAGE
-    =========================== */
+        /*
+         * ===========================
+         * PAGE
+         * ===========================
+         */
 
-    @GetMapping("/excel-to-pdf")
-    public String excelToPdfPage(){
+        @GetMapping("/excel-to-pdf")
+        public String excelToPdfPage() {
 
-        return "excel-to-pdf";
-
-    }
-
-    /* ===========================
-       CONVERT EXCEL TO PDF
-    =========================== */
-
-    @PostMapping("/excel-to-pdf-ajax")
-    @ResponseBody
-    public Map<String,Object> convertExcelToPdf(
-
-            @RequestParam("excelFiles")
-            MultipartFile[] excelFiles,
-
-            @RequestParam("orientation")
-            String orientation,
-
-            @RequestParam("paperSize")
-            String paperSize,
-
-            @RequestParam("scaling")
-            String scaling,
-
-            @RequestParam("quality")
-            String quality
-
-    ){
-
-        return excelToPdfService.convertExcelToPdf(
-
-                excelFiles,
-
-                orientation,
-
-                paperSize,
-
-                scaling,
-
-                quality
-
-        );
-
-    }
-
-    /* ===========================
-       DOWNLOAD PDF
-    =========================== */
-
-    @GetMapping("/download-converted-pdf")
-    public ResponseEntity<Resource> downloadPdf(
-
-            @RequestParam("fileName")
-            String fileName
-
-    ){
-
-        try{
-
-            File file =
-                    new File(
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "converted-pdfs"
-                            +
-                            File.separator
-                            +
-                            fileName
-                    );
-
-            if(!file.exists()){
-
-                return ResponseEntity
-                        .notFound()
-                        .build();
-
-            }
-
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
-
-            return ResponseEntity.ok()
-
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\""
-                            +
-                            file.getName()
-                            +
-                            "\""
-                    )
-
-                    .contentLength(
-                            file.length()
-                    )
-
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
-
-                    .body(
-                            resource
-                    );
-
-        }
-        catch(Exception e){
-
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                return "excel-to-pdf";
 
         }
 
-    }
+        /*
+         * ===========================
+         * CONVERT EXCEL TO PDF
+         * ===========================
+         */
 
-    /* ===========================
-       PREVIEW PDF
-    =========================== */
+        @PostMapping("/excel-to-pdf-ajax")
+        @ResponseBody
+        public Map<String, Object> convertExcelToPdf(
 
-    @GetMapping("/preview-converted-pdf")
-    public ResponseEntity<Resource> previewPdf(
+                        @RequestParam("excelFiles") MultipartFile[] excelFiles,
 
-            @RequestParam("fileName")
-            String fileName
+                        @RequestParam("orientation") String orientation,
 
-    ){
+                        @RequestParam("paperSize") String paperSize,
 
-        try{
+                        @RequestParam("scaling") String scaling,
 
-            File file =
-                    new File(
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "converted-pdfs"
-                            +
-                            File.separator
-                            +
-                            fileName
-                    );
+                        @RequestParam("quality") String quality
 
-            if(!file.exists()){
+        ) {
 
-                return ResponseEntity
-                        .notFound()
-                        .build();
+                /* Empty Request Validation */
 
-            }
+                if (excelFiles == null
+                                ||
+                                excelFiles.length == 0) {
 
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
+                        return Map.of(
+                                        "success",
+                                        false,
+                                        "message",
+                                        "Please upload at least one Excel file.");
 
-            return ResponseEntity.ok()
+                }
 
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "inline; filename=\""
-                            +
-                            file.getName()
-                            +
-                            "\""
-                    )
+                /* File Validation */
 
-                    .contentLength(
-                            file.length()
-                    )
+                for (MultipartFile file : excelFiles) {
 
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
+                        if (file.isEmpty()) {
 
-                    .body(
-                            resource
-                    );
+                                return Map.of(
+                                                "success",
+                                                false,
+                                                "message",
+                                                "One of the uploaded files is empty.");
+
+                        }
+
+                        String fileName = file.getOriginalFilename();
+
+                        if (fileName == null) {
+
+                                return Map.of(
+                                                "success",
+                                                false,
+                                                "message",
+                                                "Invalid file.");
+
+                        }
+
+                        fileName = fileName.toLowerCase();
+
+                        if (!fileName.endsWith(".xls")
+                                        &&
+                                        !fileName.endsWith(".xlsx")) {
+
+                                return Map.of(
+                                                "success",
+                                                false,
+                                                "message",
+                                                file.getOriginalFilename()
+                                                                +
+                                                                " is not a valid Excel file.");
+
+                        }
+
+                        if (file.getSize() > 50 * 1024 * 1024) {
+
+                                return Map.of(
+                                                "success",
+                                                false,
+                                                "message",
+                                                file.getOriginalFilename()
+                                                                +
+                                                                " exceeds 50 MB.");
+
+                        }
+
+                }
+
+                try {
+
+                        return excelToPdfService.convertExcelToPdf(
+
+                                        excelFiles,
+                                        orientation,
+                                        paperSize,
+                                        scaling,
+                                        quality
+
+                        );
+
+                } catch (Exception e) {
+
+                        return Map.of(
+                                        "success",
+                                        false,
+                                        "message",
+                                        e.getMessage());
+
+                }
 
         }
-        catch(Exception e){
 
-            return ResponseEntity
-                    .notFound()
-                    .build();
+        /*
+         * ===========================
+         * DOWNLOAD PDF
+         * ===========================
+         */
+
+        @GetMapping("/download-converted-pdf")
+        public ResponseEntity<Resource> downloadPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "converted-pdfs"
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "attachment; filename=\""
+                                                                        +
+                                                                        file.getName()
+                                                                        +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
 
         }
 
-    }
+        /*
+         * ===========================
+         * PREVIEW PDF
+         * ===========================
+         */
+
+        @GetMapping("/preview-converted-pdf")
+        public ResponseEntity<Resource> previewPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "converted-pdfs"
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "inline; filename=\""
+                                                                        +
+                                                                        file.getName()
+                                                                        +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
+
+        }
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
+
+        @PostMapping("/delete-temp-files")
+        @ResponseBody
+        public Map<String, Object> deleteTempFiles() {
+
+                try {
+
+                        excelToPdfService.deleteTempFiles();
+
+                        return Map.of(
+                                        "success",
+                                        true);
+
+                } catch (Exception e) {
+
+                        return Map.of(
+                                        "success",
+                                        false,
+                                        "message",
+                                        e.getMessage());
+
+                }
+
+        }
 
 }
-

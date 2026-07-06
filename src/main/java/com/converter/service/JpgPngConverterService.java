@@ -14,219 +14,248 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.awt.Graphics2D;
 
 @Service
 public class JpgPngConverterService {
 
-    public Map<String,Object> convertImages(
+        public Map<String, Object> convertImages(
 
-            MultipartFile[] imageFiles,
+                        MultipartFile[] imageFiles,
 
-            List<String> targetFormats
+                        List<String> targetFormats
 
-    ){
+        ) {
 
-        Map<String,Object> result =
-                new HashMap<>();
+                Map<String, Object> result = new HashMap<>();
 
-        try{
+                deleteConvertedImages();
 
-            List<Map<String,String>> files =
-                    new ArrayList<>();
+                try {
 
-            File outputFolder =
-                    new File(
-                            "converted-images"
-                    );
+                        List<Map<String, String>> files = new ArrayList<>();
 
-            if(!outputFolder.exists()){
+                        File outputFolder = new File("converted-images");
 
-                outputFolder.mkdirs();
+                        if (!outputFolder.exists()) {
 
-            }
+                                outputFolder.mkdirs();
 
-            for(
-                    int i = 0;
-                    i < imageFiles.length;
-                    i++
-            ){
+                        }
 
-                MultipartFile imageFile =
-                        imageFiles[i];
+                        for (int i = 0; i < imageFiles.length; i++) {
 
-                String targetFormat =
-                        targetFormats.get(i)
-                                     .toLowerCase();
+                                MultipartFile imageFile = imageFiles[i];
 
-                String originalName =
-                        imageFile.getOriginalFilename();
+                                File tempInput = null;
 
-                if(
-                        originalName == null
-                        ||
-                        originalName.isBlank()
-                ){
+                                try {
 
-                    originalName =
-                            "image.jpg";
+                                        String targetFormat = targetFormats.get(i)
+                                                        .toLowerCase();
+
+                                        if (!targetFormat.equals("jpg")
+                                                        &&
+                                                        !targetFormat.equals("jpeg")
+                                                        &&
+                                                        !targetFormat.equals("png")) {
+
+                                                throw new RuntimeException(
+                                                                "Invalid target format selected.");
+
+                                        }
+
+                                        String originalName = imageFile.getOriginalFilename();
+
+                                        if (originalName == null
+                                                        ||
+                                                        originalName.isBlank()) {
+
+                                                originalName = "image.jpg";
+
+                                        }
+
+                                        String originalFormat = originalName.substring(
+                                                        originalName.lastIndexOf(".") + 1).toUpperCase();
+
+                                        String baseName = originalName.replaceAll(
+                                                        "\\.[^.]+$",
+                                                        "");
+
+                                        tempInput = File.createTempFile(
+                                                        UUID.randomUUID().toString(),
+                                                        ".tmp");
+
+                                        imageFile.transferTo(
+                                                        tempInput);
+
+                                        BufferedImage image = ImageIO.read(
+                                                        tempInput);
+
+                                        if (image == null) {
+
+                                                throw new RuntimeException(
+                                                                "The file \""
+                                                                                +
+                                                                                originalName
+                                                                                +
+                                                                                "\" is corrupted or is not a valid JPG/PNG image.");
+
+                                        }
+
+                                        String uniqueFileName = UUID.randomUUID()
+                                                        +
+                                                        "_"
+                                                        +
+                                                        baseName
+                                                        +
+                                                        "."
+                                                        +
+                                                        targetFormat;
+
+                                        File outputFile = new File(
+                                                        outputFolder,
+                                                        uniqueFileName);
+
+                                        if (targetFormat.equals("jpg")
+                                                        ||
+                                                        targetFormat.equals("jpeg")) {
+
+                                                BufferedImage rgbImage = new BufferedImage(
+                                                                image.getWidth(),
+                                                                image.getHeight(),
+                                                                BufferedImage.TYPE_INT_RGB);
+
+                                                Graphics2D graphics = rgbImage.createGraphics();
+
+                                                graphics.drawImage(
+                                                                image,
+                                                                0,
+                                                                0,
+                                                                null);
+
+                                                graphics.dispose();
+
+                                                ImageIO.write(
+                                                                rgbImage,
+                                                                "jpg",
+                                                                outputFile);
+
+                                        } else {
+
+                                                ImageIO.write(
+                                                                image,
+                                                                "png",
+                                                                outputFile);
+
+                                        }
+
+                                        Map<String, String> fileInfo = new HashMap<>();
+
+                                        fileInfo.put(
+                                                        "name",
+                                                        outputFile.getName());
+
+                                        fileInfo.put(
+                                                        "originalFormat",
+                                                        originalFormat);
+
+                                        fileInfo.put(
+                                                        "convertedFormat",
+                                                        targetFormat.toUpperCase());
+
+                                        fileInfo.put(
+                                                        "size",
+                                                        String.format(
+                                                                        "%.2f MB",
+                                                                        outputFile.length()
+                                                                                        /
+                                                                                        1024.0
+                                                                                        /
+                                                                                        1024.0));
+
+                                        files.add(
+                                                        fileInfo);
+
+                                } finally {
+
+                                        if (tempInput != null
+                                                        &&
+                                                        tempInput.exists()) {
+
+                                                tempInput.delete();
+
+                                        }
+
+                                }
+
+                        }
+
+                        result.put(
+                                        "success",
+                                        true);
+
+                        result.put(
+                                        "files",
+                                        files);
+
+                } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        result.put(
+                                        "success",
+                                        false);
+
+                        result.put(
+                                        "message",
+                                        e.getMessage());
 
                 }
 
-                String originalFormat =
-                        originalName.substring(
-                                originalName.lastIndexOf(".")
-                                + 1
-                        ).toUpperCase();
-
-                String baseName =
-                        originalName.replaceAll(
-                                "\\.[^.]+$",
-                                ""
-                        );
-
-                File tempInput =
-                        File.createTempFile(
-                                UUID.randomUUID().toString(),
-                                ".tmp"
-                        );
-
-                imageFile.transferTo(
-                        tempInput
-                );
-
-                BufferedImage image =
-                        ImageIO.read(
-                                tempInput
-                        );
-
-                if(image == null){
-
-                    throw new RuntimeException(
-                            "Invalid image: "
-                            + originalName
-                    );
-
-                }
-
-                File outputFile =
-                        new File(
-                                outputFolder,
-                                baseName
-                                +
-                                "."
-                                +
-                                targetFormat
-                        );
-
-                if(
-                        "jpg".equals(
-                                targetFormat
-                        )
-                        ||
-                        "jpeg".equals(
-                                targetFormat
-                        )
-                ){
-
-                    BufferedImage rgbImage =
-                            new BufferedImage(
-                                    image.getWidth(),
-                                    image.getHeight(),
-                                    BufferedImage.TYPE_INT_RGB
-                            );
-
-                    rgbImage.createGraphics()
-                            .drawImage(
-                                    image,
-                                    0,
-                                    0,
-                                    null
-                            );
-
-                    ImageIO.write(
-                            rgbImage,
-                            "jpg",
-                            outputFile
-                    );
-
-                }
-                else{
-
-                    ImageIO.write(
-                            image,
-                            "png",
-                            outputFile
-                    );
-
-                }
-
-                Map<String,String> fileInfo =
-                        new HashMap<>();
-
-                fileInfo.put(
-                        "name",
-                        outputFile.getName()
-                );
-
-                fileInfo.put(
-                        "originalFormat",
-                        originalFormat
-                );
-
-                fileInfo.put(
-                        "convertedFormat",
-                        targetFormat.toUpperCase()
-                );
-
-                fileInfo.put(
-                        "size",
-                        String.format(
-                                "%.2f MB",
-                                outputFile.length()
-                                /
-                                1024.0
-                                /
-                                1024.0
-                        )
-                );
-
-                files.add(
-                        fileInfo
-                );
-
-                tempInput.delete();
-
-            }
-
-            result.put(
-                    "success",
-                    true
-            );
-
-            result.put(
-                    "files",
-                    files
-            );
+                return result;
 
         }
-        catch(Exception e){
+        /*
+         * ===========================
+         * DELETE CONVERTED IMAGES
+         * ===========================
+         */
 
-            e.printStackTrace();
+        public void deleteConvertedImages() {
 
-            result.put(
-                    "success",
-                    false
-            );
+                File outputFolder = new File(
+                                "converted-images");
 
-            result.put(
-                    "message",
-                    e.getMessage()
-            );
+                if (!outputFolder.exists()) {
+
+                        return;
+
+                }
+
+                File[] files = outputFolder.listFiles();
+
+                if (files == null) {
+
+                        return;
+
+                }
+
+                for (File file : files) {
+
+                        if (file.isFile()) {
+
+                                if (!file.delete()) {
+
+                                        System.err.println(
+                                                        "Unable to delete: "
+                                                                        + file.getAbsolutePath());
+
+                                }
+
+                        }
+
+                }
 
         }
-
-        return result;
-
-    }
-
 }

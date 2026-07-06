@@ -26,179 +26,235 @@ import java.util.Map;
 @Controller
 public class PdfPageRemoverController {
 
-    @Autowired
-    private PdfPageRemoverService pdfPageRemoverService;
+        @Autowired
+        private PdfPageRemoverService pdfPageRemoverService;
 
-    /* ===========================
-       PAGE
-    =========================== */
+        /*
+         * ===========================
+         * PAGE
+         * ===========================
+         */
 
-    @GetMapping("/pdf-page-remover")
-    public String pdfPageRemoverPage(){
+        @GetMapping("/pdf-page-remover")
+        public String pdfPageRemoverPage() {
 
-        return "pdf-page-remover";
-
-    }
-
-    /* ===========================
-       REMOVE PAGES
-    =========================== */
-
-    @PostMapping("/pdf-page-remover-ajax")
-    @ResponseBody
-    public Map<String,Object> removePages(
-
-            @RequestParam("pdfFiles")
-            MultipartFile[] pdfFiles,
-
-            @RequestParam("pagesToRemove")
-            String pagesToRemove
-
-    ){
-
-        return pdfPageRemoverService.removePages(
-
-                pdfFiles,
-
-                pagesToRemove
-
-        );
-
-    }
-
-    /* ===========================
-       DOWNLOAD PROCESSED PDF
-    =========================== */
-
-    @GetMapping("/download-processed-pdf")
-    public ResponseEntity<Resource> downloadProcessedPdf(
-
-            @RequestParam("fileName")
-            String fileName
-
-    ){
-
-        try{
-
-            File file =
-                    new File(
-                            "processed-pdfs",
-                            fileName
-                    );
-
-            if(!file.exists()){
-
-                return ResponseEntity
-                        .notFound()
-                        .build();
-
-            }
-
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
-
-            return ResponseEntity.ok()
-
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\""
-                            +
-                            fileName
-                            +
-                            "\""
-                    )
-
-                    .contentLength(
-                            file.length()
-                    )
-
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
-
-                    .body(
-                            resource
-                    );
-
-        }
-        catch(Exception e){
-
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                return "pdf-page-remover";
 
         }
 
-    }
+        /*
+         * ===========================
+         * REMOVE PAGES
+         * ===========================
+         */
 
-    /* ===========================
-       PREVIEW PROCESSED PDF
-    =========================== */
+        @PostMapping("/pdf-page-remover-ajax")
+        @ResponseBody
+        public Map<String, Object> removePages(
 
-    @GetMapping("/preview-processed-pdf")
-    public ResponseEntity<Resource> previewProcessedPdf(
+                        @RequestParam("pdfFiles") MultipartFile[] pdfFiles,
 
-            @RequestParam("fileName")
-            String fileName
+                        @RequestParam("pagesToRemove") String pagesToRemove
 
-    ){
+        ) {
 
-        try{
+                if (pdfFiles == null || pdfFiles.length == 0) {
 
-            File file =
-                    new File(
-                            "processed-pdfs",
-                            fileName
-                    );
+                        return Map.of(
+                                        "success",
+                                        false,
+                                        "message",
+                                        "Please upload PDF files.");
 
-            if(!file.exists()){
+                }
 
-                return ResponseEntity
-                        .notFound()
-                        .build();
+                return pdfPageRemoverService.removePages(
 
-            }
+                                pdfFiles,
 
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
+                                pagesToRemove
 
-            return ResponseEntity.ok()
-
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "inline; filename=\""
-                            +
-                            fileName
-                            +
-                            "\""
-                    )
-
-                    .contentLength(
-                            file.length()
-                    )
-
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
-
-                    .body(
-                            resource
-                    );
-
-        }
-        catch(Exception e){
-
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                );
 
         }
 
-    }
+        /*
+         * ===========================
+         * DOWNLOAD PROCESSED PDF
+         * ===========================
+         */
+
+        @GetMapping("/download-processed-pdf")
+        public ResponseEntity<Resource> downloadProcessedPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "processed-pdfs"
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "attachment; filename=\""
+                                                                        +
+                                                                        fileName
+                                                                        +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
+
+        }
+
+        /*
+         * ===========================
+         * PREVIEW PROCESSED PDF
+         * ===========================
+         */
+
+        @GetMapping("/preview-processed-pdf")
+        public ResponseEntity<Resource> previewProcessedPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        if (fileName == null
+                                        ||
+                                        fileName.isBlank()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        File file = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "processed-pdfs"
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "inline; filename=\""
+                                                                        +
+                                                                        fileName
+                                                                        +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
+
+        }
+
+        @PostMapping("/delete-processed-pdf")
+        @ResponseBody
+        public void deleteProcessedPdf() {
+
+                File folder = new File(
+                                System.getProperty("user.dir")
+                                                +
+                                                File.separator
+                                                +
+                                                "processed-pdfs");
+
+                if (!folder.exists()) {
+
+                        return;
+
+                }
+
+                File[] files = folder.listFiles();
+
+                if (files == null) {
+
+                        return;
+
+                }
+
+                for (File file : files) {
+
+                        if (file.isFile()) {
+
+                                file.delete();
+
+                        }
+
+                }
+
+        }
 
 }
-

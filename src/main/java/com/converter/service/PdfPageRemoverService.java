@@ -19,272 +19,303 @@ import java.util.UUID;
 @Service
 public class PdfPageRemoverService {
 
-    public Map<String,Object> removePages(
+        public Map<String, Object> removePages(
 
-            MultipartFile[] pdfFiles,
+                        MultipartFile[] pdfFiles,
 
-            String pagesToRemove
+                        String pagesToRemove
 
-    ){
+        ) {
 
-        Map<String,Object> result =
-                new HashMap<>();
+                Map<String, Object> result = new HashMap<>();
 
-        try{
+                List<Map<String, String>> files = new ArrayList<>();
 
-            List<Map<String,String>> files =
-                    new ArrayList<>();
+                File tempInput = null;
 
-            File outputFolder =
-                    new File(
-                            "processed-pdfs"
-                    );
+                PDDocument sourceDocument = null;
 
-            if(!outputFolder.exists()){
+                PDDocument outputDocument = null;
 
-                outputFolder.mkdirs();
+                try {
 
-            }
+                        File outputFolder = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "processed-pdfs");
 
-            for(
-                    MultipartFile pdfFile
-                    :
-                    pdfFiles
-            ){
+                        if (!outputFolder.exists()) {
 
-                String originalName =
-                        pdfFile.getOriginalFilename();
+                                outputFolder.mkdirs();
 
-                if(
-                        originalName == null
-                        ||
-                        originalName.isBlank()
-                ){
+                        }
 
-                    originalName =
-                            "document.pdf";
+                        for (MultipartFile pdfFile : pdfFiles) {
+                                if (pdfFile == null ||
+                                                pdfFile.isEmpty()) {
+
+                                        result.put(
+                                                        "success",
+                                                        false);
+
+                                        result.put(
+                                                        "message",
+                                                        "One or more uploaded files are empty.");
+
+                                        return result;
+
+                                }
+
+                                if (!"application/pdf".equalsIgnoreCase(
+                                                pdfFile.getContentType())) {
+
+                                        result.put(
+                                                        "success",
+                                                        false);
+
+                                        result.put(
+                                                        "message",
+                                                        "Only PDF files are allowed.");
+
+                                        return result;
+
+                                }
+
+                                String originalName = pdfFile.getOriginalFilename();
+
+                                if (originalName == null
+                                                ||
+                                                originalName.isBlank()) {
+
+                                        originalName = "document.pdf";
+
+                                }
+
+                                String baseName = originalName.replace(
+                                                ".pdf",
+                                                "");
+
+                                tempInput = File.createTempFile(
+                                                UUID.randomUUID().toString(),
+                                                ".pdf");
+
+                                pdfFile.transferTo(
+                                                tempInput);
+
+                                try {
+
+                                        sourceDocument = Loader.loadPDF(
+                                                        tempInput);
+
+                                } catch (Exception ex) {
+
+                                        tempInput.delete();
+
+                                        result.put(
+                                                        "success",
+                                                        false);
+
+                                        result.put(
+                                                        "message",
+                                                        pdfFile.getOriginalFilename()
+                                                                        +
+                                                                        " is corrupted or not a valid PDF.");
+
+                                        return result;
+
+                                }
+
+                                int originalPages = sourceDocument.getNumberOfPages();
+
+                                Set<Integer> pages = parsePages(
+                                                pagesToRemove);
+
+                                outputDocument = new PDDocument();
+
+                                for (int i = 0; i < originalPages; i++) {
+
+                                        int pageNumber = i + 1;
+
+                                        if (!pages.contains(
+                                                        pageNumber)) {
+
+                                                outputDocument.importPage(
+                                                                sourceDocument.getPage(
+                                                                                i));
+
+                                        }
+
+                                }
+
+                                File outputFile = new File(
+                                                outputFolder,
+                                                baseName
+                                                                +
+                                                                "-processed.pdf");
+
+                                outputDocument.save(
+                                                outputFile);
+
+                                int finalPages = outputDocument.getNumberOfPages();
+
+                                int removedPages = originalPages
+                                                -
+                                                finalPages;
+
+                                Map<String, String> fileInfo = new HashMap<>();
+
+                                fileInfo.put(
+                                                "name",
+                                                outputFile.getName());
+
+                                fileInfo.put(
+                                                "size",
+                                                String.format(
+                                                                "%.2f MB",
+                                                                outputFile.length()
+                                                                                /
+                                                                                1024.0
+                                                                                /
+                                                                                1024.0));
+
+                                fileInfo.put(
+                                                "originalPages",
+                                                String.valueOf(
+                                                                originalPages));
+
+                                fileInfo.put(
+                                                "removedPages",
+                                                String.valueOf(
+                                                                removedPages));
+
+                                fileInfo.put(
+                                                "finalPages",
+                                                String.valueOf(
+                                                                finalPages));
+
+                                files.add(
+                                                fileInfo);
+
+                                sourceDocument.close();
+
+                                outputDocument.close();
+
+                                tempInput.delete();
+
+                                sourceDocument = null;
+
+                                outputDocument = null;
+
+                                tempInput = null;
+
+                        }
+
+                        result.put(
+                                        "success",
+                                        true);
+
+                        result.put(
+                                        "files",
+                                        files);
+
+                } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        result.put(
+                                        "success",
+                                        false);
+
+                        result.put(
+                                        "message",
+                                        "Unable to remove PDF pages.");
+
+                } finally {
+
+                        try {
+
+                                if (sourceDocument != null) {
+
+                                        sourceDocument.close();
+
+                                }
+
+                                if (outputDocument != null) {
+
+                                        outputDocument.close();
+
+                                }
+
+                        } catch (Exception ex) {
+
+                                ex.printStackTrace();
+
+                        }
+
+                        if (tempInput != null &&
+                                        tempInput.exists()) {
+
+                                tempInput.delete();
+
+                        }
 
                 }
 
-                String baseName =
-                        originalName.replace(
-                                ".pdf",
-                                ""
-                        );
+                return result;
 
-                File tempInput =
-                        File.createTempFile(
-                                UUID.randomUUID().toString(),
-                                ".pdf"
-                        );
+        }
 
-                pdfFile.transferTo(
-                        tempInput
-                );
+        /*
+         * ===========================
+         * PARSE PAGE INPUT
+         * ===========================
+         */
 
-                PDDocument sourceDocument =
-                        Loader.loadPDF(
-                                tempInput
-                        );
+        private Set<Integer> parsePages(
 
-                int originalPages =
-                        sourceDocument.getNumberOfPages();
+                        String pageText
 
-                Set<Integer> pages =
-                        parsePages(
-                                pagesToRemove
-                        );
+        ) {
 
-                PDDocument outputDocument =
-                        new PDDocument();
+                Set<Integer> pages = new HashSet<>();
 
-                for(
-                        int i = 0;
-                        i < originalPages;
-                        i++
-                ){
+                String[] parts = pageText.split(",");
 
-                    int pageNumber =
-                            i + 1;
+                for (String part : parts) {
 
-                    if(
-                            !pages.contains(
-                                    pageNumber
-                            )
-                    ){
+                        part = part.trim();
 
-                        outputDocument.importPage(
-                                sourceDocument.getPage(
-                                        i
-                                )
-                        );
+                        if (part.contains("-")) {
 
-                    }
+                                String[] range = part.split("-");
+
+                                int start = Integer.parseInt(
+                                                range[0].trim());
+
+                                int end = Integer.parseInt(
+                                                range[1].trim());
+
+                                for (int i = start; i <= end; i++) {
+
+                                        pages.add(
+                                                        i);
+
+                                }
+
+                        } else {
+
+                                pages.add(
+                                                Integer.parseInt(
+                                                                part));
+
+                        }
 
                 }
 
-                File outputFile =
-                        new File(
-                                outputFolder,
-                                baseName
-                                +
-                                "-processed.pdf"
-                        );
-
-                outputDocument.save(
-                        outputFile
-                );
-
-                int finalPages =
-                        outputDocument.getNumberOfPages();
-
-                int removedPages =
-                        originalPages
-                        -
-                        finalPages;
-
-                outputDocument.close();
-
-                sourceDocument.close();
-
-                Map<String,String> fileInfo =
-                        new HashMap<>();
-
-                fileInfo.put(
-                        "name",
-                        outputFile.getName()
-                );
-
-                fileInfo.put(
-                        "originalPages",
-                        String.valueOf(
-                                originalPages
-                        )
-                );
-
-                fileInfo.put(
-                        "removedPages",
-                        String.valueOf(
-                                removedPages
-                        )
-                );
-
-                fileInfo.put(
-                        "finalPages",
-                        String.valueOf(
-                                finalPages
-                        )
-                );
-
-                files.add(
-                        fileInfo
-                );
-
-                tempInput.delete();
-
-            }
-
-            result.put(
-                    "success",
-                    true
-            );
-
-            result.put(
-                    "files",
-                    files
-            );
+                return pages;
 
         }
-        catch(Exception e){
-
-            e.printStackTrace();
-
-            result.put(
-                    "success",
-                    false
-            );
-
-            result.put(
-                    "message",
-                    e.getMessage()
-            );
-
-        }
-
-        return result;
-
-    }
-
-    /* ===========================
-       PARSE PAGE INPUT
-    =========================== */
-
-    private Set<Integer> parsePages(
-
-            String pageText
-
-    ){
-
-        Set<Integer> pages =
-                new HashSet<>();
-
-        String[] parts =
-                pageText.split(",");
-
-        for(
-                String part
-                :
-                parts
-        ){
-
-            part =
-                    part.trim();
-
-            if(
-                    part.contains("-")
-            ){
-
-                String[] range =
-                        part.split("-");
-
-                int start =
-                        Integer.parseInt(
-                                range[0].trim()
-                        );
-
-                int end =
-                        Integer.parseInt(
-                                range[1].trim()
-                        );
-
-                for(
-                        int i = start;
-                        i <= end;
-                        i++
-                ){
-
-                    pages.add(
-                            i
-                    );
-
-                }
-
-            }
-            else{
-
-                pages.add(
-                        Integer.parseInt(
-                                part
-                        )
-                );
-
-            }
-
-        }
-
-        return pages;
-
-    }
 
 }
-

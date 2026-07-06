@@ -3,39 +3,54 @@
 =========================== */
 
 const excelFiles =
-document.getElementById(
-    "excelFiles"
-);
+    document.getElementById(
+        "excelFiles"
+    );
 
 const dropZone =
-document.getElementById(
-    "dropZone"
-);
+    document.getElementById(
+        "dropZone"
+    );
 
 const summaryCard =
-document.getElementById(
-    "summaryCard"
-);
+    document.getElementById(
+        "summaryCard"
+    );
 
 const fileListContainer =
-document.getElementById(
-    "fileListContainer"
-);
+    document.getElementById(
+        "fileListContainer"
+    );
 
 const totalFiles =
-document.getElementById(
-    "totalFiles"
-);
+    document.getElementById(
+        "totalFiles"
+    );
 
 const totalSize =
-document.getElementById(
-    "totalSize"
-);
+    document.getElementById(
+        "totalSize"
+    );
 
 const excelToPdfForm =
-document.getElementById(
-    "excelToPdfForm"
-);
+    document.getElementById(
+        "excelToPdfForm"
+    );
+
+const convertBtn =
+    document.getElementById(
+        "convertBtn"
+    );
+
+const progressContainer =
+    document.getElementById(
+        "progressContainer"
+    );
+
+const progressBar =
+    document.getElementById(
+        "progressBar"
+    );
 
 let selectedFiles = [];
 
@@ -45,14 +60,50 @@ let selectedFiles = [];
 
 excelFiles.addEventListener(
     "change",
-    function(){
+    function () {
 
-        selectedFiles =
-        Array.from(
-            this.files
-        );
+        let duplicateFiles = [];
+
+        Array.from(this.files)
+            .forEach(file => {
+
+                const exists =
+                    selectedFiles.some(
+                        f =>
+                            f.name === file.name
+                            &&
+                            f.size === file.size
+                    );
+
+                if (exists) {
+
+                    duplicateFiles.push(
+                        file.name
+                    );
+
+                    return;
+                }
+
+                selectedFiles.push(file);
+
+            });
+
+        if (
+            duplicateFiles.length > 0
+        ) {
+
+            alert(
+                "These files already exist:\n\n"
+                +
+                [...new Set(duplicateFiles)]
+                    .join("\n")
+            );
+
+        }
 
         renderFiles();
+
+        this.value = "";
 
     }
 );
@@ -63,7 +114,7 @@ excelFiles.addEventListener(
 
 dropZone.addEventListener(
     "dragover",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
@@ -72,14 +123,50 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "drop",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
-        selectedFiles =
+        let duplicateFiles = [];
+
         Array.from(
             e.dataTransfer.files
-        );
+        )
+            .forEach(file => {
+
+                const exists =
+                    selectedFiles.some(
+                        f =>
+                            f.name === file.name
+                            &&
+                            f.size === file.size
+                    );
+
+                if (exists) {
+
+                    duplicateFiles.push(
+                        file.name
+                    );
+
+                    return;
+                }
+
+                selectedFiles.push(file);
+
+            });
+
+        if (
+            duplicateFiles.length > 0
+        ) {
+
+            alert(
+                "These files already exist:\n\n"
+                +
+                [...new Set(duplicateFiles)]
+                    .join("\n")
+            );
+
+        }
 
         renderFiles();
 
@@ -90,27 +177,27 @@ dropZone.addEventListener(
    RENDER FILES
 =========================== */
 
-function renderFiles(){
+function renderFiles() {
 
-    if(selectedFiles.length === 0){
+    if (selectedFiles.length === 0) {
 
         summaryCard.style.display =
-        "none";
+            "none";
 
         fileListContainer.innerHTML =
-        "";
+            "";
 
         return;
 
     }
 
     summaryCard.style.display =
-    "flex";
+        "flex";
 
     let totalBytes = 0;
 
     fileListContainer.innerHTML =
-    "";
+        "";
 
     selectedFiles.forEach(
 
@@ -120,7 +207,7 @@ function renderFiles(){
         ) => {
 
             totalBytes +=
-            file.size;
+                file.size;
 
             fileListContainer.innerHTML += `
 
@@ -183,18 +270,18 @@ function renderFiles(){
     );
 
     totalFiles.innerHTML =
-    selectedFiles.length;
+        selectedFiles.length;
 
     totalSize.innerHTML =
-    (
-        totalBytes
-        /
-        1024
-        /
-        1024
-    ).toFixed(2)
-    +
-    " MB";
+        (
+            totalBytes
+            /
+            1024
+            /
+            1024
+        ).toFixed(2)
+        +
+        " MB";
 
 }
 
@@ -202,7 +289,7 @@ function renderFiles(){
    DELETE FILE
 =========================== */
 
-function deleteFile(index){
+function deleteFile(index) {
 
     selectedFiles.splice(
         index,
@@ -211,52 +298,54 @@ function deleteFile(index){
 
     renderFiles();
 
+    if (
+        selectedFiles.length === 0
+    ) {
+        excelFiles.value = "";
+    }
+
 }
 
 /* ===========================
    EXCEL PREVIEW
 =========================== */
 
-function previewExcel(index){
+function previewExcel(index) {
 
     const file =
-    selectedFiles[index];
+        selectedFiles[index];
 
     document.getElementById(
         "pdfPreviewFrame"
     ).src =
-    "";
+        "";
 
     document.querySelector(
         "#pdfPreviewModal .modal-title"
     ).innerHTML =
-    file.name;
+        file.name;
 
     const modal =
-    new bootstrap.Modal(
-        document.getElementById(
-            "pdfPreviewModal"
-        )
-    );
+        new bootstrap.Modal(
+            document.getElementById(
+                "pdfPreviewModal"
+            )
+        );
 
     modal.show();
 
 }
-
 /* ===========================
    SUBMIT
 =========================== */
 
 excelToPdfForm.addEventListener(
     "submit",
-    function(e){
+    function (e) {
+
         e.preventDefault();
 
-         if(
-            !validateFiles(selectedFiles)){
-            return;
-        }
-        if(selectedFiles.length === 0){
+        if (selectedFiles.length === 0) {
 
             alert(
                 "Please select Excel files"
@@ -266,8 +355,16 @@ excelToPdfForm.addEventListener(
 
         }
 
+        if (
+            !validateFiles(
+                selectedFiles
+            )
+        ) {
+            return;
+        }
+
         const formData =
-        new FormData();
+            new FormData();
 
         selectedFiles.forEach(
             file => {
@@ -308,73 +405,229 @@ excelToPdfForm.addEventListener(
             ).value
         );
 
+        /* Freeze UI */
+
+        convertBtn.disabled =
+            true;
+
+        excelFiles.disabled =
+            true;
+
+        document
+            .querySelectorAll(
+                ".btn-danger"
+            )
+            .forEach(
+                btn =>
+                    btn.disabled =
+                    true
+            );
+
+        document
+            .querySelectorAll(
+                ".btn-primary"
+            )
+            .forEach(
+                btn =>
+                    btn.disabled =
+                    true
+            );
+
+        /* Hide upload section */
+
+        document.getElementById(
+            "uploadSection"
+        ).style.display =
+            "none";
+
+        progressContainer.style.display =
+            "block";
+        progressBar.style.width =
+            "25%";
+
+        progressBar.innerHTML =
+            "25%";
+        
+        setTimeout(() => {
         fetch(
             "/excel-to-pdf-ajax",
             {
-                method:"POST",
-                body:formData
+                method: "POST",
+                body: formData
             }
         )
-        .then(
-            response =>
-            response.json()
-        )
-        .then(
-            result => {
+            .then(
+                response => {
 
-                if(result.success){
+                    if (
+                        !response.ok
+                    ) {
+                        throw new Error(
+                            "Server error"
+                        );
+                    }
 
-                    buildResult(
-                        result
-                    );
+                    return response.json();
 
                 }
-                else{
+            )
+            .then(
+                result => {
 
+                    progressBar.style.width =
+                        "75%";
+
+                    progressBar.innerHTML =
+                        "75%";
+
+                    if (
+                        result.success
+                    ) {
+                        progressBar.style.width =
+                            "100%";
+
+                        progressBar.innerHTML =
+                            "100%";
+
+                        setTimeout(() => {
+
+                            progressContainer.style.display =
+                                "none";
+
+                        }, 500);
+                        buildResult(
+                            result
+                        );
+
+                    }
+                    else {
+
+                        convertBtn.disabled =
+                            false;
+
+                        excelFiles.disabled =
+                            false;
+
+                        document
+                            .querySelectorAll(
+                                ".btn-danger"
+                            )
+                            .forEach(
+                                btn =>
+                                    btn.disabled =
+                                    false
+                            );
+
+                        document
+                            .querySelectorAll(
+                                ".btn-primary"
+                            )
+                            .forEach(
+                                btn =>
+                                    btn.disabled =
+                                    false
+                            );
+
+                        document.getElementById(
+                            "uploadSection"
+                        ).style.display =
+                            "block";
+
+                        progressContainer.style.display =
+                            "none";
+
+                        progressBar.style.width =
+                            "0%";
+
+                        progressBar.innerHTML =
+                            "0%";
+
+                        alert(
+                            result.message
+                        );
+
+                    }
+
+                }
+            )
+            .catch(
+                error => {
+
+                    convertBtn.disabled =
+                        false;
+
+                    excelFiles.disabled =
+                        false;
+
+                    document
+                        .querySelectorAll(
+                            ".btn-danger"
+                        )
+                        .forEach(
+                            btn =>
+                                btn.disabled =
+                                false
+                        );
+
+                    document
+                        .querySelectorAll(
+                            ".btn-primary"
+                        )
+                        .forEach(
+                            btn =>
+                                btn.disabled =
+                                false
+                        );
+
+                    document.getElementById(
+                        "uploadSection"
+                    ).style.display =
+                        "block";
+                    progressContainer.style.display =
+                        "none";
+
+                    progressBar.style.width =
+                        "0%";
+
+                    progressBar.innerHTML =
+                        "0%";
                     alert(
-                        result.message
+                        error.message ||
+                        "Conversion failed."
                     );
 
                 }
-
-            }
-        )
-        .catch(
-            error => {
-
-                alert(
-                    "Conversion failed"
-                );
-
-            }
-        );
+            );
+        }, 100);
 
     }
 );
+
+
 
 /* ===========================
    RESULT
 =========================== */
 
-function buildResult(result){
+function buildResult(result) {
 
     document.getElementById(
         "uploadSection"
     ).style.display =
-    "none";
+        "none";
 
     document.getElementById(
         "resultCard"
     ).style.display =
-    "block";
+        "block";
 
     const container =
-    document.getElementById(
-        "resultFilesContainer"
-    );
+        document.getElementById(
+            "resultFilesContainer"
+        );
 
     container.innerHTML =
-    "";
+        "";
 
     result.files.forEach(
         file => {
@@ -437,12 +690,12 @@ function buildResult(result){
     document.getElementById(
         "resultFiles"
     ).innerHTML =
-    result.files.length;
+        result.files.length;
 
     document.getElementById(
         "resultSuccess"
     ).innerHTML =
-    result.files.length;
+        result.files.length;
 
 }
 
@@ -450,21 +703,21 @@ function buildResult(result){
    RESULT PREVIEW
 =========================== */
 
-function previewResultPdf(fileName){
+function previewResultPdf(fileName) {
 
     document.getElementById(
         "pdfPreviewFrame"
     ).src =
-    "/preview-converted-pdf?fileName="
-    +
-    encodeURIComponent(fileName);
+        "/preview-converted-pdf?fileName="
+        +
+        encodeURIComponent(fileName);
 
     const modal =
-    new bootstrap.Modal(
-        document.getElementById(
-            "pdfPreviewModal"
-        )
-    );
+        new bootstrap.Modal(
+            document.getElementById(
+                "pdfPreviewModal"
+            )
+        );
 
     modal.show();
 
@@ -480,7 +733,19 @@ document.getElementById(
     "click",
     function(){
 
-        location.reload();
+        fetch(
+            "/delete-temp-files",
+            {
+                method: "POST"
+            }
+        )
+        .finally(
+            () => {
+
+                location.reload();
+
+            }
+        );
 
     }
 );
@@ -493,7 +758,7 @@ document.getElementById(
     "darkModeBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
         document.body.classList.toggle(
             "dark-mode"
@@ -502,3 +767,51 @@ document.getElementById(
     }
 );
 
+
+
+function validateFiles(files) {
+
+    for (const file of files) {
+
+        const fileName =
+            file.name.toLowerCase();
+
+        if (
+            file.size >
+            50 * 1024 * 1024
+        ) {
+            alert(
+                file.name +
+                " exceeds 50 MB."
+            );
+
+            return false;
+        }
+
+        const validType =
+            file.type ===
+            "application/vnd.ms-excel"
+            ||
+            file.type ===
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+        const validExtension =
+            fileName.endsWith(".xls")
+            ||
+            fileName.endsWith(".xlsx");
+
+        if (
+            !validType &&
+            !validExtension
+        ) {
+            alert(
+                file.name +
+                " is not a valid Excel file."
+            );
+
+            return false;
+        }
+    }
+
+    return true;
+}

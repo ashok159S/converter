@@ -32,6 +32,33 @@ h1{
 }
 
 /* =================================
+   UPLOAD SECTION
+================================= */
+
+.upload-section{
+    transition:0.3s ease;
+}
+
+/* =================================
+   FREEZE UI
+================================= */
+
+.conversion-active{
+    pointer-events:none;
+    opacity:0.7;
+}
+
+/* =================================
+   PROGRESS
+================================= */
+
+#progressSection{
+    text-align:center;
+}
+
+.progress-bar{
+    transition:width .25s linear;
+}==================
    COMMON WIDTH
 ================================= */
 
@@ -43,6 +70,8 @@ h1{
 .merge-btn{
     width:70%;
     margin:auto;
+    
+
 }
 
 /* =================================
@@ -190,6 +219,7 @@ h1{
 
 .progress-bar{
     font-weight:600;
+    
 }
 
 /* =================================

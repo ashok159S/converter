@@ -1,209 +1,255 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>PDF Page Remover</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <link rel="stylesheet"
-          th:href="@{/css/pdf-page-remover.css}">
+    <link rel="stylesheet" th:href="@{/css/pdf-page-remover.css}">
 
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
 
-    <div class="container">
+        <div class="container">
 
-         <a class="navbar-brand d-flex align-items-center"
-        href="/">
+            <a class="navbar-brand d-flex align-items-center" href="/">
 
-            <img src="/images/logo.png"
-                alt="ConvertNova"
-                height="50"
-                class="me-2">
+                <img src="/images/logo.png" alt="ConvertNova" height="50" class="me-2">
 
-        </a>
+            </a>
 
-        <button id="darkModeBtn"
-                class="btn btn-outline-dark">
+            <button id="darkModeBtn" class="btn btn-outline-dark">
 
-            🌙 Dark Mode
+                🌙 Dark Mode
 
-        </button>
+            </button>
 
-    </div>
+        </div>
 
-</nav>
+    </nav>
 
-<div class="container py-5">
+    <div class="container py-5">
 
-    <div class="converter-card">
+        <div class="converter-card">
 
-        <h1 class="text-center">
+            <h1 class="text-center">
 
-            PDF Page Remover
+                PDF Page Remover
 
-        </h1>
+            </h1>
 
-        <p class="text-center text-muted mb-4">
+            <p class="text-center text-muted mb-4">
 
-            Remove selected pages from PDF files
+                Remove selected pages from PDF files
 
-        </p>
+            </p>
 
-        <!-- UPLOAD SECTION -->
+            <!-- UPLOAD SECTION -->
 
-        <div id="uploadSection">
+            <div id="uploadSection">
 
-            <form id="removeForm">
+                <form id="removeForm">
 
-                <!-- SUMMARY -->
+                    <!-- SUMMARY -->
 
-                <div id="summaryCard"
-                     class="summary-card"
-                     style="display:none;">
+                    <div id="summaryCard" class="summary-card" style="display:none;">
 
-                    <div>
+                        <div>
 
-                        <strong>Total Files:</strong>
+                            <strong>Total Files:</strong>
 
-                        <span id="totalFiles">
+                            <span id="totalFiles">
 
-                            0
+                                0
 
-                        </span>
+                            </span>
 
-                    </div>
+                        </div>
 
-                    <div>
+                        <div>
 
-                        <strong>Total Size:</strong>
+                            <strong>Total Size:</strong>
 
-                        <span id="totalSize">
+                            <span id="totalSize">
 
-                            0 MB
+                                0 MB
 
-                        </span>
+                            </span>
+
+                        </div>
 
                     </div>
 
-                </div>
+                    <!-- FILE LIST -->
 
-                <!-- FILE LIST -->
+                    <div id="fileListContainer">
 
-                <div id="fileListContainer">
+                    </div>
 
-                </div>
+                    <!-- UPLOAD AREA -->
 
-                <!-- UPLOAD AREA -->
+                    <div id="dropZone" class="upload-area">
 
-                <div id="dropZone"
-                     class="upload-area">
+                        <i class="bi bi-file-earmark-pdf-fill upload-icon"></i>
 
-                    <i class="bi bi-file-earmark-pdf-fill upload-icon"></i>
+                        <h3>
 
-                    <h3>
+                            Drag & Drop PDF Files Here
 
-                        Drag & Drop PDF Files Here
+                        </h3>
 
-                    </h3>
+                        <p>
 
-                    <p>
+                            PDF Files Only
 
-                        PDF Files Only
+                        </p>
 
-                    </p>
+                        <input type="file" id="pdfFiles" accept=".pdf" multiple hidden>
+                        <p class="text-muted">
 
-                    <input type="file"
-                           id="pdfFiles"
-                           accept=".pdf"
-                           multiple
-                           hidden>
-                       <p class="text-muted">
+                            Maximum file size:
+                            50 MB
 
-                    Maximum file size:
-                    50 MB
+                        </p>
 
-                    </p>
+                        <div class="mt-3">
 
-                    <button type="button"
-                            class="btn btn-primary btn-lg"
-                            onclick="document.getElementById('pdfFiles').click()">
+                            <button type="button" class="btn btn-primary btn-lg"
+                                onclick="document.getElementById('pdfFiles').click()">
 
-                        Choose PDF Files
+                                Choose PDF Files
 
-                    </button>
+                            </button>
 
-                </div>
+                            <button type="button" id="addMoreBtn" class="btn btn-outline-primary btn-lg ms-2">
 
-                <!-- PAGE SETTINGS -->
+                                + Add More Files
 
-                <div class="settings-card">
+                            </button>
 
-                    <label class="form-label fw-bold">
+                        </div>
+                    </div>
 
-                        Pages To Remove
+                    <!-- PAGE SETTINGS -->
 
-                    </label>
+                    <div class="settings-card">
 
-                    <input type="text"
-                           id="pagesToRemove"
-                           class="form-control"
-                           placeholder="Example: 1-3,5,8-10">
+                        <label class="form-label fw-bold">
 
-                    <div class="form-text mt-2">
+                            Pages To Remove
 
-                        Examples:
-                        5 |
-                        1-3 |
-                        2,5,8 |
-                        1-3,5,8-10
+                        </label>
+
+                        <input type="text" id="pagesToRemove" class="form-control" placeholder="Example: 1-3,5,8-10">
+
+                        <div class="form-text mt-2">
+
+                            Examples:
+                            5 |
+                            1-3 |
+                            2,5,8 |
+                            1-3,5,8-10
+
+                        </div>
+
+                    </div>
+
+                    <!-- REMOVE BUTTON -->
+
+                    <div class="text-center mt-4">
+
+                        <button id="removeBtn" type="submit" class="btn btn-primary btn-lg">
+
+                            Remove Pages
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <!-- PROGRESS -->
+
+            <div id="progressSection" class="mt-4" style="display:none;">
+
+                <div class="progress">
+
+                    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated"
+                        style="width:0%">
+
+                        0%
 
                     </div>
 
                 </div>
 
-                <!-- REMOVE BUTTON -->
+            </div>
 
-                <div class="text-center mt-4">
+            <!-- RESULT SECTION -->
 
-                    <button id="removeBtn"
-                            type="submit"
-                            class="btn btn-primary btn-lg">
+            <div id="resultCard" class="mt-5" style="display:none;">
 
-                        Remove Pages
+                <div class="alert alert-success">
 
-                    </button>
+                    <h4>
+
+                        🎉 PDF Page Removal Completed
+
+                    </h4>
 
                 </div>
 
-                <!-- PROGRESS -->
+                <div class="result-header">
 
-                <div id="progressSection"
-                     class="mt-4"
-                     style="display:none;">
+                    <div class="row fw-bold text-center">
 
-                    <div class="progress">
+                        <div class="col-md-3">
 
-                        <div id="progressBar"
-                             class="progress-bar progress-bar-striped progress-bar-animated"
-                             style="width:0%">
+                            File Name
 
-                            0%
+                        </div>
+
+                        <div class="col-md-2">
+
+                            Original Pages
+
+                        </div>
+
+                        <div class="col-md-2">
+
+                            Removed Pages
+
+                        </div>
+
+                        <div class="col-md-2">
+
+                            Final Pages
+
+                        </div>
+
+                        <div class="col-md-1">
+
+                            Preview
+
+                        </div>
+
+                        <div class="col-md-2">
+
+                            Download
 
                         </div>
 
@@ -211,100 +257,72 @@
 
                 </div>
 
-            </form>
+                <div id="processedFilesContainer">
 
-        </div>
+                </div>
 
-        <!-- RESULT SECTION -->
+                <div class="result-summary">
 
-        <div id="resultCard"
-             class="mt-5"
-             style="display:none;">
+                    Files:
+                    <span id="resultFiles">0</span>
 
-            <div class="alert alert-success">
+                    |
 
-                <h4>
+                    Pages Removed:
+                    <span id="resultRemovedPages">0</span>
 
-                    🎉 PDF Page Removal Completed
+                    |
 
-                </h4>
+                    Remaining Pages:
+                    <span id="resultRemainingPages">0</span>
 
-            </div>
+                </div>
 
-            <div class="result-header">
+                <div class="text-center mt-4">
 
-                <div class="row fw-bold text-center">
+                    <button id="removeMoreBtn" type="button" class="btn btn-secondary btn-lg">
 
-                    <div class="col-md-3">
+                        Remove More Pages
 
-                        File Name
-
-                    </div>
-
-                    <div class="col-md-2">
-
-                        Original Pages
-
-                    </div>
-
-                    <div class="col-md-2">
-
-                        Removed Pages
-
-                    </div>
-
-                    <div class="col-md-2">
-
-                        Final Pages
-
-                    </div>
-
-                    <div class="col-md-1">
-
-                        Preview
-
-                    </div>
-
-                    <div class="col-md-2">
-
-                        Download
-
-                    </div>
+                    </button>
 
                 </div>
 
             </div>
 
-            <div id="processedFilesContainer">
+        </div>
 
-            </div>
+    </div>
 
-            <div class="result-summary">
+    <!-- PDF PREVIEW MODAL -->
 
-                Files:
-                <span id="resultFiles">0</span>
+    <div class="modal fade" id="pdfPreviewModal">
 
-                |
+        <div class="modal-dialog modal-xl">
 
-                Pages Removed:
-                <span id="resultRemovedPages">0</span>
+            <div class="modal-content">
 
-                |
+                <div class="modal-header">
 
-                Remaining Pages:
-                <span id="resultRemainingPages">0</span>
+                    <h5>
 
-            </div>
+                        PDF Preview
 
-            <div class="text-center mt-4">
+                    </h5>
 
-                <button id="removeMoreBtn"
-                        type="button"
-                        class="btn btn-secondary btn-lg">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
 
-                    Remove More Pages
+                    </button>
 
-                </button>
+                </div>
+
+                <div class="modal-body p-0">
+
+                    <iframe id="previewFrame" width="100%" height="700" style="border:none;">
+
+                    </iframe>
+
+                </div>
 
             </div>
 
@@ -312,57 +330,12 @@
 
     </div>
 
-</div>
+    <script th:src="@{/js/pdf-page-remover.js}"></script>
 
-<!-- PDF PREVIEW MODAL -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
-<div class="modal fade"
-     id="pdfPreviewModal">
-
-    <div class="modal-dialog modal-xl">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h5>
-
-                    PDF Preview
-
-                </h5>
-
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-
-                </button>
-
-            </div>
-
-            <div class="modal-body p-0">
-
-                <iframe id="previewFrame"
-                        width="100%"
-                        height="700"
-                        style="border:none;">
-
-                </iframe>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<script th:src="@{/js/pdf-page-remover.js}"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-
-<script src="/js/common-validation.js"></script>
+    <script src="/js/common-validation.js"></script>
 
 </body>
 
 </html>
-

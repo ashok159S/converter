@@ -42,34 +42,100 @@ fileInput.addEventListener(
     function () {
 
         const incoming =
-            Array.from(this.files);
+            Array.from(
+                this.files
+            );
+
+        const duplicateNames = [];
+
+        const invalidFiles = [];
+
+        const filesToAdd = [];
 
         incoming.forEach(file => {
+
+            if (
+                !file.type.startsWith(
+                    "image/"
+                )
+            ) {
+
+                invalidFiles.push(
+                    file.name
+                );
+
+                return;
+
+            }
 
             const exists =
                 selectedFiles.some(
                     existing =>
-                        existing.name === file.name &&
-                        existing.size === file.size
+                        existing.name === file.name
                 );
 
-            if(!exists){
+            if (
+                exists
+            ) {
 
-                selectedFiles.push(file);
-                imageRotations.push(0);
+                duplicateNames.push(
+                    file.name
+                );
 
             }
-            else{
+            else {
 
-                alert(
-                        "Duplicate file skipped: "
-                        + file.name
-                    );
+                filesToAdd.push(
+                    file
+                );
+
             }
 
         });
 
+        filesToAdd.forEach(file => {
+
+            selectedFiles.push(
+                file
+            );
+
+            imageRotations.push(
+                0
+            );
+
+        });
+
+        if (
+            invalidFiles.length > 0
+        ) {
+
+            alert(
+                "Invalid files:\n\n"
+                +
+                invalidFiles.join(
+                    "\n"
+                )
+            );
+
+        }
+
+        if (
+            duplicateNames.length > 0
+        ) {
+
+            alert(
+                "Duplicate files:\n\n"
+                +
+                duplicateNames.join(
+                    "\n"
+                )
+            );
+
+        }
+
         renderFiles();
+
+        this.value = "";
 
     }
 );
@@ -117,23 +183,92 @@ dropZone.addEventListener(
                 e.dataTransfer.files
             );
 
+        const duplicateNames = [];
+
+        const invalidFiles = [];
+
+        const filesToAdd = [];
+
         incoming.forEach(file => {
+
+            if (
+                !file.type.startsWith(
+                    "image/"
+                )
+            ) {
+
+                invalidFiles.push(
+                    file.name
+                );
+
+                return;
+
+            }
 
             const exists =
                 selectedFiles.some(
                     existing =>
-                        existing.name === file.name &&
-                        existing.size === file.size
+                        existing.name === file.name
                 );
 
-            if(!exists){
+            if (
+                exists
+            ) {
 
-                selectedFiles.push(file);
-                imageRotations.push(0);
+                duplicateNames.push(
+                    file.name
+                );
+
+            }
+            else {
+
+                filesToAdd.push(
+                    file
+                );
 
             }
 
         });
+
+        filesToAdd.forEach(file => {
+
+            selectedFiles.push(
+                file
+            );
+
+            imageRotations.push(
+                0
+            );
+
+        });
+
+        if (
+            invalidFiles.length > 0
+        ) {
+
+            alert(
+                "Invalid files:\n\n"
+                +
+                invalidFiles.join(
+                    "\n"
+                )
+            );
+
+        }
+
+        if (
+            duplicateNames.length > 0
+        ) {
+
+            alert(
+                "Duplicate files:\n\n"
+                +
+                duplicateNames.join(
+                    "\n"
+                )
+            );
+
+        }
 
         renderFiles();
 
@@ -144,11 +279,11 @@ dropZone.addEventListener(
    RENDER FILES
 =========================== */
 
-function renderFiles(){
+function renderFiles() {
 
     fileList.innerHTML = "";
 
-    if(selectedFiles.length === 0){
+    if (selectedFiles.length === 0) {
 
         summaryCard.classList.add(
             "d-none"
@@ -181,26 +316,26 @@ function renderFiles(){
         ).toFixed(2) + " MB";
 
     selectedFiles.forEach(
-        (file,index) => {
+        (file, index) => {
 
-        const reader =
-            new FileReader();
+            const reader =
+                new FileReader();
 
-        reader.onload =
-            function(e){
+            reader.onload =
+                function (e) {
 
-            const card =
-                document.createElement(
-                    "div"
-                );
+                    const card =
+                        document.createElement(
+                            "div"
+                        );
 
-            card.className =
-                "card mb-3 shadow-sm draggable-card";
-                
-                card.draggable = true;
-                card.dataset.index = index;
+                    card.className =
+                        "card mb-3 shadow-sm draggable-card";
 
-            card.innerHTML = `
+                    card.draggable = true;
+                    card.dataset.index = index;
+
+                    card.innerHTML = `
                 <div class="card-body">
 
                     <div class="row align-items-center">
@@ -282,63 +417,63 @@ function renderFiles(){
 
                 </div>
             `;
-            card.addEventListener(
-                "dragstart",
-                dragStart
-            );
+                    card.addEventListener(
+                        "dragstart",
+                        dragStart
+                    );
 
-            card.addEventListener(
-                "dragover",
-                dragOver
-            );
+                    card.addEventListener(
+                        "dragover",
+                        dragOver
+                    );
 
-            card.addEventListener(
-                "drop",
-                dropCard
-            );
+                    card.addEventListener(
+                        "drop",
+                        dropCard
+                    );
 
-            card.addEventListener(
-                "dragend",
-                dragEnd
-            );
+                    card.addEventListener(
+                        "dragend",
+                        dragEnd
+                    );
 
-            fileList.appendChild(card);
+                    fileList.appendChild(card);
 
-        };
+                };
 
-        reader.readAsDataURL(file);
+            reader.readAsDataURL(file);
 
-    });
+        });
 
 }
 
 
-function rotateLeft(index){
+function rotateLeft(index) {
 
     imageRotations[index] -= 90;
 
     renderFiles();
 }
 
-function rotateRight(index){
+function rotateRight(index) {
 
     imageRotations[index] += 90;
 
     renderFiles();
 }
 
-function removeFile(index){
+function removeFile(index) {
 
-    selectedFiles.splice(index,1);
+    selectedFiles.splice(index, 1);
 
-    imageRotations.splice(index,1);
+    imageRotations.splice(index, 1);
 
     renderFiles();
 }
 
 let draggedIndex = null;
 
-function dragStart(){
+function dragStart() {
 
     draggedIndex =
         Number(
@@ -350,12 +485,12 @@ function dragStart(){
     );
 }
 
-function dragOver(e){
+function dragOver(e) {
 
     e.preventDefault();
 }
 
-function dropCard(){
+function dropCard() {
 
     const targetIndex =
         Number(
@@ -388,19 +523,19 @@ function dropCard(){
 
     renderFiles();
 }
-function dragEnd(){
+function dragEnd() {
 
     document
-    .querySelectorAll(
-        ".draggable-card"
-    )
-    .forEach(card => {
+        .querySelectorAll(
+            ".draggable-card"
+        )
+        .forEach(card => {
 
-        card.classList.remove(
-            "dragging"
-        );
+            card.classList.remove(
+                "dragging"
+            );
 
-    });
+        });
 }
 
 
@@ -421,23 +556,62 @@ const progressBar =
 
 form.addEventListener(
     "submit",
-    async function(e){
+    async function (e) {
 
         e.preventDefault();
 
-        
-         if(
+
+        if (
             !validateFiles(selectedFiles)
-        ){
+        ) {
             return;
         }
 
-        if(selectedFiles.length === 0){
+        if (selectedFiles.length === 0) {
 
             alert("Please select files");
 
             return;
         }
+
+        /* ===========================
+   FREEZE UI
+=========================== */
+
+        fileInput.disabled = true;
+
+        addMoreBtn.disabled = true;
+
+        document.getElementById(
+            "convertBtn"
+        ).disabled = true;
+
+        document.querySelectorAll(
+            "#fileList button"
+        ).forEach(btn => {
+
+            btn.disabled = true;
+
+        });
+
+        summaryCard.style.display =
+            "none";
+
+        fileList.style.display =
+            "none";
+
+        dropZone.style.display =
+            "none";
+
+        document.getElementById(
+            "settingsCard"
+        ).style.display =
+            "none";
+
+        document.getElementById(
+            "conversionModeSection"
+        ).style.display =
+            "none";
 
         progressSection.style.display =
             "block";
@@ -448,7 +622,7 @@ form.addEventListener(
         const formData =
             new FormData();
 
-        selectedFiles.forEach((file,index) => {
+        selectedFiles.forEach((file, index) => {
 
             formData.append(
                 "images",
@@ -487,14 +661,14 @@ form.addEventListener(
 
         xhr.upload.addEventListener(
             "progress",
-            function(event){
+            function (event) {
 
-                if(event.lengthComputable){
+                if (event.lengthComputable) {
 
                     const percent =
                         Math.round(
                             (event.loaded /
-                             event.total) * 100
+                                event.total) * 100
                         );
 
                     progressBar.style.width =
@@ -503,7 +677,7 @@ form.addEventListener(
                     progressBar.innerHTML =
                         percent + "%";
 
-                    if(percent === 100){
+                    if (percent === 100) {
 
                         progressBar.classList.remove(
                             "progress-bar-animated"
@@ -514,42 +688,45 @@ form.addEventListener(
             }
         );
 
-       
-        
-        xhr.onreadystatechange =
-            function(){
 
-                if(xhr.readyState === 4 &&
-                   xhr.status === 200){
+
+        xhr.onreadystatechange =
+            function () {
+
+                if (xhr.readyState === 4 &&
+                    xhr.status === 200) {
 
                     const result =
                         JSON.parse(
                             xhr.responseText
                         );
 
-                    if(result.success){
+                    if (result.success) {
 
-                            conversionCompleted = true;
-                            document.querySelectorAll(
-                                "#fileList button"
-                            ).forEach(btn => {
+                        conversionCompleted = true;
+                        document.querySelectorAll(
+                            "#fileList button"
+                        ).forEach(btn => {
 
-                                btn.style.display = "none";
+                            btn.style.display = "none";
 
-                            });
+                        });
 
-                            document.querySelectorAll(
-                                ".drag-handle"
-                            ).forEach(handle => {
 
-                                handle.style.display = "none";
 
-                            });
+                        document.querySelectorAll(
+                            ".drag-handle"
+                        ).forEach(handle => {
 
-                        document.getElementById(
-                            "resultCard"
-                        ).style.display = "block";
+                            handle.style.display = "none";
 
+                        });
+
+                        progressBar.style.width =
+                            "100%";
+
+                        progressBar.innerHTML =
+                            "100%";
 
                         document.getElementById(
                             "settingsCard"
@@ -561,19 +738,19 @@ form.addEventListener(
                         ).style.display =
                             "none";
 
-                            document.getElementById(
-                                    "mergeInfoCard"
-                                ).style.display =
-                                    "block";
+                        document.getElementById(
+                            "mergeInfoCard"
+                        ).style.display =
+                            "block";
 
-                        if(result.separateMode){
+                        if (result.separateMode) {
 
                             document.getElementById(
                                 "mergeInfoCard"
                             ).style.display =
-                                "none";                      
+                                "none";
                         }
-                        else{
+                        else {
 
                             document.getElementById(
                                 "pdfName"
@@ -592,8 +769,21 @@ form.addEventListener(
                             "pdfSize"
                         ).innerHTML =
                             result.size;
-                            
-                        if(result.separateMode){
+
+
+                        setTimeout(() => {
+
+                            progressSection.style.display =
+                                "none";
+
+                            document.getElementById(
+                                "resultCard"
+                            ).style.display =
+                                "block";
+
+                        }, 800);
+
+                        if (result.separateMode) {
 
                             document.getElementById(
                                 "downloadBtn"
@@ -638,10 +828,10 @@ form.addEventListener(
 
                             </div>
                             `;
-                                                    
-                        result.files.forEach(file => {
-                                                                
-                        downloads.innerHTML += `
+
+                            result.files.forEach(file => {
+
+                                downloads.innerHTML += `
                         <div class="card mb-2 shadow-sm">
 
                             <div class="card-body">
@@ -713,7 +903,7 @@ form.addEventListener(
 
                             progressSection.style.display = "none";
 
-                        },1500);
+                        }, 1500);
 
                         document.getElementById(
                             "dropZone"
@@ -729,9 +919,51 @@ form.addEventListener(
                             "none";
 
                     }
+                    else {
+
+                        fileInput.disabled = false;
+
+                        addMoreBtn.disabled = false;
+
+                        document.getElementById(
+                            "convertBtn"
+                        ).disabled = false;
+
+                        summaryCard.style.display =
+                            "";
+
+                        fileList.style.display =
+                            "block";
+
+                        dropZone.style.display =
+                            "block";
+
+                        document.getElementById(
+                            "settingsCard"
+                        ).style.display =
+                            "block";
+
+                        document.getElementById(
+                            "conversionModeSection"
+                        ).style.display =
+                            "block";
+
+                        progressSection.style.display =
+                            "none";
+
+                        progressBar.style.width =
+                            "0%";
+
+                        progressBar.innerHTML =
+                            "0%";
+
+                        alert(
+                            result.message
+                        );
+
+                    }
 
                 }
-
             };
 
         xhr.open(
@@ -743,126 +975,208 @@ form.addEventListener(
             formData
         );
 
+        xhr.onerror =
+            function () {
+
+                fileInput.disabled = false;
+
+                addMoreBtn.disabled = false;
+
+                document.getElementById(
+                    "convertBtn"
+                ).disabled = false;
+
+                summaryCard.style.display =
+                    "";
+
+                fileList.style.display =
+                    "block";
+
+                dropZone.style.display =
+                    "block";
+
+                document.getElementById(
+                    "settingsCard"
+                ).style.display =
+                    "block";
+
+                document.getElementById(
+                    "conversionModeSection"
+                ).style.display =
+                    "block";
+
+                progressSection.style.display =
+                    "none";
+
+                progressBar.style.width =
+                    "0%";
+
+                progressBar.innerHTML =
+                    "0%";
+
+                alert(
+                    "Image to PDF conversion failed. Please try again."
+                );
+
+            };
+
     }
 );
-
 document
-.getElementById(
-    "convertMoreBtn"
-)
-.addEventListener(
-    "click",
-    function(){
+    .getElementById(
+        "convertMoreBtn"
+    )
+    .addEventListener(
+        "click",
+        function () {
 
-        selectedFiles = [];
+            fetch(
+                "/delete-image-to-pdf-temp-files",
+                {
+                    method: "POST"
+                }
+            )
+                .finally(() => {
 
-        conversionCompleted = false;
+                    selectedFiles = [];
 
-        totalFiles.innerHTML = "0";
-        totalSize.innerHTML = "0 MB";
+                    imageRotations = [];
 
-        fileList.innerHTML = "";
+                    conversionCompleted = false;
 
-        fileInput.value = "";
+                    totalFiles.innerHTML = "0";
 
-        summaryCard.classList.add(
-            "d-none"
-        );
+                    totalSize.innerHTML = "0 MB";
 
-        document
-        .getElementById(
-            "resultCard"
-        )
-        .style.display =
-            "none";
+                    fileList.innerHTML = "";
 
-        document.getElementById(
-            "fileList"
-        ).style.display =
-            "block";
+                    fileInput.value = "";
 
-        document
-        .getElementById(
-            "settingsCard"
-        )
-        .style.display =
-            "block";
+                    summaryCard.classList.add(
+                        "d-none"
+                    );
 
-        document
-        .getElementById(
-            "conversionModeSection"
-        )
-        .style.display =
-            "block";
+                    document
+                        .getElementById(
+                            "resultCard"
+                        )
+                        .style.display =
+                        "none";
 
-        document
-        .getElementById(
-            "dropZone"
-        )
-        .style.display =
-            "block";
+                    document
+                        .getElementById(
+                            "fileList"
+                        )
+                        .style.display =
+                        "block";
 
-        document
-        .getElementById(
-            "convertBtn"
-        )
-        .style.display =
-            "block";
+                    document
+                        .getElementById(
+                            "settingsCard"
+                        )
+                        .style.display =
+                        "block";
 
-        progressSection.style.display =
-            "none";
+                    document
+                        .getElementById(
+                            "conversionModeSection"
+                        )
+                        .style.display =
+                        "block";
 
-        progressBar.style.width =
-            "0%";
+                    document
+                        .getElementById(
+                            "dropZone"
+                        )
+                        .style.display =
+                        "block";
 
-        progressBar.innerHTML =
-            "0%";
-        
-        progressBar.classList.add(
-            "progress-bar-animated"
-        );
+                    document
+                        .getElementById(
+                            "convertBtn"
+                        )
+                        .style.display =
+                        "block";
 
-        document.getElementById(
-            "pdfName"
-        ).value =
-            "merged.pdf";
+                    document
+                        .getElementById(
+                            "convertBtn"
+                        )
+                        .disabled =
+                        false;
 
-        document.getElementById(
-            "pageCount"
-        ).innerHTML =
-            "0";
+                    fileInput.disabled =
+                        false;
 
-        document.getElementById(
-            "pdfSize"
-        ).innerHTML =
-            "0 MB";
-        
-        document.getElementById(
-            "mergeInfoCard"
-        ).style.display =
-            "block";
+                    addMoreBtn.disabled =
+                        false;
 
-        document.getElementById(
-            "downloadBtn"
-        ).style.display =
-            "inline-block";
+                    progressSection.style.display =
+                        "none";
 
-        document.getElementById(
-            "separateDownloads"
-        ).innerHTML =
-            "";
-          
+                    progressBar.style.width =
+                        "0%";
 
+                    progressBar.innerHTML =
+                        "0%";
 
-        window.scrollTo({
-            top:0,
-            behavior:"smooth"
-        });
+                    progressBar.classList.add(
+                        "progress-bar-animated"
+                    );
 
-    }
-);
+                    document
+                        .getElementById(
+                            "pdfName"
+                        )
+                        .value =
+                        "merged.pdf";
 
-function openPreview(imageSrc){
+                    document
+                        .getElementById(
+                            "pageCount"
+                        )
+                        .innerHTML =
+                        "0";
+
+                    document
+                        .getElementById(
+                            "pdfSize"
+                        )
+                        .innerHTML =
+                        "0 MB";
+
+                    document
+                        .getElementById(
+                            "mergeInfoCard"
+                        )
+                        .style.display =
+                        "block";
+
+                    document
+                        .getElementById(
+                            "downloadBtn"
+                        )
+                        .style.display =
+                        "inline-block";
+
+                    document
+                        .getElementById(
+                            "separateDownloads"
+                        )
+                        .innerHTML =
+                        "";
+
+                    window.scrollTo({
+                        top: 0,
+                        behavior: "smooth"
+                    });
+
+                });
+
+        }
+    );
+
+function openPreview(imageSrc) {
 
     document.getElementById(
         "previewModalImage"
@@ -898,7 +1212,7 @@ document.getElementById(
     "downloadBtn"
 ).addEventListener(
     "click",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
@@ -916,7 +1230,7 @@ document.getElementById(
     }
 );
 
-function previewSeparatePdf(fileName){
+function previewSeparatePdf(fileName) {
 
     document.getElementById(
         "previewFrame"
@@ -936,12 +1250,12 @@ function previewSeparatePdf(fileName){
 
 document.addEventListener(
     "click",
-    function(e){
+    function (e) {
 
-        if(
+        if (
             e.target &&
             e.target.id === "previewMergedBtn"
-        ){
+        ) {
 
             document.getElementById(
                 "previewFrame"
@@ -957,6 +1271,23 @@ document.addEventListener(
 
             modal.show();
         }
+    }
+
+
+);
+
+/* ===========================
+   DELETE TEMP FILES
+=========================== */
+
+window.addEventListener(
+    "beforeunload",
+    function () {
+
+        navigator.sendBeacon(
+            "/delete-image-to-pdf-temp-files"
+        );
+
     }
 );
 

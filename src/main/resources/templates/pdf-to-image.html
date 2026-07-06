@@ -5,314 +5,290 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>PDF To JPG Converter</title>
 
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet"
-        th:href="@{/css/pdf-to-image.css}">
+    <link rel="stylesheet" th:href="@{/css/pdf-to-image.css}">
 
-    <link rel="stylesheet"
-        th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg">
 
-    <div class="container">
+        <div class="container">
 
-        <a class="navbar-brand d-flex align-items-center"
-        href="/">
+            <a class="navbar-brand d-flex align-items-center" href="/">
 
-            <img src="/images/logo.png"
-                alt="ConvertNova"
-                height="50"
-                class="me-2">
+                <img src="/images/logo.png" alt="ConvertNova" height="50" class="me-2">
 
-        </a>
+            </a>
 
-        <div class="ms-auto">
+            <div class="ms-auto">
 
-            <button id="darkModeBtn"
-                    class="btn btn-outline-dark">
+                <button id="darkModeBtn" class="btn btn-outline-dark">
 
-                🌙 Dark Mode
+                    🌙 Dark Mode
 
-            </button>
+                </button>
+
+            </div>
 
         </div>
 
-    </div>
+    </nav>
 
-</nav>
-
-<!-- ===========================
+    <!-- ===========================
      MAIN CONTAINER
 =========================== -->
 
-<div class="container py-5">
+    <div class="container py-5">
 
-    <div class="row justify-content-center">
+        <div class="row justify-content-center">
 
-        <div class="col-lg-10">
+            <div class="col-lg-10">
 
-            <div class="card converter-card">
+                <div class="card converter-card">
 
-                <div class="card-body p-5">
+                    <div class="card-body p-5">
 
-                    <h1 class="text-center mb-3">
+                        <h1 class="text-center mb-3">
 
-                        PDF To  Image Converter
+                            PDF To Image Converter
 
-                    </h1>
+                        </h1>
 
-                    <p class="text-center text-muted mb-5">
+                        <p class="text-center text-muted mb-5">
 
-                        Upload PDF files,
-                        customize image settings,
-                        and convert PDF pages into JPG images.
+                            Upload PDF files,
+                            customize image settings,
+                            and convert PDF pages into JPG images.
 
-                    </p>
+                        </p>
 
-                        <form id="convertForm"
-                            enctype="multipart/form-data">
+                        <form id="convertForm" enctype="multipart/form-data">
 
-                        <!-- ===========================
+                            <!-- ===========================
                              FILE SUMMARY
                         ============================ -->
 
-                        <div id="summaryCard"
-                             class="alert alert-primary d-none">
+                            <div id="summaryCard" class="alert alert-primary d-none">
 
-                            <div class="row">
+                                <div class="row">
 
-                                <div class="col-md-6">
+                                    <div class="col-md-6">
 
-                                    <strong>Total Files:</strong>
+                                        <strong>Total Files:</strong>
 
-                                    <span id="totalFiles">
+                                        <span id="totalFiles">
 
-                                        0
+                                            0
 
-                                    </span>
+                                        </span>
 
-                                </div>
+                                    </div>
 
-                                <div class="col-md-6">
+                                    <div class="col-md-6">
 
-                                    <strong>Total Size:</strong>
+                                        <strong>Total Size:</strong>
 
-                                    <span id="totalSize">
+                                        <span id="totalSize">
 
-                                        0 MB
+                                            0 MB
 
-                                    </span>
+                                        </span>
+
+                                    </div>
 
                                 </div>
 
                             </div>
 
-                        </div>
-
-                        <!-- ===========================
+                            <!-- ===========================
                              FILE PREVIEW LIST
                         ============================ -->
 
-                        <div id="fileList">
+                            <div id="fileList">
 
-                        </div>
+                            </div>
 
-                        <!-- ===========================
+                            <!-- ===========================
                              DRAG & DROP AREA
                         ============================ -->
 
-                        <div id="dropZone"
-                             class="upload-area">
+                            <div id="uploadAreaWrapper">
 
-                            <i class="bi bi-cloud-arrow-up upload-icon"></i>
+                                <div id="dropZone" class="upload-area">
 
-                            <h3>
+                                    <i class="bi bi-cloud-arrow-up upload-icon"></i>
 
-                                Drag & Drop PDF Files Here
+                                    <h3>
 
-                            </h3>
+                                        Drag & Drop PDF Files Here
 
-                            <p>
+                                    </h3>
 
-                                Or click below to browse
+                                    <p>
 
-                            </p>
+                                        Or click below to browse
 
-                          <input type="file"
-                                id="pdfFile"
-                                name="pdfFile"
-                                class="d-none"
-                                accept=".pdf"
-                                required>
-                               <p class="text-muted">
+                                    </p>
 
-                    Maximum file size:
-                    50 MB
+                                    <input type="file" id="pdfFile" name="pdfFiles" class="d-none" accept=".pdf"
+                                        multiple>
+                                    <p class="text-muted">
 
-                    </p>
+                                        Maximum file size:
+                                        50 MB
 
-                            <button type="button"
-                                    class="btn btn-primary btn-lg mt-3"
-                                    onclick="document.getElementById('pdfFile').click()">
+                                    </p>
 
-                                Choose Files
+                                    <button type="button" class="btn btn-primary btn-lg mt-3"
+                                        onclick="document.getElementById('pdfFile').click()">
 
-                            </button>
-                            <button type="button"
-                                    id="addMoreBtn"
-                                    class="btn btn-outline-primary btn-lg mt-3 ms-2">
+                                        Choose Files
 
-                                + Add More Files
+                                    </button>
+                                    <button type="button" id="addMoreBtn"
+                                        class="btn btn-outline-primary btn-lg mt-3 ms-2">
 
-                            </button>
+                                        + Add More Files
 
-                        </div>
+                                    </button>
 
-                        <!-- ===========================
+                                </div>
+
+                            </div>
+
+                            <!-- ===========================
                              SETTINGS
                         ============================ -->
 
-                        <div id="settingsCard" 
-                            class="settings-card mt-5">
+                            <div id="settingsCard" class="settings-card mt-5">
 
-                            <h4 class="mb-4">
+                                <h4 class="mb-4">
 
-                                Image Settings
+                                    Image Settings
 
-                            </h4>
+                                </h4>
 
-                            <div class="row">
+                                <div class="row">
 
-                                <div class="col-md-6">
+                                    <div class="col-md-6">
 
-                                    <label class="form-label fw-bold">
+                                        <label class="form-label fw-bold">
 
-                                        Output Format
+                                            Output Format
 
-                                    </label>
+                                        </label>
 
-                                    <select class="form-select"
-                                            name="outputFormat">
+                                        <select class="form-select" name="outputFormat">
 
-                                        <option value="jpg">
+                                            <option value="jpg">
 
-                                            JPG
+                                                JPG
 
-                                        </option>
+                                            </option>
 
-                                        <option value="png">
+                                            <option value="png">
 
-                                            PNG
+                                                PNG
 
-                                        </option>
+                                            </option>
 
-                                    </select>
+                                        </select>
 
-                                </div>
+                                    </div>
 
-                                <div class="col-md-6">
+                                    <div class="col-md-6">
 
-                                    <label class="form-label fw-bold">
+                                        <label class="form-label fw-bold">
 
-                                        Image Quality
+                                            Image Quality
 
-                                    </label>
+                                        </label>
 
-                                    <select class="form-select"
-                                        name="quality">
+                                        <select class="form-select" name="quality">
 
-                                        <option value="high">High</option>
-                                        <option value="medium">Medium</option>
-                                        <option value="low">Low</option>
+                                            <option value="high">High</option>
+                                            <option value="medium">Medium</option>
+                                            <option value="low">Low</option>
 
-                                    </select>
+                                        </select>
+
+                                    </div>
 
                                 </div>
 
                             </div>
 
-                        </div>
-    
-                        <!-- ===========================
+                            <!-- ===========================
                              CONVERT BUTTON
                         ============================ -->
 
-                        <div class="d-grid mt-5">
+                            <div class="d-grid mt-5">
 
-                            <button id="convertBtn"
-                                    type="submit"
-                                    class="btn btn-primary btn-lg">
+                                <button id="convertBtn" type="submit" class="btn btn-primary btn-lg">
 
-                                <i class="bi bi-file-earmark-pdf"></i>
+                                    <i class="bi bi-file-earmark-pdf"></i>
 
-                                Convert To JPG
+                                    Convert To JPG
 
-                            </button>
+                                </button>
 
-                        </div>
+                            </div>
 
-                        <!-- ===========================
+                            <!-- ===========================
                              PROGRESS BAR
                         ============================ -->
 
-                        <div id="progressSection"
-                             class="mt-5"
-                             style="display:none;">
+                            <div id="progressSection" class="mt-5" style="display:none;">
 
-                            <h5 class="mb-3">
+                                <h5 class="mb-3">
 
-                                Processing Files...
+                                    Processing Files...
 
-                            </h5>
+                                </h5>
 
-                            <div class="progress">
+                                <div class="progress">
 
-                                <div id="progressBar"
-                                     class="progress-bar progress-bar-striped progress-bar-animated"
-                                     role="progressbar"
-                                     style="width:0%;">
+                                    <div id="progressBar"
+                                        class="progress-bar progress-bar-striped progress-bar-animated"
+                                        role="progressbar" style="width:0%;">
 
-                                    0%
+                                        0%
+
+                                    </div>
 
                                 </div>
 
                             </div>
 
-                        </div>
+                        </form>
 
-                    </form>
-
-                    <!-- ===========================
+                        <!-- ===========================
                          PDF RESULT CARD
                     ============================ -->
 
 
-                    <div id="resultCard"
-                        style="display:none;">
+                        <div id="resultCard" style="display:none;">
 
-                        <div class="alert alert-success">
+                            <div class="alert alert-success">
 
-                            <h4>
-                                🎉 Images Created Successfully
-                            </h4>
+                                <h4>
+                                    🎉 Images Created Successfully
+                                </h4>
 
-                        </div>
+                            </div>
 
-                        <div class="card mb-2">
+                            <div class="card mb-2">
 
                                 <div class="card-body">
 
@@ -348,29 +324,27 @@
 
                             </div>
 
-                            <div id="imageDownloads"
-                                class="mt-2">
+                            <div id="imageDownloads" class="mt-2">
                             </div>
-                    </div>
 
 
+                            <!-- DOWNLOAD BUTTONS -->
 
-                        <!-- DOWNLOAD BUTTONS -->
+                            <div class="text-center mt-4">
 
-                        <div class="text-center mt-4">
+                                <button id="convertMoreBtn" type="button" class="btn btn-secondary btn-lg">
 
-                            <button
-                                id="convertMoreBtn"
-                                type="button"
-                                class="btn btn-secondary btn-lg">
+                                    <i class="bi bi-arrow-repeat"></i>
 
-                                <i class="bi bi-arrow-repeat"></i>
+                                    Convert More
 
-                                Convert More
+                                </button>
 
-                        </button>
-
+                            </div>
                         </div>
+
+
+
 
                     </div>
 
@@ -382,37 +356,34 @@
 
     </div>
 
-</div>
-<!-- IMAGE PREVIEW MODAL -->
+    </div>
+    <!-- IMAGE PREVIEW MODAL -->
 
-<div class="modal fade"
-     id="imagePreviewModal"
-     tabindex="-1">
+    <div class="modal fade" id="imagePreviewModal" tabindex="-1">
 
-    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
 
-        <div class="modal-content">
+            <div class="modal-content">
 
-            <div class="modal-header">
+                <div class="modal-header">
 
-                <h5 class="modal-title">
+                    <h5 class="modal-title">
 
-                    Image Preview
+                        Image Preview
 
-                </h5>
+                    </h5>
 
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
 
-                </button>
+                    </button>
 
-            </div>
+                </div>
 
-            <div class="modal-body text-center">
+                <div class="modal-body text-center">
 
-                <img id="previewModalImage"
-                     class="img-fluid rounded">
+                    <img id="previewModalImage" class="img-fluid rounded">
+
+                </div>
 
             </div>
 
@@ -420,29 +391,27 @@
 
     </div>
 
-</div>
+    <div class="modal fade" id="imageResultPreviewModal">
 
-<div class="modal fade"
-     id="imageResultPreviewModal">
+        <div class="modal-dialog modal-xl">
 
-    <div class="modal-dialog modal-xl">
+            <div class="modal-content">
 
-        <div class="modal-content">
+                <div class="modal-header">
 
-            <div class="modal-header">
+                    <h5>
 
-                <h5>
+                        Image Preview
 
-                    Image Preview
+                    </h5>
 
-                </h5>
+                </div>
 
-            </div>
+                <div class="modal-body text-center">
 
-            <div class="modal-body text-center">
+                    <img id="resultPreviewImage" class="img-fluid rounded">
 
-                <img id="resultPreviewImage"
-                     class="img-fluid rounded">
+                </div>
 
             </div>
 
@@ -450,37 +419,27 @@
 
     </div>
 
-</div>
+    <div class="modal fade" id="pdfPreviewModal">
 
-<script th:src="@{/js/pdf-to-image.js}"></script>
+        <div class="modal-dialog modal-xl">
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+            <div class="modal-content">
 
-<div class="modal fade"
-     id="pdfPreviewModal">
+                <div class="modal-header">
 
-    <div class="modal-dialog modal-xl">
+                    <h5>PDF Preview</h5>
 
-        <div class="modal-content">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    </button>
 
-            <div class="modal-header">
+                </div>
 
-                <h5>PDF Preview</h5>
+                <div class="modal-body">
 
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal">
-                </button>
+                    <iframe id="pdfPreviewFrame" width="100%" height="600">
+                    </iframe>
 
-            </div>
-
-            <div class="modal-body">
-
-                <iframe id="pdfPreviewFrame"
-                        width="100%"
-                        height="600">
-                </iframe>
+                </div>
 
             </div>
 
@@ -488,13 +447,12 @@
 
     </div>
 
-</div>
+    <script src="/js/common-validation.js"></script>
 
-<script src="/js/common-validation.js"></script>
+    <script th:src="@{/js/pdf-to-image.js}"></script>
 
-<script th:src="@{/js/pdf-to-image.js}"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
+
 </html>

@@ -595,3 +595,37 @@ h1{
         max-height:40vh;
     }
 }
+
+/* ===========================
+   FREEZE UI
+=========================== */
+
+.converting{
+
+    pointer-events:none;
+
+    opacity:.65;
+
+}
+
+/* ===========================
+   HIDE DURING CONVERSION
+=========================== */
+
+.hide-during-conversion{
+
+    display:none !important;
+
+}
+
+/* ===========================
+   DISABLED BUTTON
+=========================== */
+
+button:disabled{
+
+    cursor:not-allowed;
+
+    opacity:.7;
+
+}

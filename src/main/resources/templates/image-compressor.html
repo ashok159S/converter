@@ -1,238 +1,215 @@
 <!DOCTYPE html>
 
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Image Compressor</title>
+    <title>Image Compressor</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-      rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-<link rel="stylesheet"
-      th:href="@{/css/image-compressor.css}">
+    <link rel="stylesheet" th:href="@{/css/image-compressor.css}">
 
 
 </head>
 
 <body>
 
-<!-- NAVBAR -->
+    <!-- NAVBAR -->
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
 
 
-<div class="container">
+        <div class="container">
 
-     <a class="navbar-brand d-flex align-items-center"
-        href="/">
+            <a class="navbar-brand d-flex align-items-center" href="/">
 
-            <img src="/images/logo.png"
-                alt="ConvertNova"
-                height="50"
-                class="me-2">
+                <img src="/images/logo.png" alt="ConvertNova" height="50" class="me-2">
 
-        </a>
+            </a>
 
-    <button id="darkModeBtn"
-            class="btn btn-outline-dark">
+            <button id="darkModeBtn" class="btn btn-outline-dark">
 
-        🌙 Dark Mode
+                🌙 Dark Mode
 
-    </button>
+            </button>
 
-</div>
+        </div>
 
 
-</nav>
+    </nav>
 
-<!-- MAIN -->
+    <!-- MAIN -->
 
-<div class="container py-5">
+    <div class="container py-5">
 
 
-<div class="converter-card">
+        <div class="converter-card">
 
-    <!-- TITLE -->
+            <!-- TITLE -->
 
-    <h1 class="text-center">
+            <h1 class="text-center">
 
-        Image Compressor
+                Image Compressor
 
-    </h1>
+            </h1>
 
-    <p class="text-center text-muted mb-4">
+            <p class="text-center text-muted mb-4">
 
-        Compress JPG, PNG and WEBP images online
+                Compress JPG, PNG and WEBP images online
 
-    </p>
+            </p>
 
-    <!-- CONVERT PAGE -->
+            <!-- CONVERT PAGE -->
 
-    <div id="uploadSection">
+            <div id="uploadSection">
 
-        <form id="compressForm">
+                <form id="compressForm">
 
-            <!-- SUMMARY -->
+                    <!-- SUMMARY -->
 
-            <div id="summaryCard"
-                 class="summary-card"
-                 style="display:none;">
+                    <div id="summaryCard" class="summary-card" style="display:none;">
 
-                <div>
+                        <div>
 
-                    <strong>Total Files:</strong>
+                            <strong>Total Files:</strong>
 
-                    <span id="totalFiles">
+                            <span id="totalFiles">
 
-                        0
+                                0
 
-                    </span>
+                            </span>
 
-                </div>
+                        </div>
 
-                <div>
+                        <div>
 
-                    <strong>Total Size:</strong>
+                            <strong>Total Size:</strong>
 
-                    <span id="totalSize">
+                            <span id="totalSize">
 
-                        0 MB
+                                0 MB
 
-                    </span>
+                            </span>
 
-                </div>
+                        </div>
 
-            </div>
+                    </div>
 
-            <!-- FILE LIST -->
+                    <!-- FILE LIST -->
 
-            <div id="fileListContainer">
+                    <div id="fileListContainer">
 
-            </div>
+                    </div>
 
-            <!-- UPLOAD AREA -->
+                    <!-- UPLOAD AREA -->
 
-            <div id="dropZone"
-                 class="upload-area">
+                    <div id="dropZone" class="upload-area">
 
-                <i class="bi bi-images upload-icon"></i>
+                        <i class="bi bi-images upload-icon"></i>
 
-                <h3>
+                        <h3>
 
-                    Drag & Drop Images Here
+                            Drag & Drop Images Here
 
-                </h3>
+                        </h3>
 
-                <p>
+                        <p>
 
-                    JPG • PNG • WEBP
+                            JPG • PNG • WEBP
 
-                </p>
+                        </p>
 
-                <input type="file"
-                       id="imageFiles"
-                       accept=".jpg,.jpeg,.png,.webp"
-                       multiple
-                       hidden>
+                        <input type="file" id="imageFiles" accept=".jpg,.jpeg,.png,.webp" multiple hidden>
 
-                <p class="text-muted">
+                        <p class="text-muted">
 
-                    Maximum file size:
-                    50 MB
+                            Maximum file size:
+                            50 MB
 
-                    </p>
+                        </p>
 
-                <button type="button"
-                        class="btn btn-primary btn-lg"
-                        onclick="document.getElementById('imageFiles').click()">
+                        <button type="button" class="btn btn-primary btn-lg"
+                            onclick="document.getElementById('imageFiles').click()">
 
-                    Choose Images
+                            Choose Images
 
-                </button>
+                        </button>
 
-            </div>
+                    </div>
 
-            <!-- COMPRESSION LEVEL -->
+                    <!-- COMPRESSION LEVEL -->
 
-           <div class="settings-card">
-    <label for="compressionLevel" class="form-label">
-        Compression Level
-    </label>
+                    <div id="settingsSection">
+                        <div class="settings-card">
+                            <label for="compressionLevel" class="form-label">
+                                Compression Level
+                            </label>
 
-    <select id="compressionLevel"
-            class="form-select">
+                            <select id="compressionLevel" class="form-select">
 
-        <option value="LOW">
-            Low Compression
-        </option>
+                                <option value="LOW">
+                                    Low Compression
+                                </option>
 
-        <option value="MEDIUM" selected>
-            Medium Compression
-        </option>
+                                <option value="MEDIUM" selected>
+                                    Medium Compression
+                                </option>
 
-        <option value="HIGH">
-            High Compression
-        </option>
+                                <option value="HIGH">
+                                    High Compression
+                                </option>
 
-    </select>
-</div>
+                            </select>
+                        </div>
 
-<!-- QUALITY -->
-<div class="settings-card mt-3">
-    <label for="quality" class="form-label">
-        Quality
-    </label>
+                        <!-- QUALITY -->
+                        <div class="settings-card mt-3">
+                            <label for="quality" class="form-label">
+                                Quality
+                            </label>
 
-    <input type="range"
-           id="quality"
-           class="form-range"
-           min="10"
-           max="100"
-           value="80">
+                            <input type="range" id="quality" class="form-range" min="10" max="100" value="80">
 
-    <div class="text-center">
-        <span id="qualityValue">
-            80%
-        </span>
-    </div>
-</div>
+                            <div class="text-center">
+                                <span id="qualityValue">
+                                    80%
+                                </span>
+                            </div>
+                        </div>
 
-            <!-- COMPRESS BUTTON -->
+                    </div>
+                    <!-- COMPRESS BUTTON -->
 
-            <div class="text-center mt-4">
+                    <div class="text-center mt-4">
 
-                <button id="compressBtn"
-                        type="submit"
-                        class="btn btn-primary btn-lg">
+                        <button id="compressBtn" type="submit" class="btn btn-primary btn-lg">
 
-                    Compress Images
+                            Compress Images
 
-                </button>
+                        </button>
+
+                    </div>
+
+                </form>
 
             </div>
 
             <!-- PROGRESS -->
 
-            <div id="progressSection"
-                 class="mt-4"
-                 style="display:none;">
+            <div id="progressSection" class="mt-4" style="display:none;">
 
                 <div class="progress">
 
-                    <div id="progressBar"
-                         class="progress-bar progress-bar-striped progress-bar-animated"
-                         style="width:0%;">
+                    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated"
+                        role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:0%;">
 
                         0%
 
@@ -241,72 +218,116 @@
                 </div>
 
             </div>
+            <!-- RESULT PAGE -->
 
-        </form>
+            <div id="resultCard" class="mt-5" style="display:none;">
 
-    </div>
+                <div class="alert alert-success">
 
-    <!-- RESULT PAGE -->
+                    <h4>
 
-    <div id="resultCard"
-         class="mt-5"
-         style="display:none;">
+                        🎉 Image Compression Completed
 
-        <div class="alert alert-success">
-
-            <h4>
-
-                🎉 Image Compression Completed
-
-            </h4>
-
-        </div>
-
-        <!-- RESULT HEADER -->
-
-        <div class="result-header">
-
-            <div class="row text-center fw-bold">
-
-                <div class="col-md-3">
-
-                    File Name
+                    </h4>
 
                 </div>
 
-                <div class="col-md-2">
+                <!-- RESULT HEADER -->
 
-                    Original Size
+                <div class="result-header">
+
+                    <div class="row text-center fw-bold">
+
+                        <div class="col-md-3">
+
+                            File Name
+
+                        </div>
+
+                        <div class="col-md-2">
+
+                            Original Size
+
+                        </div>
+
+                        <div class="col-md-2">
+
+                            Compressed Size
+
+                        </div>
+
+                        <div class="col-md-1">
+
+                            Saved
+
+                        </div>
+
+                        <div class="col-md-1">
+
+                            Reduction
+
+                        </div>
+
+                        <div class="col-md-1">
+
+                            Preview
+
+                        </div>
+
+                        <div class="col-md-2">
+
+                            Download
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-                <div class="col-md-2">
+                <!-- COMPRESSED FILES -->
 
-                    Compressed Size
-
-                </div>
-
-                <div class="col-md-1">
-
-                    Saved
+                <div id="compressedFilesContainer">
 
                 </div>
 
-                <div class="col-md-1">
+                <!-- RESULT SUMMARY -->
 
-                    Reduction
+                <div id="resultSummary" class="result-summary">
+
+                    Files:
+                    <span id="resultFiles">0</span>
+
+                    |
+
+                    Original:
+                    <span id="resultOriginalSize">0 MB</span>
+
+                    |
+
+                    Compressed:
+                    <span id="resultCompressedSize">0 MB</span>
+
+                    |
+
+                    Saved:
+                    <span id="resultSaved">0 MB</span>
+
+                    |
+
+                    Reduction:
+                    <span id="resultReduction">0%</span>
 
                 </div>
 
-                <div class="col-md-1">
+                <!-- COMPRESS MORE -->
 
-                    Preview
+                <div class="text-center mt-4">
 
-                </div>
+                    <button id="compressMoreBtn" type="button" class="btn btn-secondary btn-lg">
 
-                <div class="col-md-2">
+                        Compress More
 
-                    Download
+                    </button>
 
                 </div>
 
@@ -314,108 +335,50 @@
 
         </div>
 
-        <!-- COMPRESSED FILES -->
-
-        <div id="compressedFilesContainer">
-
-        </div>
-
-        <!-- RESULT SUMMARY -->
-
-        <div id="resultSummary"
-             class="result-summary">
-
-            Files:
-            <span id="resultFiles">0</span>
-
-            |
-
-            Original:
-            <span id="resultOriginalSize">0 MB</span>
-
-            |
-
-            Compressed:
-            <span id="resultCompressedSize">0 MB</span>
-
-            |
-
-            Saved:
-            <span id="resultSaved">0 MB</span>
-
-            |
-
-            Reduction:
-            <span id="resultReduction">0%</span>
-
-        </div>
-
-        <!-- COMPRESS MORE -->
-
-        <div class="text-center mt-4">
-
-            <button id="compressMoreBtn"
-                    type="button"
-                    class="btn btn-secondary btn-lg">
-
-                Compress More
-
-            </button>
-
-        </div>
 
     </div>
 
-</div>
+    <!-- PREVIEW MODAL -->
+
+    <div class="modal fade" id="imagePreviewModal">
 
 
-</div>
+        <div class="modal-dialog modal-xl">
 
-<!-- PREVIEW MODAL -->
+            <div class="modal-content">
 
-<div class="modal fade"
-     id="imagePreviewModal">
+                <div class="modal-header">
 
+                    <h5>
 
-<div class="modal-dialog modal-xl">
+                        Image Preview
 
-    <div class="modal-content">
+                    </h5>
 
-        <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
 
-            <h5>
+                    </button>
 
-                Image Preview
+                </div>
 
-            </h5>
+                <div class="modal-body text-center">
 
-            <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal">
+                    <img id="previewImage" class="img-fluid">
 
-            </button>
+                </div>
 
-        </div>
-
-        <div class="modal-body text-center">
-
-            <img id="previewImage"
-                 class="img-fluid">
+            </div>
 
         </div>
 
-    </div>cd converter
 
-</div>
+    </div>
 
+    <script th:src="@{/js/image-compressor.js}"></script>
 
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
-<script th:src="@{/js/image-compressor.js}"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-
-<script src="/js/common-validation.js"></script>
+    <script src="/js/common-validation.js"></script>
 
 </body>
 

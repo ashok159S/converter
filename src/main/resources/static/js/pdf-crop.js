@@ -3,39 +3,79 @@
 =========================== */
 
 const pdfFiles =
-document.getElementById(
-    "pdfFiles"
-);
+    document.getElementById(
+        "pdfFiles"
+    );
 
 const dropZone =
-document.getElementById(
-    "dropZone"
-);
+    document.getElementById(
+        "dropZone"
+    );
 
 const summaryCard =
-document.getElementById(
-    "summaryCard"
-);
+    document.getElementById(
+        "summaryCard"
+    );
 
 const fileListContainer =
-document.getElementById(
-    "fileListContainer"
-);
+    document.getElementById(
+        "fileListContainer"
+    );
 
 const totalFiles =
-document.getElementById(
-    "totalFiles"
-);
+    document.getElementById(
+        "totalFiles"
+    );
 
 const totalSize =
-document.getElementById(
-    "totalSize"
-);
+    document.getElementById(
+        "totalSize"
+    );
 
 const pdfCropForm =
-document.getElementById(
-    "pdfCropForm"
-);
+    document.getElementById(
+        "pdfCropForm"
+    );
+
+const uploadSection =
+    document.getElementById(
+        "uploadSection"
+    );
+
+const settingsSection =
+    document.getElementById(
+        "settingsSection"
+    );
+
+const cropBtn =
+    document.getElementById(
+        "cropBtn"
+    );
+
+const progressSection =
+    document.getElementById(
+        "progressSection"
+    );
+
+const progressBar =
+    document.getElementById(
+        "progressBar"
+    );
+
+const resultCard =
+    document.getElementById(
+        "resultCard"
+    );
+
+const croppedFilesContainer =
+    document.getElementById(
+        "croppedFilesContainer"
+    );
+
+const cropMoreBtn =
+    document.getElementById(
+        "cropMoreBtn"
+    );
 
 let selectedFiles = [];
 
@@ -45,12 +85,95 @@ let selectedFiles = [];
 
 pdfFiles.addEventListener(
     "change",
-    function(){
+    function () {
 
-        selectedFiles =
-        Array.from(
-            this.files
-        );
+        const newFiles =
+            Array.from(
+                this.files
+            );
+
+        const duplicateFiles = [];
+
+        newFiles.forEach(file => {
+
+            /* PDF Validation */
+
+            if (
+                !file.name.toLowerCase().endsWith(".pdf")
+            ) {
+
+                alert(
+                    `"${file.name}" is not a valid PDF file.\n\nOnly PDF files are allowed.`
+                );
+
+                return;
+
+            }
+
+            /* Size Validation */
+
+            if (
+                file.size >
+                50 * 1024 * 1024
+            ) {
+
+                alert(
+                    `"${file.name}" exceeds the maximum file size of 50 MB.`
+                );
+
+                return;
+
+            }
+
+            /* Duplicate Validation */
+
+            const duplicate =
+                selectedFiles.some(
+                    existingFile =>
+
+                        existingFile.name === file.name &&
+                        existingFile.size === file.size &&
+                        existingFile.lastModified === file.lastModified
+                );
+
+            if (
+                duplicate
+            ) {
+
+                duplicateFiles.push(
+                    file.name
+                );
+
+            }
+            else {
+
+                selectedFiles.push(
+                    file
+                );
+
+            }
+
+        });
+
+        if (
+            duplicateFiles.length > 0
+        ) {
+
+            alert(
+
+                "Duplicate PDF file(s) detected:\n\n"
+
+                +
+
+                duplicateFiles.join(
+                    "\n"
+                )
+
+            );
+
+        }
+
+        this.value = "";
 
         renderFiles();
 
@@ -63,54 +186,158 @@ pdfFiles.addEventListener(
 
 dropZone.addEventListener(
     "dragover",
-    function(e){
+    function (e) {
 
         e.preventDefault();
+
+        dropZone.classList.add(
+            "drag-active"
+        );
+
+    }
+);
+
+dropZone.addEventListener(
+    "dragleave",
+    function () {
+
+        dropZone.classList.remove(
+            "drag-active"
+        );
 
     }
 );
 
 dropZone.addEventListener(
     "drop",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
-        selectedFiles =
-        Array.from(
-            e.dataTransfer.files
+        dropZone.classList.remove(
+            "drag-active"
         );
+
+        const newFiles =
+            Array.from(
+                e.dataTransfer.files
+            );
+
+        const duplicateFiles = [];
+
+        newFiles.forEach(file => {
+
+            /* PDF Validation */
+
+            if (
+                !file.name.toLowerCase().endsWith(".pdf")
+            ) {
+
+                alert(
+                    `"${file.name}" is not a valid PDF file.\n\nOnly PDF files are allowed.`
+                );
+
+                return;
+
+            }
+
+            /* Size Validation */
+
+            if (
+                file.size >
+                50 * 1024 * 1024
+            ) {
+
+                alert(
+                    `"${file.name}" exceeds the maximum file size of 50 MB.`
+                );
+
+                return;
+
+            }
+
+            /* Duplicate Validation */
+
+            const duplicate =
+                selectedFiles.some(
+                    existingFile =>
+
+                        existingFile.name === file.name &&
+                        existingFile.size === file.size &&
+                        existingFile.lastModified === file.lastModified
+                );
+
+            if (
+                duplicate
+            ) {
+
+                duplicateFiles.push(
+                    file.name
+                );
+
+            }
+            else {
+
+                selectedFiles.push(
+                    file
+                );
+
+            }
+
+        });
+
+        if (
+            duplicateFiles.length > 0
+        ) {
+
+            alert(
+
+                "Duplicate PDF file(s) detected:\n\n"
+
+                +
+
+                duplicateFiles.join(
+                    "\n"
+                )
+
+            );
+
+        }
 
         renderFiles();
 
     }
 );
-
 /* ===========================
    RENDER FILES
 =========================== */
 
-function renderFiles(){
+function renderFiles() {
 
-    if(selectedFiles.length === 0){
+    if (
+        selectedFiles.length === 0
+    ) {
 
         summaryCard.style.display =
-        "none";
+            "none";
 
         fileListContainer.innerHTML =
-        "";
+            "";
+
+        pdfFiles.value =
+            "";
 
         return;
 
     }
 
     summaryCard.style.display =
-    "flex";
-
-    let totalBytes = 0;
+        "flex";
 
     fileListContainer.innerHTML =
-    "";
+        "";
+
+    let totalBytes = 0;
 
     selectedFiles.forEach(
 
@@ -119,81 +346,82 @@ function renderFiles(){
             index
         ) => {
 
-            totalBytes += file.size;
+            totalBytes +=
+                file.size;
 
             fileListContainer.innerHTML += `
 
-            <div class="card">
+<div class="card mb-2">
 
-                <div class="card-body">
+    <div class="card-body">
 
-                    <div class="row align-items-center">
+        <div class="row align-items-center">
 
-                        <div class="col-md-5 file-row-name">
+            <div class="col-md-5 file-row-name">
 
-                            <i class="bi bi-file-earmark-pdf-fill"></i>
+                <i class="bi bi-file-earmark-pdf-fill text-danger me-2"></i>
 
-                            ${file.name}
-
-                        </div>
-
-                        <div class="col-md-2 text-center">
-
-                            ${(file.size / 1024 / 1024).toFixed(2)} MB
-
-                        </div>
-
-                        <div class="col-md-2 text-center">
-
-                            <button
-                                type="button"
-                                class="btn btn-primary btn-sm"
-                                onclick="previewPdf(${index})">
-
-                                Preview
-
-                            </button>
-
-                        </div>
-
-                        <div class="col-md-3 text-center">
-
-                            <button
-                                type="button"
-                                class="btn btn-danger btn-sm"
-                                onclick="deleteFile(${index})">
-
-                                Delete
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
+                ${file.name}
 
             </div>
 
-            `;
+            <div class="col-md-2 text-center">
+
+                ${(file.size / 1024 / 1024).toFixed(2)} MB
+
+            </div>
+
+            <div class="col-md-2 text-center">
+
+                <button
+                    type="button"
+                    class="btn btn-primary btn-sm"
+                    onclick="previewPdf(${index})">
+
+                    Preview
+
+                </button>
+
+            </div>
+
+            <div class="col-md-3 text-center">
+
+                <button
+                    type="button"
+                    class="btn btn-danger btn-sm"
+                    onclick="deleteFile(${index})">
+
+                    Delete
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+`;
 
         }
 
     );
 
     totalFiles.innerHTML =
-    selectedFiles.length;
+        selectedFiles.length;
 
     totalSize.innerHTML =
-    (
-        totalBytes
-        /
-        1024
-        /
-        1024
-    ).toFixed(2)
-    +
-    " MB";
+        (
+            totalBytes
+            /
+            1024
+            /
+            1024
+        ).toFixed(2)
+        +
+        " MB";
 
 }
 
@@ -201,12 +429,29 @@ function renderFiles(){
    DELETE FILE
 =========================== */
 
-function deleteFile(index){
+function deleteFile(index) {
 
     selectedFiles.splice(
         index,
         1
     );
+
+    if (
+        selectedFiles.length === 0
+    ) {
+
+        summaryCard.style.display =
+            "none";
+
+        fileListContainer.innerHTML =
+            "";
+
+        pdfFiles.value =
+            "";
+
+        return;
+
+    }
 
     renderFiles();
 
@@ -216,115 +461,98 @@ function deleteFile(index){
    PDF PREVIEW
 =========================== */
 
-function previewPdf(index){
+function previewPdf(index) {
 
     const file =
-    selectedFiles[index];
+        selectedFiles[index];
 
     const url =
-    URL.createObjectURL(
-        file
-    );
-
-    let modal =
-    document.getElementById(
-        "previewModal"
-    );
-
-    if(!modal){
-
-        document.body.insertAdjacentHTML(
-            "beforeend",
-
-            `
-            <div class="modal fade"
-                 id="previewModal">
-
-                <div class="modal-dialog modal-xl">
-
-                    <div class="modal-content">
-
-                        <div class="modal-header">
-
-                            <h5 class="modal-title">
-
-                                PDF Preview
-
-                            </h5>
-
-                            <button
-                                type="button"
-                                class="btn-close"
-                                data-bs-dismiss="modal">
-                            </button>
-
-                        </div>
-
-                        <div class="modal-body p-0">
-
-                            <iframe
-                                id="previewFrame"
-                                width="100%"
-                                height="750"
-                                style="border:none;">
-                            </iframe>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-            `
+        URL.createObjectURL(
+            file
         );
-
-    }
 
     document.getElementById(
         "previewFrame"
     ).src =
-    url;
+        url;
 
-    const bsModal =
-    new bootstrap.Modal(
-        document.getElementById(
-            "previewModal"
-        )
-    );
+    const modal =
+        new bootstrap.Modal(
 
-    bsModal.show();
+            document.getElementById(
+                "pdfPreviewModal"
+            )
+
+        );
+
+    modal.show();
 
 }
-
 /* ===========================
-   SUBMIT
+   CROP PDF
 =========================== */
 
 pdfCropForm.addEventListener(
     "submit",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
-        
-         if(
+        if (
             !validateFiles(selectedFiles)
-        ){
+        ) {
             return;
         }
-        if(selectedFiles.length === 0){
+
+        if (
+            selectedFiles.length === 0
+        ) {
 
             alert(
-                "Please select PDF files"
+                "Please select PDF files."
             );
 
             return;
 
         }
 
+        /* Freeze UI */
+
+        cropBtn.disabled =
+            true;
+
+        pdfFiles.disabled =
+            true;
+
+        dropZone.style.pointerEvents =
+            "none";
+
+        summaryCard.style.display =
+            "none";
+
+        settingsSection.style.display =
+            "none";
+
+        fileListContainer.style.display =
+            "none";
+
+        dropZone.style.display =
+            "none";
+
+        cropBtn.style.display =
+            "none";
+
+        progressSection.style.display =
+            "block";
+
+        progressBar.style.width =
+            "0%";
+
+        progressBar.innerHTML =
+            "0%";
+
         const formData =
-        new FormData();
+            new FormData();
 
         selectedFiles.forEach(
             file => {
@@ -351,139 +579,348 @@ pdfCropForm.addEventListener(
             ).value
         );
 
-        fetch(
-            "/crop-pdf-ajax",
-            {
-                method:"POST",
-                body:formData
-            }
-        )
-        .then(
-            response =>
-            response.json()
-        )
-        .then(
-            result => {
+        const xhr =
+            new XMLHttpRequest();
 
-               if(result.success){
+        xhr.upload.addEventListener(
+            "progress",
+            function (event) {
 
-    showResults(
-        result.files
-    );
+                if (
+                    event.lengthComputable
+                ) {
 
-}
-                else{
+                    const percent =
+                        Math.round(
 
-                    alert(
-                        result.message
-                    );
+                            (
+                                event.loaded
+                                /
+                                event.total
+                            )
+                            *
+                            100
+
+                        );
+
+                    progressBar.style.width =
+                        percent + "%";
+
+                    progressBar.innerHTML =
+                        percent + "%";
 
                 }
 
             }
-        )
-        .catch(
-            error => {
+        );
+
+        xhr.onreadystatechange =
+            function () {
+
+                if (
+                    xhr.readyState === 4
+                ) {
+
+                    if (
+                        xhr.status === 200
+                    ) {
+
+                        const result =
+                            JSON.parse(
+                                xhr.responseText
+                            );
+
+                        if (
+                            result.success
+                        ) {
+
+                            progressSection.style.display =
+                                "none";
+
+                            uploadSection.style.display =
+                                "none";
+
+                            resultCard.style.display =
+                                "block";
+
+                            buildResultTable(
+                                result
+                            );
+
+                        }
+                        else {
+
+                            progressSection.style.display =
+                                "none";
+
+                            settingsSection.style.display =
+                                "block";
+
+                            summaryCard.style.display =
+                                "flex";
+
+                            fileListContainer.style.display =
+                                "block";
+
+                            dropZone.style.display =
+                                "block";
+
+                            cropBtn.style.display =
+                                "inline-block";
+
+                            cropBtn.disabled =
+                                false;
+
+                            pdfFiles.disabled =
+                                false;
+
+                            dropZone.style.pointerEvents =
+                                "auto";
+
+                            alert(
+                                "Server error. Please try again."
+                            );
+
+                        }
+
+                    }
+
+                }
+
+            };
+
+        xhr.onerror =
+            function () {
+
+                settingsSection.style.display =
+                    "block";
+
+                progressSection.style.display =
+                    "none";
+
+                summaryCard.style.display =
+                    "flex";
+
+                fileListContainer.style.display =
+                    "block";
+
+                dropZone.style.display =
+                    "block";
+
+                cropBtn.style.display =
+                    "inline-block";
+
+                cropBtn.disabled =
+                    false;
+
+                pdfFiles.disabled =
+                    false;
+
+                dropZone.style.pointerEvents =
+                    "auto";
 
                 alert(
-                    "Crop failed"
+                    "PDF cropping failed. Please try again."
                 );
 
-            }
+            };
+
+        xhr.open(
+            "POST",
+            "/crop-pdf-ajax"
+        );
+
+        xhr.send(
+            formData
         );
 
     }
 );
 
+/* ===========================
+   DARK MODE
+=========================== */
 
+document.getElementById(
+    "darkModeBtn"
+).addEventListener(
+    "click",
+    function () {
 
-function showResults(files){
+        document.body.classList.toggle(
+            "dark-mode"
+        );
+
+    }
+);
+
+/* ===========================
+   PREVIEW CROPPED PDF
+=========================== */
+
+function previewCroppedPdf(fileName) {
 
     document.getElementById(
-        "pdfCropForm"
-    ).style.display =
-    "none";
+        "previewFrame"
+    ).src =
+        "/preview-cropped-pdf?fileName="
+        +
+        encodeURIComponent(
+            fileName
+        );
 
-    let html = `
+    const modal =
+        new bootstrap.Modal(
 
-    <div class="alert alert-success">
+            document.getElementById(
+                "pdfPreviewModal"
+            )
 
-        <h4>
-            ✅ PDF Cropped Successfully
-        </h4>
+        );
 
-    </div>
+    modal.show();
 
-    <table class="table table-bordered text-center">
+}
 
-        <thead>
+/* ===========================
+   BUILD RESULT TABLE
+=========================== */
 
-            <tr>
+function buildResultTable(result) {
 
-                <th>File Name</th>
+    croppedFilesContainer.innerHTML =
+        "";
 
-                <th>Size</th>
+    document.getElementById(
+        "resultFiles"
+    ).innerHTML =
+        result.files.length;
 
-                <th>Download</th>
+    document.getElementById(
+        "resultSuccess"
+    ).innerHTML =
+        result.files.length;
 
-            </tr>
+    result.files.forEach(
+        file => {
 
-        </thead>
+            croppedFilesContainer.innerHTML += `
 
-        <tbody>
+<div class="card mb-2">
 
-    `;
+    <div class="card-body">
 
-    files.forEach(file => {
+        <div class="row align-items-center text-center">
 
-        html += `
+            <div class="col-md-4">
 
-        <tr>
+                <i class="bi bi-file-earmark-pdf-fill text-danger me-2"></i>
 
-            <td>${file.name}</td>
+                ${file.name}
 
-            <td>${file.size}</td>
+            </div>
 
-            <td>
+            <div class="col-md-2">
 
-                <a href="/download-cropped-pdf?fileName=${file.name}"
-                   class="btn btn-success btn-sm">
+                ${file.pages}
+
+            </div>
+
+            <div class="col-md-2">
+
+                ${file.cropAmount}
+
+            </div>
+
+            <div class="col-md-2">
+
+                <button
+                    class="btn btn-primary btn-sm"
+                    onclick="previewCroppedPdf('${file.name}')">
+
+                    Preview
+
+                </button>
+
+            </div>
+
+            <div class="col-md-2">
+
+                <a
+                    href="/download-cropped-pdf?fileName=${file.name}"
+                    class="btn btn-success btn-sm">
 
                     Download
 
                 </a>
 
-            </td>
+            </div>
 
-        </tr>
-
-        `;
-
-    });
-
-    html += `
-
-        </tbody>
-
-    </table>
-
-    <div class="text-center mt-4">
-
-        <button
-            class="btn btn-primary"
-            onclick="location.reload()">
-
-            Crop More
-
-        </button>
+        </div>
 
     </div>
 
-    `;
+</div>
 
-    document.querySelector(
-        ".converter-card"
-    ).innerHTML = html;
+`;
+
+        }
+
+    );
 
 }
 
+/* ===========================
+   CROP MORE
+=========================== */
+
+cropMoreBtn.addEventListener(
+
+    "click",
+
+    function () {
+
+        fetch(
+
+            "/delete-cropped-pdfs",
+
+            {
+
+                method: "POST"
+
+            }
+
+        )
+            .finally(
+
+                () => {
+
+                    location.reload();
+
+                }
+
+            );
+
+    }
+
+);
+
+/* ===========================
+   DELETE FILES ON RELOAD
+=========================== */
+
+window.addEventListener(
+
+    "beforeunload",
+
+    function () {
+
+        navigator.sendBeacon(
+
+            "/delete-cropped-pdfs"
+
+        );
+
+    }
+
+);

@@ -4,102 +4,90 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class ExcelToPdfService {
 
-    public Map<String,Object> convertExcelToPdf(
+    public Map<String, Object> convertExcelToPdf(
 
             MultipartFile[] excelFiles,
-
             String orientation,
-
             String paperSize,
-
             String scaling,
-
             String quality
 
-    ){
+    ) {
 
-        Map<String,Object> result =
+        Map<String, Object> result =
                 new HashMap<>();
 
-        try{
+        List<Map<String, String>> files =
+                new ArrayList<>();
 
-            List<Map<String,String>> files =
-                    new ArrayList<>();
+        File uploadFolder =
+                new File(
+                        System.getProperty("user.dir")
+                                +
+                                File.separator
+                                +
+                                "uploaded-excel"
+                );
 
-            File uploadFolder =
-                    new File(
+        File outputFolder =
+                new File(
+                        System.getProperty("user.dir")
+                                +
+                                File.separator
+                                +
+                                "converted-pdfs"
+                );
 
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "uploaded-excel"
+        try {
 
-                    );
-
-            if(!uploadFolder.exists()){
-
+            if (!uploadFolder.exists()) {
                 uploadFolder.mkdirs();
-
             }
 
-            File outputFolder =
-                    new File(
-
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "converted-pdfs"
-
-                    );
-
-            if(!outputFolder.exists()){
-
+            if (!outputFolder.exists()) {
                 outputFolder.mkdirs();
-
             }
 
-            for(
-
-                    MultipartFile excelFile
-                    :
+            for (
+                    MultipartFile excelFile :
                     excelFiles
-
-            ){
+            ) {
 
                 String originalName =
                         excelFile.getOriginalFilename();
 
-                if(
-
+                if (
                         originalName == null
-                        ||
-                        originalName.isBlank()
-
-                ){
+                                ||
+                                originalName.isBlank()
+                ) {
 
                     originalName =
                             "spreadsheet.xlsx";
 
                 }
 
+                String uniqueName =
+                        UUID.randomUUID()
+                                +
+                                "_"
+                                +
+                                originalName;
+
                 File uploadedFile =
                         new File(
-
                                 uploadFolder,
-
-                                originalName
-
+                                uniqueName
                         );
 
                 excelFile.transferTo(
@@ -135,16 +123,18 @@ public class ExcelToPdfService {
                 int exitCode =
                         process.waitFor();
 
-                if(exitCode != 0){
+                if (
+                        exitCode != 0
+                ) {
 
                     throw new RuntimeException(
-                            "LibreOffice conversion failed"
+                            "LibreOffice conversion failed."
                     );
 
                 }
 
                 String pdfName =
-                        originalName.replaceAll(
+                        uniqueName.replaceAll(
                                 "\\.(xlsx|xls)$",
                                 ".pdf"
                         );
@@ -155,15 +145,17 @@ public class ExcelToPdfService {
                                 pdfName
                         );
 
-                if(!pdfFile.exists()){
+                if (
+                        !pdfFile.exists()
+                ) {
 
                     throw new RuntimeException(
-                            "PDF file not generated"
+                            "PDF file not generated."
                     );
 
                 }
 
-                Map<String,String> fileInfo =
+                Map<String, String> fileInfo =
                         new HashMap<>();
 
                 fileInfo.put(
@@ -172,25 +164,23 @@ public class ExcelToPdfService {
                 );
 
                 fileInfo.put(
-
                         "size",
-
                         String.format(
-
                                 "%.2f MB",
-
                                 pdfFile.length()
-                                /
-                                1024.0
-                                /
-                                1024.0
-
+                                        /
+                                        1024.0
+                                        /
+                                        1024.0
                         )
-
                 );
 
                 files.add(
                         fileInfo
+                );
+
+                Files.deleteIfExists(
+                        uploadedFile.toPath()
                 );
 
             }
@@ -206,7 +196,7 @@ public class ExcelToPdfService {
             );
 
         }
-        catch(Exception e){
+        catch (Exception e) {
 
             e.printStackTrace();
 
@@ -223,6 +213,77 @@ public class ExcelToPdfService {
         }
 
         return result;
+
+    }
+
+    /* ===========================
+       DELETE TEMP FILES
+    =========================== */
+
+    public void deleteTempFiles() {
+
+        deleteFolder(
+                new File(
+                        System.getProperty("user.dir")
+                                +
+                                File.separator
+                                +
+                                "uploaded-excel"
+                )
+        );
+
+        deleteFolder(
+                new File(
+                        System.getProperty("user.dir")
+                                +
+                                File.separator
+                                +
+                                "converted-pdfs"
+                )
+        );
+
+    }
+
+    private void deleteFolder(
+            File folder
+    ) {
+
+        if (
+                folder == null
+                        ||
+                        !folder.exists()
+        ) {
+            return;
+        }
+
+        File[] files =
+                folder.listFiles();
+
+        if (
+                files == null
+        ) {
+            return;
+        }
+
+        for (
+                File file :
+                files
+        ) {
+
+            try {
+
+                Files.deleteIfExists(
+                        file.toPath()
+                );
+
+            }
+            catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+
+        }
 
     }
 

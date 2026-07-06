@@ -28,15 +28,42 @@ const progressSection =
 const progressBar =
     document.getElementById("progressBar");
 
-let selectedFiles = [];
+const uploadAreaWrapper =
+    document.getElementById(
+        "uploadAreaWrapper"
+    );
 
+const settingsCard =
+    document.getElementById(
+        "settingsCard"
+    );
+
+const convertBtn =
+    document.getElementById(
+        "convertBtn"
+    );
+
+const resultCard =
+    document.getElementById(
+        "resultCard"
+    );
+
+const imageDownloads =
+    document.getElementById(
+        "imageDownloads"
+    );
+
+let conversionCompleted =
+    false;
+
+let selectedFiles = [];
 /* ===========================
    ADD MORE FILES
 =========================== */
 
 addMoreBtn.addEventListener(
     "click",
-    () => {
+    function () {
 
         fileInput.click();
 
@@ -49,12 +76,23 @@ addMoreBtn.addEventListener(
 
 fileInput.addEventListener(
     "change",
-    function(){
+    function () {
 
-        selectedFiles =
-            Array.from(this.files);
+        if (
+            this.files.length === 0
+        ) {
 
-        renderFiles();
+            return;
+
+        }
+
+        addFiles(
+            Array.from(
+                this.files
+            )
+        );
+
+        this.value = "";
 
     }
 );
@@ -65,7 +103,7 @@ fileInput.addEventListener(
 
 dropZone.addEventListener(
     "dragover",
-    e => {
+    function (e) {
 
         e.preventDefault();
 
@@ -78,7 +116,7 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "dragleave",
-    () => {
+    function () {
 
         dropZone.classList.remove(
             "drag-active"
@@ -89,7 +127,7 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "drop",
-    e => {
+    function (e) {
 
         e.preventDefault();
 
@@ -97,28 +135,107 @@ dropZone.addEventListener(
             "drag-active"
         );
 
-        selectedFiles =
+        addFiles(
             Array.from(
                 e.dataTransfer.files
-            );
-
-        renderFiles();
+            )
+        );
 
     }
 );
 
 /* ===========================
-   RENDER FILE
+   HELPER FUNCTIONS
 =========================== */
-function renderFiles(){
+
+function addFiles(newFiles) {
+
+    let duplicateNames = [];
+
+    newFiles.forEach(
+        file => {
+
+            if (
+                file.type !==
+                "application/pdf"
+            ) {
+
+                alert(
+                    "Only PDF files are allowed."
+                );
+
+                return;
+
+            }
+
+            const exists =
+                selectedFiles.some(
+                    existingFile =>
+
+                        existingFile.name === file.name
+                        &&
+                        existingFile.size === file.size
+                );
+
+            if (
+                exists
+            ) {
+
+                duplicateNames.push(
+                    file.name
+                );
+
+            }
+            else {
+
+                selectedFiles.push(
+                    file
+                );
+
+            }
+
+        }
+    );
+
+    if (
+        duplicateNames.length > 0
+    ) {
+
+        alert(
+
+            "The following duplicate file(s) were skipped:\n\n• "
+            +
+            duplicateNames.join(
+                "\n• "
+            )
+
+        );
+
+    }
+
+    renderFiles();
+
+}/* ===========================
+   RENDER FILES
+=========================== */
+
+function renderFiles() {
 
     fileList.innerHTML = "";
 
-    if(selectedFiles.length === 0){
+    if (
+
+        selectedFiles.length === 0
+
+    ) {
 
         summaryCard.classList.add(
             "d-none"
         );
+
+        totalFiles.innerHTML = "0";
+
+        totalSize.innerHTML = "0 MB";
 
         return;
 
@@ -128,132 +245,176 @@ function renderFiles(){
         "d-none"
     );
 
-    totalFiles.innerHTML =
-        selectedFiles.length;
+    let totalBytes = 0;
 
-    totalSize.innerHTML =
+    selectedFiles.forEach(
         (
-            selectedFiles[0].size /
-            1024 /
-            1024
-        ).toFixed(2) + " MB";
+            file,
+            index
+        ) => {
 
-    const file =
-        selectedFiles[0];
+            totalBytes += file.size;
 
-    fileList.innerHTML = `
+            fileList.innerHTML += `
 
-    <div class="card shadow-sm">
+            <div class="card shadow-sm">
 
-        <div class="card-body">
+                <div class="card-body">
 
-            <div class="row align-items-center">
+                    <div class="row align-items-center">
 
-                <div class="col-md-5">
+                        <div class="col-md-5">
 
-                    <i class="bi bi-file-earmark-pdf-fill
-                              text-danger fs-2 me-2"
-                       style="cursor:pointer"
-                       onclick="previewSelectedPdf()">
-                    </i>
+                            <i class="bi bi-file-earmark-pdf-fill
+                                      text-danger fs-2 me-2"
+                               style="cursor:pointer"
+                               onclick="previewSelectedPdf(${index})">
+                            </i>
 
-                    <a href="#"
-                       onclick="previewSelectedPdf();
-                                return false;">
+                            <a href="#"
+                               onclick="previewSelectedPdf(${index});
+                                        return false;">
 
-                        ${file.name}
+                                ${file.name}
 
-                    </a>
+                            </a>
 
-                </div>
+                        </div>
 
-                <div class="col-md-2">
+                        <div class="col-md-2">
 
-                    ${(file.size / 1024 / 1024).toFixed(2)} MB
+                            ${(file.size / 1024 / 1024).toFixed(2)} MB
 
-                </div>
+                        </div>
 
-                <div class="col-md-2">
+                        <div class="col-md-2">
 
-                    <button
-                        type="button"
-                        class="btn btn-primary btn-sm px-4"
-                        onclick="previewSelectedPdf()">
+                            <button
+                                type="button"
+                                class="btn btn-primary btn-sm px-4"
+                                onclick="previewSelectedPdf(${index})">
 
-                        Preview
+                                Preview
 
-                    </button>
+                            </button>
 
-                </div>
+                        </div>
 
-                <div class="col-md-3">
+                        <div class="col-md-3">
 
-                    <button
-                        type="button"
-                        class="btn btn-danger btn-sm px-4"
-                        onclick="removeFile()">
+                            <button
+                                type="button"
+                                class="btn btn-danger btn-sm px-4"
+                                onclick="removeFile(${index})">
 
-                        Delete
+                                Delete
 
-                    </button>
+                            </button>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
             </div>
 
-        </div>
+            `;
 
-    </div>
+        }
+    );
 
-    `;
+    totalFiles.innerHTML =
+        selectedFiles.length;
 
-}
+    totalSize.innerHTML =
+        (
+            totalBytes
+            /
+            1024
+            /
+            1024
+        ).toFixed(2)
+        + " MB";
 
-function removeFile(){
-
-    selectedFiles = [];
-
-    fileInput.value = "";
-
-    renderFiles();
-
-}
-
-/* ===========================
+}/* ===========================
    CONVERT
 =========================== */
 
 form.addEventListener(
     "submit",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
-        
-         if(
-            !validateFiles(selectedFiles)
-        ){
+        if (
+            conversionCompleted
+        ) {
             return;
         }
 
-        if(selectedFiles.length === 0){
+        if (
+            !validateFiles(selectedFiles)
+        ) {
+            return;
+        }
+
+        if (
+            selectedFiles.length === 0
+        ) {
 
             alert(
-                "Please select a PDF file"
+                "Please select one or more PDF files."
             );
 
             return;
+
         }
+
+        uploadAreaWrapper.classList.add(
+            "hide-during-conversion"
+        );
+
+        summaryCard.classList.add(
+            "hide-during-conversion"
+        );
+
+        fileList.classList.add(
+            "hide-during-conversion"
+        );
+
+        settingsCard.classList.add(
+            "hide-during-conversion"
+        );
 
         progressSection.style.display =
             "block";
 
+        document.body.classList.add(
+            "converting"
+        );
+
+        convertBtn.disabled =
+            true;
+
+        progressBar.style.width =
+            "0%";
+
+        progressBar.innerHTML =
+            "0%";
+
         const formData =
             new FormData();
 
-        formData.append(
-            "pdfFile",
-            selectedFiles[0]
+        selectedFiles.forEach(
+            file => {
+
+                formData.append(
+                    "pdfFiles",
+                    file
+                );
+
+            }
         );
 
         formData.append(
@@ -275,14 +436,17 @@ form.addEventListener(
 
         xhr.upload.addEventListener(
             "progress",
-            function(event){
+            function (event) {
 
-                if(event.lengthComputable){
+                if (
+                    event.lengthComputable
+                ) {
 
                     const percent =
                         Math.round(
                             (
-                                event.loaded /
+                                event.loaded
+                                /
                                 event.total
                             ) * 100
                         );
@@ -292,61 +456,59 @@ form.addEventListener(
 
                     progressBar.innerHTML =
                         percent + "%";
+
                 }
 
             }
         );
 
         xhr.onreadystatechange =
-            function(){
+            function () {
 
-                if(
-                    xhr.readyState === 4 &&
-                    xhr.status === 200
-                ){
+                if (
+                    xhr.readyState === 4
+                ) {
 
-                    const result =
-                        JSON.parse(
-                            xhr.responseText
-                        );
+                    if (
+                        xhr.status === 200
+                    ) {
 
-                    if(result.success){
-                        document.getElementById(
-                            "dropZone"
-                        ).style.display = "none";
+                        const result =
+                            JSON.parse(
+                                xhr.responseText
+                            );
 
-                        document.getElementById(
-                            "settingsCard"
-                        ).style.display = "none";
+                        if (
+                            result.success
+                        ) {
 
-                        document.getElementById(
-                            "convertBtn"
-                        ).style.display = "none";
+                            conversionCompleted =
+                                true;
 
-                        document.getElementById(
-                            "fileList"
-                        ).style.display = "none";
-                        document.getElementById(
-                                "resultCard"
-                            ).style.display =
+                            document.body.classList.remove(
+                                "converting"
+                            );
+
+                            convertBtn.disabled =
+                                false;
+
+                            resultCard.style.display =
                                 "block";
-                        setTimeout(() => {
 
                             progressSection.style.display =
                                 "none";
 
-                        }, 1000);
+                            const downloads =
+                                imageDownloads;
 
-                        const downloads =
-                            document.getElementById(
-                                "imageDownloads"
-                            );
+                            downloads.innerHTML =
+                                "";
 
-                        downloads.innerHTML =
-                            "";
-
-                        result.files.forEach(
-                            (file,index)=> {
+                            result.files.forEach(
+                                (
+                                    file,
+                                    index
+                                ) => {
 
                                     downloads.innerHTML += `
 
@@ -406,11 +568,83 @@ form.addEventListener(
                                     </div>
 
                                     `;
-                        });
+
+                                }
+                            );
+
+                        }
+                        else {
+
+                            alert(
+                                result.message
+                            );
+
+                            uploadAreaWrapper.classList.remove(
+                                "hide-during-conversion"
+                            );
+
+                            summaryCard.classList.remove(
+                                "hide-during-conversion"
+                            );
+
+                            fileList.classList.remove(
+                                "hide-during-conversion"
+                            );
+
+                            settingsCard.classList.remove(
+                                "hide-during-conversion"
+                            );
+
+                            progressSection.style.display =
+                                "none";
+
+                            document.body.classList.remove(
+                                "converting"
+                            );
+
+                            convertBtn.disabled =
+                                false;
+
+                        }
 
                     }
 
                 }
+
+            };
+
+        xhr.onerror =
+            function () {
+
+                alert(
+                    "Conversion failed. Please try again."
+                );
+
+                uploadAreaWrapper.classList.remove(
+                    "hide-during-conversion"
+                );
+
+                summaryCard.classList.remove(
+                    "hide-during-conversion"
+                );
+
+                fileList.classList.remove(
+                    "hide-during-conversion"
+                );
+
+                settingsCard.classList.remove(
+                    "hide-during-conversion"
+                );
+
+                progressSection.style.display =
+                    "none";
+
+                document.body.classList.remove(
+                    "converting"
+                );
+
+                convertBtn.disabled =
+                    false;
 
             };
 
@@ -425,97 +659,114 @@ form.addEventListener(
 
     }
 );
-
 /* ===========================
    CONVERT MORE
 =========================== */
 
 document
-.getElementById(
-    "convertMoreBtn"
-)
-.addEventListener(
-    "click",
-    function(){
+    .getElementById(
+        "convertMoreBtn"
+    )
+    .addEventListener(
+        "click",
+        function () {
 
-        selectedFiles = [];
+            fetch(
+                "/delete-pdf-to-image-files",
+                {
+                    method: "POST"
+                }
+            );
 
-        fileInput.value = "";
+            conversionCompleted =
+                false;
 
-        fileList.innerHTML = "";
+            selectedFiles = [];
 
-        summaryCard.classList.add(
-            "d-none"
-        );
+            fileInput.value = "";
 
-        document.getElementById(
-            "imageDownloads"
-        ).innerHTML = "";
+            fileList.innerHTML = "";
 
-        progressSection.style.display =
-            "none";
+            imageDownloads.innerHTML = "";
 
-        progressBar.style.width =
-            "0%";
+            totalFiles.innerHTML =
+                "0";
 
-        progressBar.innerHTML =
-            "0%";
+            totalSize.innerHTML =
+                "0 MB";
 
-        document.getElementById(
-            "dropZone"
-        ).style.display =
-            "block";
+            summaryCard.classList.add(
+                "d-none"
+            );
 
-        document.getElementById(
-            "settingsCard"
-        ).style.display =
-            "block";
+            progressSection.style.display =
+                "none";
 
-        document.getElementById(
-            "convertBtn"
-        ).style.display =
-            "block";
+            progressBar.style.width =
+                "0%";
 
-        document.getElementById(
-            "fileList"
-        ).style.display =
-            "block";
+            progressBar.innerHTML =
+                "0%";
 
-        document.getElementById(
-            "resultCard"
-        ).style.display =
-            "none";
+            uploadAreaWrapper.classList.remove(
+                "hide-during-conversion"
+            );
 
-        window.scrollTo({
-            top:0,
-            behavior:"smooth"
-        });
+            summaryCard.classList.remove(
+                "hide-during-conversion"
+            );
 
-    }
-);
+            fileList.classList.remove(
+                "hide-during-conversion"
+            );
+
+            settingsCard.classList.remove(
+                "hide-during-conversion"
+            );
+
+            document.body.classList.remove(
+                "converting"
+            );
+
+            convertBtn.disabled =
+                false;
+
+            resultCard.style.display =
+                "none";
+
+            window.scrollTo({
+
+                top: 0,
+
+                behavior: "smooth"
+
+            });
+
+        }
+    );
 
 /* ===========================
    DARK MODE
 =========================== */
 
 document
-.getElementById(
-    "darkModeBtn"
-)
-.addEventListener(
-    "click",
-    () => {
+    .getElementById(
+        "darkModeBtn"
+    )
+    .addEventListener(
+        "click",
+        () => {
 
-        document.body.classList.toggle(
-            "dark-mode"
-        );
+            document.body.classList.toggle(
+                "dark-mode"
+            );
 
-    }
-);
+        }
+    );
 
 
 
-function previewImage(fileName){
+function previewImage(fileName) {
 
     document.getElementById(
         "resultPreviewImage"
@@ -534,9 +785,12 @@ function previewImage(fileName){
 
 }
 
-function previewSelectedPdf(){
+function previewSelectedPdf(index) {
 
-    if(selectedFiles.length === 0){
+    const file =
+        selectedFiles[index];
+
+    if (!file) {
 
         return;
 
@@ -544,7 +798,7 @@ function previewSelectedPdf(){
 
     const fileUrl =
         URL.createObjectURL(
-            selectedFiles[0]
+            file
         );
 
     document.getElementById(
@@ -566,7 +820,7 @@ function previewSelectedPdf(){
 function downloadImage(
     originalFileName,
     inputId
-){
+) {
 
     const newFileName =
         document.getElementById(
@@ -582,5 +836,58 @@ function downloadImage(
         + encodeURIComponent(
             newFileName
         );
+
+}
+/* ===========================
+   CLEANUP ON RELOAD
+=========================== */
+
+window.addEventListener(
+    "beforeunload",
+    function () {
+
+        navigator.sendBeacon(
+            "/delete-pdf-to-image-files"
+        );
+
+    }
+);
+
+/* ===========================
+   REMOVE FILE
+=========================== */
+
+function removeFile(index) {
+
+    selectedFiles.splice(
+        index,
+        1
+    );
+
+    if (
+        selectedFiles.length === 0
+    ) {
+
+        fileInput.value = "";
+
+    }
+
+    renderFiles();
+
+    uploadAreaWrapper.classList.remove(
+        "hide-during-conversion"
+    );
+
+    summaryCard.classList.remove(
+        "hide-during-conversion"
+    );
+
+    fileList.classList.remove(
+        "hide-during-conversion"
+    );
+
+    settingsCard.classList.remove(
+        "hide-during-conversion"
+    );
 
 }

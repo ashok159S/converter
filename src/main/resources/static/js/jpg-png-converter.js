@@ -3,48 +3,68 @@
 =========================== */
 
 const imageFiles =
-document.getElementById(
-    "imageFiles"
-);
+    document.getElementById(
+        "imageFiles"
+    );
 
 const dropZone =
-document.getElementById(
-    "dropZone"
-);
+    document.getElementById(
+        "dropZone"
+    );
 
 const convertForm =
-document.getElementById(
-    "convertForm"
-);
+    document.getElementById(
+        "convertForm"
+    );
 
 const summaryCard =
-document.getElementById(
-    "summaryCard"
-);
+    document.getElementById(
+        "summaryCard"
+    );
 
 const fileListContainer =
-document.getElementById(
-    "fileListContainer"
-);
+    document.getElementById(
+        "fileListContainer"
+    );
 
 const totalFiles =
-document.getElementById(
-    "totalFiles"
-);
+    document.getElementById(
+        "totalFiles"
+    );
 
 const totalSize =
-document.getElementById(
-    "totalSize"
-);
+    document.getElementById(
+        "totalSize"
+    );
 
 const progressSection =
-document.getElementById(
-    "progressSection"
-);
+    document.getElementById(
+        "progressSection"
+    );
 
 const progressBar =
+    document.getElementById(
+        "progressBar"
+    );
+
+const convertBtn =
 document.getElementById(
-    "progressBar"
+    "convertBtn"
+);
+
+const uploadSection =
+document.getElementById(
+    "uploadSection"
+);
+
+const resultCard =
+document.getElementById(
+    "resultCard"
+);
+
+const darkModeBtn =
+document.getElementById(
+    "darkModeBtn"
 );
 
 let selectedFiles = [];
@@ -55,25 +75,116 @@ let selectedFiles = [];
 
 imageFiles.addEventListener(
     "change",
-    function(){
+    function () {
 
-        selectedFiles =
-        Array.from(
-            this.files
-        );
+        const newFiles =
+            Array.from(
+                this.files
+            );
+
+        const duplicateFiles = [];
+
+        newFiles.forEach(file => {
+
+            // File type validation
+
+            const fileName =
+                file.name.toLowerCase();
+
+            if (
+                !fileName.endsWith(".jpg") &&
+                !fileName.endsWith(".jpeg") &&
+                !fileName.endsWith(".png")
+            ) {
+
+                alert(
+                    `"${file.name}" is not a valid image.\n\nOnly JPG, JPEG and PNG files are allowed.`
+                );
+
+                return;
+
+            }
+
+            // File size validation (50 MB)
+
+            if (
+                file.size >
+                50 * 1024 * 1024
+            ) {
+
+                alert(
+                    `"${file.name}" exceeds the maximum file size of 50 MB.`
+                );
+
+                return;
+
+            }
+
+            // Duplicate validation
+
+            const isDuplicate =
+                selectedFiles.some(
+                    existingFile =>
+
+                        existingFile.name === file.name &&
+                        existingFile.size === file.size &&
+                        existingFile.lastModified === file.lastModified
+                );
+
+            if (isDuplicate) {
+
+                duplicateFiles.push(
+                    file.name
+                );
+
+            }
+            else {
+
+                selectedFiles.push(
+                    file
+                );
+
+            }
+
+        });
+
+        // Duplicate alert
+
+        if (
+            duplicateFiles.length > 0
+        ) {
+
+            alert(
+
+                "Duplicate file(s) detected:\n\n"
+
+                +
+
+                duplicateFiles.join(
+                    "\n"
+                )
+
+            );
+
+        }
+
+        // Reset file input
+
+        this.value = "";
+
+        // Refresh UI
 
         showFiles();
 
     }
 );
-
 /* ===========================
    DRAG & DROP
 =========================== */
 
 dropZone.addEventListener(
     "dragover",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
@@ -86,7 +197,7 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "dragleave",
-    function(){
+    function () {
 
         dropZone.classList.remove(
             "drag-active"
@@ -97,7 +208,7 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "drop",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
@@ -105,27 +216,116 @@ dropZone.addEventListener(
             "drag-active"
         );
 
-        selectedFiles =
-        Array.from(
-            e.dataTransfer.files
-        );
+        const newFiles =
+            Array.from(
+                e.dataTransfer.files
+            );
+
+        const duplicateFiles = [];
+
+        newFiles.forEach(file => {
+
+            /* File Type Validation */
+
+            const fileName =
+                file.name.toLowerCase();
+
+            if (
+                !fileName.endsWith(".jpg") &&
+                !fileName.endsWith(".jpeg") &&
+                !fileName.endsWith(".png")
+            ) {
+
+                alert(
+                    `"${file.name}" is not a valid image.\n\nOnly JPG, JPEG and PNG files are allowed.`
+                );
+
+                return;
+
+            }
+
+            /* File Size Validation */
+
+            if (
+                file.size >
+                50 * 1024 * 1024
+            ) {
+
+                alert(
+                    `"${file.name}" exceeds the maximum file size of 50 MB.`
+                );
+
+                return;
+
+            }
+
+            /* Duplicate Validation */
+
+            const isDuplicate =
+                selectedFiles.some(
+                    existingFile =>
+
+                        existingFile.name === file.name &&
+                        existingFile.size === file.size &&
+                        existingFile.lastModified === file.lastModified
+                );
+
+            if (isDuplicate) {
+
+                duplicateFiles.push(
+                    file.name
+                );
+
+            }
+            else {
+
+                selectedFiles.push(
+                    file
+                );
+
+            }
+
+        });
+
+        /* Duplicate Alert */
+
+        if (
+            duplicateFiles.length > 0
+        ) {
+
+            alert(
+
+                "Duplicate file(s) detected:\n\n"
+
+                +
+
+                duplicateFiles.join(
+                    "\n"
+                )
+
+            );
+
+        }
+
+        /* Refresh Upload List */
 
         showFiles();
 
     }
 );
 
+
 /* ===========================
    SHOW FILES
 =========================== */
 
-function showFiles(){
+function showFiles() {
 
     summaryCard.style.display =
-    "flex";
+        "flex";
 
     fileListContainer.innerHTML =
-    "";
+        "";
 
     let totalBytes = 0;
 
@@ -138,11 +338,11 @@ function showFiles(){
             totalBytes += file.size;
 
             let defaultFormat =
-            file.name.toLowerCase().endsWith(".png")
-            ?
-            "jpg"
-            :
-            "png";
+                file.name.toLowerCase().endsWith(".png")
+                    ?
+                    "jpg"
+                    :
+                    "png";
 
             fileListContainer.innerHTML += `
 
@@ -173,12 +373,12 @@ function showFiles(){
                                 id="format-${index}">
 
                                 <option value="png"
-                                ${defaultFormat==="png"?"selected":""}>
+                                ${defaultFormat === "png" ? "selected" : ""}>
                                 PNG
                                 </option>
 
                                 <option value="jpg"
-                                ${defaultFormat==="jpg"?"selected":""}>
+                                ${defaultFormat === "jpg" ? "selected" : ""}>
                                 JPG
                                 </option>
 
@@ -224,17 +424,17 @@ function showFiles(){
     );
 
     totalFiles.innerHTML =
-    selectedFiles.length;
+        selectedFiles.length;
 
     totalSize.innerHTML =
-    (
-        totalBytes
-        /
-        1024
-        /
-        1024
-    ).toFixed(2)
-    + " MB";
+        (
+            totalBytes
+            /
+            1024
+            /
+            1024
+        ).toFixed(2)
+        + " MB";
 
 }
 
@@ -242,25 +442,25 @@ function showFiles(){
    DELETE FILE
 =========================== */
 
-function deleteFile(index){
+function deleteFile(index) {
 
     selectedFiles.splice(
         index,
         1
     );
 
-    if(
+    if (
         selectedFiles.length === 0
-    ){
+    ) {
 
         summaryCard.style.display =
-        "none";
+            "none";
 
         fileListContainer.innerHTML =
-        "";
+            "";
 
         imageFiles.value =
-        "";
+            "";
 
         return;
 
@@ -274,25 +474,25 @@ function deleteFile(index){
    PREVIEW ORIGINAL IMAGE
 =========================== */
 
-function previewImage(index){
+function previewImage(index) {
 
     const file =
-    selectedFiles[index];
+        selectedFiles[index];
 
     const url =
-    URL.createObjectURL(file);
+        URL.createObjectURL(file);
 
     document.getElementById(
         "previewImage"
     ).src =
-    url;
+        url;
 
     const modal =
-    new bootstrap.Modal(
-        document.getElementById(
-            "imagePreviewModal"
-        )
-    );
+        new bootstrap.Modal(
+            document.getElementById(
+                "imagePreviewModal"
+            )
+        );
 
     modal.show();
 
@@ -304,23 +504,23 @@ function previewImage(index){
 
 function previewConvertedImage(
     fileName
-){
+) {
 
     document.getElementById(
         "previewImage"
     ).src =
-    "/preview-converted-image?fileName="
-    +
-    encodeURIComponent(
-        fileName
-    );
+        "/preview-converted-image?fileName="
+        +
+        encodeURIComponent(
+            fileName
+        );
 
     const modal =
-    new bootstrap.Modal(
-        document.getElementById(
-            "imagePreviewModal"
-        )
-    );
+        new bootstrap.Modal(
+            document.getElementById(
+                "imagePreviewModal"
+            )
+        );
 
     modal.show();
 
@@ -332,19 +532,19 @@ function previewConvertedImage(
 
 convertForm.addEventListener(
     "submit",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
-        
-         if(
+
+        if (
             !validateFiles(selectedFiles)
-        ){
+        ) {
             return;
         }
-        if(
+        if (
             selectedFiles.length === 0
-        ){
+        ) {
 
             alert(
                 "Please select images"
@@ -353,9 +553,32 @@ convertForm.addEventListener(
             return;
 
         }
+        /* Freeze UI */
+
+        convertBtn.disabled = true;
+
+        imageFiles.disabled = true;
+
+        dropZone.style.pointerEvents =
+            "none";
+
+        summaryCard.style.display =
+            "none";
+
+        fileListContainer.style.display =
+            "none";
+
+        dropZone.style.display =
+            "none";
+
+        convertBtn.style.display =
+            "none";
+
+        progressSection.style.display =
+            "block";
 
         const formData =
-        new FormData();
+            new FormData();
 
         selectedFiles.forEach(
             (
@@ -378,41 +601,39 @@ convertForm.addEventListener(
             }
         );
 
-        progressSection.style.display =
-        "block";
 
         progressBar.style.width =
-        "0%";
+            "0%";
 
         progressBar.innerHTML =
-        "0%";
+            "0%";
 
         const xhr =
-        new XMLHttpRequest();
+            new XMLHttpRequest();
 
         xhr.upload.addEventListener(
             "progress",
-            function(event){
+            function (event) {
 
-                if(
+                if (
                     event.lengthComputable
-                ){
+                ) {
 
                     const percent =
-                    Math.round(
-                        (
-                            event.loaded
-                            /
-                            event.total
-                        )
-                        * 100
-                    );
+                        Math.round(
+                            (
+                                event.loaded
+                                /
+                                event.total
+                            )
+                            * 100
+                        );
 
                     progressBar.style.width =
-                    percent + "%";
+                        percent + "%";
 
                     progressBar.innerHTML =
-                    percent + "%";
+                        percent + "%";
 
                 }
 
@@ -420,49 +641,104 @@ convertForm.addEventListener(
         );
 
         xhr.onreadystatechange =
-        function(){
+            function () {
 
-            if(
-                xhr.readyState === 4
-                &&
-                xhr.status === 200
-            ){
+                if (
+                    xhr.readyState === 4
+                    &&
+                    xhr.status === 200
+                ) {
 
-                const result =
-                JSON.parse(
-                    xhr.responseText
-                );
+                    const result =
+                        JSON.parse(
+                            xhr.responseText
+                        );
 
-                if(
-                    result.success
-                ){
+                    if (
+                        result.success
+                    ) {
 
-                    document.getElementById(
-                        "uploadSection"
-                    ).style.display =
+                        progressSection.style.display =
+                            "none";
+
+                        uploadSection.style.display =
+                            "none";
+
+                        resultCard.style.display =
+                            "block";
+
+                        buildResultTable(
+                            result
+                        );
+
+                    }
+                    else {
+                        progressSection.style.display =
+                            "none";
+
+                        summaryCard.style.display =
+                            "flex";
+
+                        fileListContainer.style.display =
+                            "block";
+
+                        dropZone.style.display =
+                            "block";
+
+                        convertBtn.style.display =
+                            "inline-block";
+
+                        convertBtn.disabled =
+                            false;
+
+                        imageFiles.disabled =
+                            false;
+
+                        dropZone.style.pointerEvents =
+                            "auto";
+
+                        alert(
+                            result.message
+                        );
+
+                    }
+
+                }
+
+            };
+
+        xhr.onerror =
+            function () {
+
+                progressSection.style.display =
                     "none";
 
-                    document.getElementById(
-                        "resultCard"
-                    ).style.display =
+                summaryCard.style.display =
+                    "flex";
+
+                fileListContainer.style.display =
                     "block";
 
-                    buildResultTable(
-                        result
-                    );
+                dropZone.style.display =
+                    "block";
 
-                }
-                else{
+                convertBtn.style.display =
+                    "inline-block";
 
-                    alert(
-                        result.message
-                    );
+                convertBtn.disabled =
+                    false;
 
-                }
+                imageFiles.disabled =
+                    false;
 
-            }
+                dropZone.style.pointerEvents =
+                    "auto";
 
-        };
+                alert(
+                    "Conversion failed. Please try again."
+                );
+
+            };
 
         xhr.open(
             "POST",
@@ -480,15 +756,15 @@ convertForm.addEventListener(
    RESULT TABLE
 =========================== */
 
-function buildResultTable(result){
+function buildResultTable(result) {
 
     const container =
-    document.getElementById(
-        "convertedFilesContainer"
-    );
+        document.getElementById(
+            "convertedFilesContainer"
+        );
 
     container.innerHTML =
-    "";
+        "";
 
     result.files.forEach(
         file => {
@@ -564,12 +840,12 @@ function buildResultTable(result){
     document.getElementById(
         "resultFiles"
     ).innerHTML =
-    result.files.length;
+        result.files.length;
 
     document.getElementById(
         "resultSuccess"
     ).innerHTML =
-    result.files.length;
+        result.files.length;
 
 }
 
@@ -581,7 +857,7 @@ document.getElementById(
     "convertMoreBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
         location.reload();
 
@@ -596,7 +872,7 @@ document.getElementById(
     "darkModeBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
         document.body.classList.toggle(
             "dark-mode"

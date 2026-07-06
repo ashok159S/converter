@@ -1,394 +1,391 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>PDF Extract Text</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <link rel="stylesheet"
-          th:href="@{/css/pdf-extract-text.css}">
+    <link rel="stylesheet" th:href="@{/css/pdf-extract-text.css}">
 
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
 
-    <div class="container">
+        <div class="container">
 
-         <a class="navbar-brand d-flex align-items-center"
-        href="/">
+            <a class="navbar-brand d-flex align-items-center" href="/">
 
-            <img src="/images/logo.png"
-                alt="ConvertNova"
-                height="50"
-                class="me-2">
+                <img src="/images/logo.png" alt="ConvertNova" height="50" class="me-2">
 
-        </a>
+            </a>
 
-        <button id="darkModeBtn"
-                class="btn btn-outline-dark">
+            <button id="darkModeBtn" class="btn btn-outline-dark">
 
-            🌙 Dark Mode
+                🌙 Dark Mode
 
-        </button>
+            </button>
 
-    </div>
+        </div>
 
-</nav>
+    </nav>
 
-<div class="container py-5">
+    <div class="container py-5">
 
-    <div class="converter-card">
+        <div class="converter-card">
 
-        <h1 class="text-center">
+            <h1 class="text-center">
 
-            PDF Extract Text
+                PDF Extract Text
 
-        </h1>
+            </h1>
 
-        <p class="text-center text-muted mb-4">
+            <p class="text-center text-muted mb-4">
 
-            Extract text content from PDF files
+                Extract text content from PDF files
 
-        </p>
+            </p>
 
-        <div id="uploadSection">
+            <div id="uploadSection">
 
-            <form id="extractTextForm">
+                <form id="extractTextForm">
 
-                <div id="summaryCard"
-                     class="summary-card"
-                     style="display:none;">
+                    <!-- SUMMARY -->
 
-                    <div>
+                    <div id="summaryCard" class="summary-card" style="display:none;">
 
-                        <strong>Total Files:</strong>
+                        <div>
 
-                        <span id="totalFiles">0</span>
+                            <strong>Total Files:</strong>
 
-                    </div>
+                            <span id="totalFiles">0</span>
 
-                    <div>
+                        </div>
 
-                        <strong>Total Size:</strong>
+                        <div>
 
-                        <span id="totalSize">0 MB</span>
+                            <strong>Total Size:</strong>
+
+                            <span id="totalSize">0 MB</span>
+
+                        </div>
 
                     </div>
 
-                </div>
+                    <!-- FILE LIST -->
 
-                <div id="fileListContainer">
+                    <div id="fileListContainer">
 
-                </div>
+                    </div>
 
-                <div id="dropZone"
-                     class="upload-area">
+                    <!-- UPLOAD -->
 
-                    <i class="bi bi-file-earmark-pdf-fill upload-icon"></i>
+                    <div id="dropZone" class="upload-area">
 
-                    <h3>
+                        <i class="bi bi-file-earmark-pdf-fill upload-icon"></i>
 
-                        Drag & Drop PDF Files Here
+                        <h3>
 
-                    </h3>
+                            Drag & Drop PDF Files Here
 
-                    <p>
+                        </h3>
 
-                        PDF Files Only
+                        <p>
 
-                    </p>
+                            PDF Files Only
 
-                    <input type="file"
-                           id="pdfFiles"
-                           accept=".pdf"
-                           multiple
-                           hidden>
+                        </p>
 
-                       <p class="text-muted">
+                        <input type="file" id="pdfFiles" accept=".pdf" multiple hidden>
 
-                    Maximum file size:
-                    50 MB
+                        <p class="text-muted">
 
-                    </p>
-                    <button type="button"
-                            class="btn btn-primary btn-lg"
+                            Maximum file size: 50 MB
+
+                        </p>
+
+                        <button type="button" class="btn btn-primary btn-lg"
                             onclick="document.getElementById('pdfFiles').click()">
 
-                        Choose PDF Files
+                            Choose PDF Files
 
-                    </button>
+                        </button>
 
-                </div>
+                    </div>
 
-                <div class="tool-section">
+                    <!-- SETTINGS -->
+
+                    <div id="settingsSection">
+
+                        <!-- EXTRACTION OPTIONS -->
+
+                        <div class="tool-section">
+
+                            <h4>
+
+                                Extraction Options
+
+                            </h4>
+
+                            <div class="form-check">
+
+                                <input type="radio" class="form-check-input" name="extractType" value="ALL" checked>
+
+                                <label class="form-check-label">
+
+                                    Extract All Pages
+
+                                </label>
+
+                            </div>
+
+                            <div class="form-check">
+
+                                <input type="radio" class="form-check-input" name="extractType" value="RANGE">
+
+                                <label class="form-check-label">
+
+                                    Extract Page Range
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                        <!-- PAGE RANGE -->
+
+                        <div id="pageRangeSection" class="tool-section" style="display:none;">
+
+                            <label class="form-label">
+
+                                Page Range
+
+                            </label>
+
+                            <input type="text" id="pageRange" class="form-control" placeholder="1-10,15,20-25">
+
+                            <small class="text-muted">
+
+                                Examples:
+                                1-10 |
+                                2,3,5 |
+                                1-5,8,10-15
+
+                            </small>
+
+                        </div>
+
+                        <!-- OUTPUT FORMAT -->
+
+                        <div class="tool-section">
+
+                            <h4>
+
+                                Output Format
+
+                            </h4>
+
+                            <div class="form-check">
+
+                                <input type="radio" class="form-check-input" name="outputFormat" value="TXT" checked>
+
+                                <label class="form-check-label">
+
+                                    TXT File
+
+                                </label>
+
+                            </div>
+
+                            <div class="form-check">
+
+                                <input type="radio" class="form-check-input" name="outputFormat" value="VIEW">
+
+                                <label class="form-check-label">
+
+                                    View Text Only
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- BUTTON -->
+
+                    <div class="text-center mt-4">
+
+                        <button id="extractBtn" type="submit" class="btn btn-primary btn-lg">
+
+                            Extract Text
+
+                        </button>
+
+                    </div>
+
+                    <!-- PROGRESS -->
+
+                    <div id="progressSection" class="mt-4" style="display:none;">
+
+                        <div class="progress">
+
+                            <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated"
+                                style="width:0%;">
+
+                                0%
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- RESULT -->
+
+            <div id="resultCard" class="mt-5" style="display:none;">
+
+                <div class="alert alert-success">
 
                     <h4>
 
-                        Extraction Options
+                        ✅ Text Extraction Completed
 
                     </h4>
 
-                    <div class="form-check">
+                </div>
 
-                        <input type="radio"
-                               class="form-check-input"
-                               name="extractType"
-                               value="ALL"
-                               checked>
+                <!-- RESULT HEADER -->
 
-                        <label class="form-check-label">
+                <div class="result-header">
 
-                            Extract All Pages
+                    <div class="row fw-bold text-center">
 
-                        </label>
+                        <div class="col-md-3">
 
-                    </div>
+                            File Name
 
-                    <div class="form-check">
+                        </div>
 
-                        <input type="radio"
-                               class="form-check-input"
-                               name="extractType"
-                               value="RANGE">
+                        <div class="col-md-2">
 
-                        <label class="form-check-label">
+                            Pages
 
-                            Extract Page Range
+                        </div>
 
-                        </label>
+                        <div class="col-md-2">
+
+                            Format
+
+                        </div>
+
+                        <div class="col-md-2">
+
+                            Preview
+
+                        </div>
+
+                        <div class="col-md-3">
+
+                            Download
+
+                        </div>
 
                     </div>
 
                 </div>
 
-                <div id="pageRangeSection"
-                     class="tool-section"
-                     style="display:none;">
+                <!-- RESULT FILES -->
 
-                    <label class="form-label">
-
-                        Page Range
-
-                    </label>
-
-                    <input type="text"
-                           id="pageRange"
-                           class="form-control"
-                           placeholder="1-10,15,20-25">
-
-                    <small class="text-muted">
-
-                        Examples:
-                        1-10
-                        |
-                        2,3,5
-                        |
-                        1-5,8,10-15
-
-                    </small>
+                <div id="resultFilesContainer">
 
                 </div>
 
-                <div class="tool-section">
+                <!-- RESULT SUMMARY -->
 
-                    <h4>
+                <div class="result-summary">
 
-                        Output Format
+                    Files:
+                    <span id="resultFiles">0</span>
 
-                    </h4>
+                    |
 
-                    <div class="form-check">
-
-                        <input type="radio"
-                               class="form-check-input"
-                               name="outputFormat"
-                               value="TXT"
-                               checked>
-
-                        <label class="form-check-label">
-
-                            TXT File
-
-                        </label>
-
-                    </div>
-
-                    <div class="form-check">
-
-                        <input type="radio"
-                               class="form-check-input"
-                               name="outputFormat"
-                               value="VIEW">
-
-                        <label class="form-check-label">
-
-                            View Text Only
-
-                        </label>
-
-                    </div>
+                    Extracted Successfully:
+                    <span id="resultSuccess">0</span>
 
                 </div>
+
+                <!-- EXTRACT MORE -->
 
                 <div class="text-center mt-4">
 
-                    <button type="submit"
-                            class="btn btn-primary btn-lg">
+                    <button id="extractMoreBtn" type="button" class="btn btn-secondary btn-lg">
 
-                        Extract Text
+                        Extract More
 
                     </button>
 
                 </div>
 
-            </form>
-
-        </div>
-
-        <div id="resultCard"
-             style="display:none;">
-
-            <div class="alert alert-success">
-
-                <h4>
-
-                    ✅ Text Extraction Completed
-
-                </h4>
-
-            </div>
-
-            <div id="resultFilesContainer">
-
-            </div>
-
-            <div class="result-summary">
-
-                Files:
-                <span id="resultFiles">0</span>
-
-                |
-
-                Extracted Successfully:
-                <span id="resultSuccess">0</span>
-
-            </div>
-
-            <div class="text-center mt-4">
-
-                <button id="extractMoreBtn"
-                        class="btn btn-secondary">
-
-                    Extract More
-
-                </button>
-
             </div>
 
         </div>
 
     </div>
 
-</div>
+    <!-- TEXT PREVIEW MODAL -->
+    <div class="modal fade" id="textPreviewModal">
 
-<!-- TEXT PREVIEW MODAL -->
+        <div class="modal-dialog modal-xl">
 
-<div class="modal fade"
-     id="textPreviewModal">
+            <div class="modal-content">
 
-    <div class="modal-dialog modal-xl">
+                <div class="modal-header">
 
-        <div class="modal-content">
+                    <h5 class="modal-title">
 
-            <div class="modal-header">
+                        Extracted Text Preview
 
-                <h5 class="modal-title">
+                    </h5>
 
-                    Extracted Text Preview
+                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    </button>
 
-                </h5>
+                </div>
 
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
+                <div class="modal-body">
 
-            </div>
-
-            <div class="modal-body">
-
-                <textarea id="previewTextArea"
-                          class="form-control"
-                          rows="25"
-                          readonly>
+                    <textarea id="previewTextArea" class="form-control" rows="25" readonly>
                 </textarea>
 
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-<div class="modal fade"
-     id="textPreviewModal">
-
-    <div class="modal-dialog modal-xl">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h5 class="modal-title">
-
-                    Extracted Text Preview
-
-                </h5>
-
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
-
-            </div>
-
-            <div class="modal-body">
-
-                <textarea
-                    id="previewTextArea"
-                    class="form-control"
-                    rows="25"
-                    readonly>
-                </textarea>
+                </div>
 
             </div>
 
         </div>
 
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/pdf-extract-text.js}"></script>
 
-<script th:src="@{/js/pdf-extract-text.js}"></script>
-
-<script src="/js/common-validation.js"></script>
+    <script src="/js/common-validation.js"></script>
 
 </body>
 
 </html>
-

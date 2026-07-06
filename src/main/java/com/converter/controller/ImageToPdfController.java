@@ -1,760 +1,306 @@
 package com.converter.controller;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import javax.imageio.ImageIO;
-
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import com.converter.service.ImageToPdfService;
+import java.io.File;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 @Controller
 public class ImageToPdfController {
 
-    private static final String PDF_FILE_NAME =
-            "merged.pdf";
+        @Autowired
+        private ImageToPdfService imageToPdfService;
 
-    @GetMapping("/image-to-pdf")
-    public String jpgToPdfPage(Model model) {
+        /*
+         * ===========================
+         * PAGE
+         * ===========================
+         */
 
-        model.addAttribute(
-                "pdfReady",
-                false
-        );
-
-        return "image-to-pdf";
-    }
-
-    @PostMapping("/image-to-pdf")
-public String convertToPdf(
-
-        @RequestParam("images")
-        MultipartFile[] images,
-
-        @RequestParam(value="pageSize", defaultValue="original")
-        String pageSize,
-
-        @RequestParam(value="quality", defaultValue="high")
-        String quality,
-
-        @RequestParam(value="conversionMode", defaultValue="merge")
-        String conversionMode,
-
-        Model model){
-
-
-    System.out.println("Page Size : " + pageSize);
-    System.out.println("Quality : " + quality);
-    System.out.println("Mode : " + conversionMode);
-
-        try {
-
-            if(images == null ||
-               images.length == 0){
-
-                model.addAttribute(
-                        "pdfReady",
-                        false
-                );
+        @GetMapping("/image-to-pdf")
+        public String imageToPdfPage() {
 
                 return "image-to-pdf";
-            }
-
-            if(conversionMode.equals("separate")){
-
-                for(MultipartFile image : images){
-
-                        System.out.println(
-                        "Creating PDF for: "
-                        + image.getOriginalFilename()
-                        );
-
-                }
-
-                }
-                else{
-
-                System.out.println(
-                        "Merge Mode Selected"
-                );
-
-                }
-
-            PDDocument document =
-                    new PDDocument();
-
-            int pageCount = 0;
-
-            for(MultipartFile image : images){
-
-                if(image.isEmpty()){
-                    continue;
-                }
-
-                File tempFile =
-                        File.createTempFile(
-                                "upload",
-                                ".jpg"
-                        );
-
-                image.transferTo(
-                        tempFile
-                );
-
-                BufferedImage bufferedImage =
-                        ImageIO.read(
-                                tempFile
-                        );
-
-                double qualityScale = 1.0;
-
-                if(quality.equals("medium")){
-
-                    qualityScale = 0.8;
-
-                }
-                else if(quality.equals("low")){
-
-                    qualityScale = 0.6;
-
-                }
-
-                if(bufferedImage == null){
-                    continue;
-                }
-                
-                PDRectangle pageRectangle;
-
-                if(pageSize.equals("a4")){
-
-                    pageRectangle =
-                            PDRectangle.A4;
-
-                }
-                else if(pageSize.equals("letter")){
-
-                    pageRectangle =
-                            PDRectangle.LETTER;
-
-                }
-                else{
-
-                    pageRectangle =
-                            new PDRectangle(
-                                    bufferedImage.getWidth(),
-                                    bufferedImage.getHeight()
-                            );
-
-                }
-
-                PDPage page =
-                        new PDPage(
-                                pageRectangle
-                        );
-
-                document.addPage(page);
-
-                PDImageXObject pdImage =
-                        PDImageXObject.createFromFile(
-                                tempFile.getAbsolutePath(),
-                                document
-                        );
-
-                PDPageContentStream contentStream =
-                        new PDPageContentStream(
-                                document,
-                                page
-                        );
-
-                float pageWidth =
-                        page.getMediaBox().getWidth();
-
-                float pageHeight =
-                        page.getMediaBox().getHeight();
-
-                float imageWidth =
-                        bufferedImage.getWidth();
-
-                float imageHeight =
-                        bufferedImage.getHeight();
-
-                float widthScale =
-                        pageWidth / imageWidth;
-
-                float heightScale =
-                        pageHeight / imageHeight;
-
-                float scale =
-                        (float) Math.min(
-                        widthScale,
-                        heightScale
-                        );
-
-                float scaledWidth =
-                        imageWidth *
-                        scale *
-                        (float)qualityScale;
-
-                float scaledHeight =
-                        imageHeight *
-                        scale *
-                        (float)qualityScale;
-
-                float x =
-                        (pageWidth - scaledWidth) / 2;
-
-                float y =
-                        (pageHeight - scaledHeight) / 2;
-
-                contentStream.drawImage(
-                        pdImage,
-                        x,
-                        y,
-                        scaledWidth,
-                        scaledHeight
-                );
-
-                contentStream.close();
-
-                tempFile.delete();
-
-                pageCount++;
-            }
-
-            document.save(
-                    PDF_FILE_NAME
-            );
-
-            document.close();
-
-            File pdfFile =
-                    new File(
-                            PDF_FILE_NAME
-                    );
-
-            double pdfSize =
-                    (double) pdfFile.length()
-                            /1024
-                            /1024;
-
-            model.addAttribute(
-                    "pdfReady",
-                    true
-            );
-
-            model.addAttribute(
-                    "pdfName",
-                    PDF_FILE_NAME
-            );
-
-            model.addAttribute(
-                    "pageCount",
-                    pageCount
-            );
-
-            model.addAttribute(
-                    "pdfSize",
-                    String.format(
-                            "%.2f MB",
-                            pdfSize
-                    )
-            );
 
         }
-        catch (Exception e){
 
-            e.printStackTrace();
+        /*
+         * ===========================
+         * CONVERT IMAGES
+         * ===========================
+         */
 
-            model.addAttribute(
-                    "pdfReady",
-                    false
-            );
+        @PostMapping("/image-to-pdf-ajax")
+        @ResponseBody
+        public Map<String, Object> convertImages(
+
+                        @RequestParam("images") MultipartFile[] images,
+
+                        @RequestParam("pageSize") String pageSize,
+
+                        @RequestParam("quality") String quality,
+
+                        @RequestParam("conversionMode") String conversionMode
+
+        ) {
+
+                return imageToPdfService.convertImages(
+
+                                images,
+
+                                pageSize,
+
+                                quality,
+
+                                conversionMode
+
+                );
+
         }
-
-        return "image-to-pdf";
-    }
+        /*
+         * ===========================
+         * DOWNLOAD MERGED PDF
+         * ===========================
+         */
 
         @GetMapping("/download-pdf")
-        public ResponseEntity<Resource>
-        downloadPdf(
+        public ResponseEntity<Resource> downloadMergedPdf() {
 
-        @RequestParam(
-                value = "fileName",
-                defaultValue = "merged.pdf"
-        )
-        String fileName
+                try {
 
-        ) throws Exception {
+                        File file = imageToPdfService.getMergedPdf();
 
-        File file =
-                new File(
-                        PDF_FILE_NAME
-                );
+                        if (!file.exists()) {
 
-        if(!file.exists()){
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
 
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "attachment; filename=\""
+                                                                        +
+                                                                        file.getName()
+                                                                        +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
+
         }
 
-        Resource resource =
-                new UrlResource(
-                        file.toURI()
-                );
-
-        return ResponseEntity.ok()
-                .header(
-                HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\""
-                + fileName +
-                "\""
-              )
-                .contentType(
-                        MediaType.APPLICATION_PDF
-                )
-                .body(resource);
-    }
+        /*
+         * ===========================
+         * DOWNLOAD SEPARATE PDF
+         * ===========================
+         */
 
         @GetMapping("/download-separate")
-        public ResponseEntity<Resource>
-        downloadSeparate(
+        public ResponseEntity<Resource> downloadSeparatePdf(
 
-                @RequestParam("fileName")
-                String fileName
+                        @RequestParam("fileName") String fileName
 
-        ) throws Exception {
+        ) {
 
-        File file =
-                new File(
-                        fileName
-                );
+                try {
 
-        if(!file.exists()){
+                        File file = imageToPdfService.getSeparatePdf(
+                                        fileName);
 
-                return ResponseEntity
-                        .notFound()
-                        .build();
-        }
+                        if (!file.exists()) {
 
-        Resource resource =
-                new UrlResource(
-                        file.toURI()
-                );
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
 
-        return ResponseEntity.ok()
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\""
-                        + file.getName()
-                        + "\""
-                )
-                .contentType(
-                        MediaType.APPLICATION_PDF
-                )
-                .body(resource);
-        }
+                        }
 
-    @PostMapping("/image-to-pdf-ajax")
-    @ResponseBody
-    public Map<String,Object> convertAjax(
+                        Resource resource = new FileSystemResource(
+                                        file);
 
-        @RequestParam("images")
-        MultipartFile[] images,
+                        return ResponseEntity.ok()
 
-        @RequestParam(value="pageSize", defaultValue="original")
-        String pageSize,
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "attachment; filename=\""
+                                                                        +
+                                                                        file.getName()
+                                                                        +
+                                                                        "\"")
 
-        @RequestParam(value="quality", defaultValue="high")
-        String quality,
+                                        .contentLength(
+                                                        file.length())
 
-        @RequestParam(value="conversionMode", defaultValue="merge")
-        String conversionMode
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
 
-    ) throws Exception {
+                                        .body(
+                                                        resource);
 
-    Map<String,Object> response =
-            new HashMap<>();
+                } catch (Exception e) {
 
-        System.out.println(
-            "Page Size : " + pageSize
-        );
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
 
-        System.out.println(
-            "Quality : " + quality
-        );
-
-if(quality.equals("high")){
-
-    System.out.println(
-        "High Quality Selected"
-    );
-
-}
-else if(quality.equals("medium")){
-
-    System.out.println(
-        "Medium Quality Selected"
-    );
-
-}
-else{
-
-    System.out.println(
-        "Low Quality Selected"
-    );
-
-}
-
-        System.out.println(
-            "Mode : " + conversionMode
-        );
-
-if(conversionMode.equals("separate")){
-
-         List<Map<String,String>> generatedFiles = new ArrayList<>();
-    for(MultipartFile image : images){
-
-        String pdfName =
-        image.getOriginalFilename()
-             .replace(".jpg", ".pdf")
-             .replace(".jpeg", ".pdf");
-             
-        PDDocument separateDocument =
-        new PDDocument();
-
-        System.out.println(
-                "Creating PDF : "
-                + pdfName
-        );
-
-        File temp =
-                File.createTempFile(
-                "img",
-                ".jpg"
-                );
-
-        image.transferTo(
-                temp
-        );
-
-        BufferedImage bufferedImage =
-        ImageIO.read(
-            temp
-        );
-
-        PDPage page =
-                new PDPage(
-                new PDRectangle(
-                        bufferedImage.getWidth(),
-                        bufferedImage.getHeight()
-                )
-        );
-                separateDocument.addPage(page);
-
-        PDImageXObject pdImage =
-        PDImageXObject.createFromFile(
-            temp.getAbsolutePath(),
-            separateDocument
-        );
-
-        PDPageContentStream stream =
-        new PDPageContentStream(
-            separateDocument,
-            page
-        );
-
-        stream.drawImage(
-        pdImage,
-        0,
-        0,
-        bufferedImage.getWidth(),
-        bufferedImage.getHeight()
-        );
-
-        stream.close();
-
-        separateDocument.save(
-                pdfName
-        );
-
-        File generatedPdf =
-        new File(pdfName);
-
-        Map<String,String> fileInfo =
-                new HashMap<>();
-
-        fileInfo.put(
-                "name",
-                pdfName
-        );
-
-        fileInfo.put(
-                "size",
-                String.format(
-                "%.2f MB",
-                generatedPdf.length()
-                /
-                1024.0
-                /
-                1024.0
-                )
-        );
-
-        generatedFiles.add(
-                fileInfo
-        );
-
-        separateDocument.close();
-
-        temp.delete();
-}
-
-        response.put(
-                "success",
-                true
-        );
-
-        response.put(
-                "separateMode",
-                true
-        );
-
-        response.put(
-                "files",
-                generatedFiles
-        );
-
-        return response;        
-
-}
-else{
-
-    System.out.println(
-            "Merge Mode Selected"
-    );
-
-}
-
-
-    PDDocument document =
-            new PDDocument();
-
-    int pageCount = 0;
-
-    for(MultipartFile image : images){
-
-        File temp =
-                File.createTempFile(
-                        "img",
-                        ".jpg"
-                );
-
-        image.transferTo(temp);
-
-        BufferedImage bufferedImage =
-                ImageIO.read(temp);
-
-        double qualityScale = 1.0;
-
-        if(quality.equals("medium")){
-
-            qualityScale = 0.8;
-
-        }
-        else if(quality.equals("low")){
-
-            qualityScale = 0.6;
+                }
 
         }
 
-PDRectangle pageRectangle;
+        /*
+         * ===========================
+         * PREVIEW MERGED PDF
+         * ===========================
+         */
 
-if(pageSize.equals("a4")){
+        @GetMapping("/preview-pdf")
+        public ResponseEntity<Resource> previewMergedPdf() {
 
-    pageRectangle =
-            PDRectangle.A4;
+                try {
 
-}
-else if(pageSize.equals("letter")){
+                        File file = imageToPdfService.getMergedPdf();
 
-    pageRectangle =
-            PDRectangle.LETTER;
+                        if (!file.exists()) {
 
-}
-else{
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
 
-    pageRectangle =
-            new PDRectangle(
-                    bufferedImage.getWidth(),
-                    bufferedImage.getHeight()
-            );
+                        }
 
-}
+                        Resource resource = new FileSystemResource(
+                                        file);
 
-        PDPage page =
-                new PDPage(
-                         pageRectangle
-                );
+                        return ResponseEntity.ok()
 
-        document.addPage(page);
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "inline; filename=\""
+                                                                        +
+                                                                        file.getName()
+                                                                        +
+                                                                        "\"")
 
-        PDImageXObject pdImage =
-                PDImageXObject.createFromFile(
-                        temp.getAbsolutePath(),
-                        document
-                );
+                                        .contentLength(
+                                                        file.length())
 
-        PDPageContentStream stream =
-                new PDPageContentStream(
-                        document,
-                        page
-                );
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
 
-                float pageWidth =
-                        page.getMediaBox().getWidth();
+                                        .body(
+                                                        resource);
 
-                float pageHeight =
-                        page.getMediaBox().getHeight();
+                } catch (Exception e) {
 
-                float imageWidth =
-                        bufferedImage.getWidth();
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
 
-                float imageHeight =
-                        bufferedImage.getHeight();
+                }
 
-                float widthScale =
-                        pageWidth / imageWidth;
+        }
 
-                float heightScale =
-                        pageHeight / imageHeight;
+        /*
+         * ===========================
+         * PREVIEW SEPARATE PDF
+         * ===========================
+         */
 
-                float scale =
-                        (float) Math.min(
-                            widthScale,
-                            heightScale
-                        );
+        @GetMapping("/preview-separate")
+        public ResponseEntity<Resource> previewSeparatePdf(
 
-                float scaledWidth =
-                        imageWidth *
-                        scale *
-                        (float)qualityScale;
+                        @RequestParam("fileName") String fileName
 
-                float scaledHeight =
-                        imageHeight *
-                        scale *
-                        (float)qualityScale;
+        ) {
 
-                float x =
-                        (pageWidth - scaledWidth) / 2;
+                try {
 
-                float y =
-                        (pageHeight - scaledHeight) / 2;
+                        File file = imageToPdfService.getSeparatePdf(
+                                        fileName);
 
-                stream.drawImage(
-                        pdImage,
-                        x,
-                        y,
-                        scaledWidth,
-                        scaledHeight
-                );
+                        if (!file.exists()) {
 
-        stream.close();
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
 
-        temp.delete();
+                        }
 
-        pageCount++;
-    }
+                        Resource resource = new FileSystemResource(
+                                        file);
 
-    document.save("merged.pdf");
-    document.close();
+                        return ResponseEntity.ok()
 
-    File pdf =
-            new File("merged.pdf");
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "inline; filename=\""
+                                                                        +
+                                                                        file.getName()
+                                                                        +
+                                                                        "\"")
 
-    response.put(
-            "success",
-            true
-    );
+                                        .contentLength(
+                                                        file.length())
 
-    response.put(
-            "pages",
-            pageCount
-    );
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
 
-    response.put(
-            "size",
-            String.format(
-                    "%.2f MB",
-                    pdf.length()/1024.0/1024.0
-            )
-    );
+                                        .body(
+                                                        resource);
 
-    response.put(
-            "fileName",
-            "merged.pdf"
-    );
+                } catch (Exception e) {
 
-    return response;
-}
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
 
-@GetMapping("/preview-pdf")
-public ResponseEntity<Resource>
-previewPdf() throws Exception {
+                }
 
-    File file =
-        new File("merged.pdf");
+        }
 
-    Resource resource =
-        new FileSystemResource(
-            file
-        );
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
 
-    return ResponseEntity.ok()
-            .contentType(
-                MediaType.APPLICATION_PDF
-            )
-            .body(resource);
-}
+        @PostMapping("/delete-image-to-pdf-temp-files")
+        @ResponseBody
+        public void deleteTempFiles() {
 
-@GetMapping("/preview-separate")
-public ResponseEntity<Resource>
-previewSeparatePdf(
-    @RequestParam String fileName
-) throws Exception {
+                imageToPdfService.deleteTempFiles();
 
-    File file =
-        new File(fileName);
-
-    Resource resource =
-        new FileSystemResource(file);
-
-    return ResponseEntity.ok()
-        .contentType(
-            MediaType.APPLICATION_PDF
-        )
-        .body(resource);
-}
+        }
 }

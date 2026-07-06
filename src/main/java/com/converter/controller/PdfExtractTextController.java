@@ -26,179 +26,306 @@ import java.util.Map;
 @Controller
 public class PdfExtractTextController {
 
-    @Autowired
-    private PdfExtractTextService pdfExtractTextService;
+        @Autowired
+        private PdfExtractTextService pdfExtractTextService;
 
-    /* ===========================
-       PAGE
-    =========================== */
+        /*
+         * ===========================
+         * PAGE
+         * ===========================
+         */
 
-    @GetMapping("/pdf-extract-text")
-    public String pdfExtractTextPage(){
+        @GetMapping("/pdf-extract-text")
+        public String pdfExtractTextPage() {
 
-        return "pdf-extract-text";
-
-    }
-
-    /* ===========================
-       EXTRACT TEXT
-    =========================== */
-
-    @PostMapping("/extract-text-ajax")
-    @ResponseBody
-    public Map<String,Object> extractText(
-
-            @RequestParam("pdfFiles")
-            MultipartFile[] pdfFiles,
-
-            @RequestParam("extractType")
-            String extractType,
-
-            @RequestParam(
-                    value = "pageRange",
-                    required = false
-            )
-            String pageRange,
-
-            @RequestParam("outputFormat")
-            String outputFormat
-
-    ){
-
-        return pdfExtractTextService.extractText(
-
-                pdfFiles,
-
-                extractType,
-
-                pageRange,
-
-                outputFormat
-
-        );
-
-    }
-
-    /* ===========================
-       DOWNLOAD TEXT FILE
-    =========================== */
-
-    @GetMapping("/download-extracted-text")
-    public ResponseEntity<Resource> downloadText(
-
-            @RequestParam("fileName")
-            String fileName
-
-    ){
-
-        try{
-
-            File file =
-                    new File(
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "extracted-text"
-                            +
-                            File.separator
-                            +
-                            fileName
-                    );
-
-            if(!file.exists()){
-
-                return ResponseEntity
-                        .notFound()
-                        .build();
-
-            }
-
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
-
-            return ResponseEntity.ok()
-
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\""
-                            +
-                            file.getName()
-                            +
-                            "\""
-                    )
-
-                    .contentLength(
-                            file.length()
-                    )
-
-                    .contentType(
-                            MediaType.TEXT_PLAIN
-                    )
-
-                    .body(
-                            resource
-                    );
-
-        }
-        catch(Exception e){
-
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                return "pdf-extract-text";
 
         }
 
-    }
+        /*
+         * ===========================
+         * EXTRACT TEXT
+         * ===========================
+         */
 
-    /* ===========================
-       PREVIEW TEXT
-    =========================== */
+        @PostMapping("/extract-text-ajax")
+        @ResponseBody
+        public Map<String, Object> extractText(
 
-    @GetMapping("/preview-extracted-text")
-    @ResponseBody
-    public String previewText(
+                        @RequestParam("pdfFiles") MultipartFile[] pdfFiles,
 
-            @RequestParam("fileName")
-            String fileName
+                        @RequestParam("extractType") String extractType,
 
-    ){
+                        @RequestParam(value = "pageRange", required = false) String pageRange,
 
-        try{
+                        @RequestParam("outputFormat") String outputFormat
 
-            File file =
-                    new File(
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "extracted-text"
-                            +
-                            File.separator
-                            +
-                            fileName
-                    );
+        ) {
 
-            if(!file.exists()){
+                if (
 
-                return "File not found";
+                pdfFiles == null
+                                ||
+                                pdfFiles.length == 0
 
-            }
+                ) {
 
-            return java.nio.file.Files.readString(
-                    file.toPath()
-            );
+                        return Map.of(
+
+                                        "success",
+                                        false,
+
+                                        "message",
+                                        "Please upload at least one PDF."
+
+                        );
+
+                }
+
+                if (
+
+                extractType == null
+                                ||
+                                extractType.isBlank()
+
+                ) {
+
+                        return Map.of(
+
+                                        "success",
+                                        false,
+
+                                        "message",
+                                        "Please select extraction type."
+
+                        );
+
+                }
+
+                if (
+
+                outputFormat == null
+                                ||
+                                outputFormat.isBlank()
+
+                ) {
+
+                        return Map.of(
+
+                                        "success",
+                                        false,
+
+                                        "message",
+                                        "Please select output format."
+
+                        );
+
+                }
+
+                if (
+
+                "RANGE".equalsIgnoreCase(extractType)
+                                &&
+                                (pageRange == null
+                                                ||
+                                                pageRange.isBlank())
+
+                ) {
+
+                        return Map.of(
+
+                                        "success",
+                                        false,
+
+                                        "message",
+                                        "Please enter page range."
+
+                        );
+
+                }
+
+                try {
+
+                        return pdfExtractTextService.extractText(
+
+                                        pdfFiles,
+
+                                        extractType,
+
+                                        pageRange,
+
+                                        outputFormat
+
+                        );
+
+                }
+
+                catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        return Map.of(
+
+                                        "success",
+                                        false,
+
+                                        "message",
+                                        "Text extraction failed."
+
+                        );
+
+                }
 
         }
-        catch(Exception e){
 
-            return "Unable to load preview";
+        /*
+         * ===========================
+         * DOWNLOAD TEXT FILE
+         * ===========================
+         */
+
+        @GetMapping("/download-extracted-text")
+        public ResponseEntity<Resource> downloadText(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+                if (
+
+                fileName.contains("..")
+                                ||
+                                fileName.contains("/")
+                                ||
+                                fileName.contains("\\")
+
+                ) {
+
+                        return ResponseEntity
+                                        .badRequest()
+                                        .build();
+
+                }
+
+                try {
+
+                        File file = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "extracted-text"
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "attachment; filename=\""
+                                                                        +
+                                                                        file.getName()
+                                                                        +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.TEXT_PLAIN)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
 
         }
 
-    }
+        /*
+         * ===========================
+         * PREVIEW TEXT
+         * ===========================
+         */
 
+        @GetMapping("/preview-extracted-text")
+        @ResponseBody
+        public String previewText(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                if (
+
+                fileName.contains("..")
+                                ||
+                                fileName.contains("/")
+                                ||
+                                fileName.contains("\\")
+
+                ) {
+
+                        return "Invalid file.";
+
+                }
+
+                try {
+
+                        File file = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "extracted-text"
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return "File not found";
+
+                        }
+
+                        return java.nio.file.Files.readString(
+                                        file.toPath());
+
+                } catch (Exception e) {
+
+                        return "Unable to preview extracted text.";
+
+                }
+
+        }
+
+        @PostMapping("/delete-extracted-files")
+        @ResponseBody
+        public Map<String, Object> deleteExtractedFiles() {
+
+                pdfExtractTextService.deleteExtractedFiles();
+
+                return Map.of(
+                                "success",
+                                true);
+
+        }
 }
-
