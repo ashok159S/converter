@@ -12,16 +12,20 @@ public class OfficeConfig {
     @Bean(initMethod = "start", destroyMethod = "stop")
     public OfficeManager officeManager() {
 
-        return LocalOfficeManager.builder()
+        String os = System.getProperty("os.name").toLowerCase();
 
-                .officeHome(
-                        "C:\\Program Files\\LibreOffice"
-                )
+        LocalOfficeManager.Builder builder = LocalOfficeManager.builder();
 
+        // Only set officeHome on Windows
+        if (os.contains("win")) {
+
+            builder.officeHome("C:\\Program Files\\LibreOffice");
+
+        }
+
+        return builder
                 .install()
-
                 .build();
-
     }
 
 }
