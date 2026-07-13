@@ -1276,18 +1276,4 @@ document.addEventListener(
 
 );
 
-/* ===========================
-   DELETE TEMP FILES
-=========================== */
-
-window.addEventListener(
-    "beforeunload",
-    function () {
-
-        navigator.sendBeacon(
-            "/delete-image-to-pdf-temp-files"
-        );
-
-    }
-);
 

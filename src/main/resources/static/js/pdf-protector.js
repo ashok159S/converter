@@ -786,7 +786,9 @@ protectForm.addEventListener(
         );
 
     }
-);/* ===========================
+);
+
+/* ===========================
    RESULT PAGE
 =========================== */
 
@@ -834,14 +836,13 @@ function buildResult(result) {
             </div>
 
             <div class="col-md-4">
+                    <a
+                        href="/download-protected-pdf?downloadName=${encodeURIComponent(file.name)}"
+                        class="btn btn-success btn-sm">
 
-                <a
-                    href="/download-protected-pdf?fileName=${encodeURIComponent(file.name)}"
-                    class="btn btn-success btn-sm">
+                        Download
 
-                    Download
-
-                </a>
+                    </a>
 
             </div>
 
@@ -886,20 +887,7 @@ protectMoreBtn.addEventListener(
     }
 );
 
-/* ===========================
-   DELETE TEMP FILES
-=========================== */
 
-window.addEventListener(
-    "beforeunload",
-    function () {
-
-        navigator.sendBeacon(
-            "/delete-protected-pdf"
-        );
-
-    }
-);
 /* ===========================
    PREVIEW PROTECTED PDF
 =========================== */

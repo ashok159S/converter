@@ -905,22 +905,3 @@ cropMoreBtn.addEventListener(
 
 );
 
-/* ===========================
-   DELETE FILES ON RELOAD
-=========================== */
-
-window.addEventListener(
-
-    "beforeunload",
-
-    function () {
-
-        navigator.sendBeacon(
-
-            "/delete-cropped-pdfs"
-
-        );
-
-    }
-
-);

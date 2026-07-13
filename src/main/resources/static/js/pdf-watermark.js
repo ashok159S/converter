@@ -3,89 +3,112 @@
 =========================== */
 
 const pdfFiles =
-document.getElementById(
-    "pdfFiles"
-);
+    document.getElementById(
+        "pdfFiles"
+    );
 
 const dropZone =
-document.getElementById(
-    "dropZone"
-);
+    document.getElementById(
+        "dropZone"
+    );
 
 const summaryCard =
-document.getElementById(
-    "summaryCard"
-);
+    document.getElementById(
+        "summaryCard"
+    );
 
 const fileListContainer =
-document.getElementById(
-    "fileListContainer"
-);
+    document.getElementById(
+        "fileListContainer"
+    );
 
 const totalFiles =
-document.getElementById(
-    "totalFiles"
-);
+    document.getElementById(
+        "totalFiles"
+    );
 
 const totalSize =
-document.getElementById(
-    "totalSize"
-);
+    document.getElementById(
+        "totalSize"
+    );
 
 const watermarkText =
-document.getElementById(
-    "watermarkText"
-);
+    document.getElementById(
+        "watermarkText"
+    );
 
 const textSize =
-document.getElementById(
-    "textSize"
-);
+    document.getElementById(
+        "textSize"
+    );
 
 const imageSize =
-document.getElementById(
-    "imageSize"
-);
+    document.getElementById(
+        "imageSize"
+    );
 
 const watermarkImage =
-document.getElementById(
-    "watermarkImage"
-);
+    document.getElementById(
+        "watermarkImage"
+    );
 
 const watermarkPreviewBox =
-document.getElementById(
-    "watermarkPreviewBox"
-);
+    document.getElementById(
+        "watermarkPreviewBox"
+    );
 
 const opacity =
-document.getElementById(
-    "opacity"
-);
+    document.getElementById(
+        "opacity"
+    );
 
 const opacityValue =
-document.getElementById(
-    "opacityValue"
-);
+    document.getElementById(
+        "opacityValue"
+    );
 
 const watermarkForm =
-document.getElementById(
-    "watermarkForm"
-);
+    document.getElementById(
+        "watermarkForm"
+    );
+
+const uploadSection =
+    document.getElementById(
+        "uploadSection"
+    );
+
+const progressSection =
+    document.getElementById(
+        "progressSection"
+    );
+
+const progressBar =
+    document.getElementById(
+        "progressBar"
+    );
+
+const convertBtn =
+    document.getElementById(
+        "convertBtn"
+    );
+
+let conversionCompleted =
+    false;
 
 let selectedFiles = [];
-
 /* ===========================
    FILE SELECT
 =========================== */
 
 pdfFiles.addEventListener(
     "change",
-    function(){
+    function () {
 
-        selectedFiles =
-        Array.from(
-            this.files
+        addFiles(
+            Array.from(this.files)
         );
+
+        this.value = "";
 
         renderFiles();
 
@@ -98,7 +121,7 @@ pdfFiles.addEventListener(
 
 dropZone.addEventListener(
     "dragover",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
@@ -107,13 +130,13 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "drop",
-    function(e){
+    function (e) {
 
         e.preventDefault();
-
-        selectedFiles =
-        Array.from(
-            e.dataTransfer.files
+        addFiles(
+            Array.from(
+                e.dataTransfer.files
+            )
         );
 
         renderFiles();
@@ -122,30 +145,89 @@ dropZone.addEventListener(
 );
 
 /* ===========================
+   ADD FILES
+=========================== */
+
+function addFiles(newFiles) {
+
+    const duplicateFiles = [];
+
+    newFiles.forEach(file => {
+
+        if (file.type !== "application/pdf") {
+
+            alert(file.name + " is not a PDF file.");
+
+            return;
+
+        }
+
+        if (file.size > 50 * 1024 * 1024) {
+
+            alert(file.name + " exceeds the 50 MB limit.");
+
+            return;
+
+        }
+
+        const alreadyExists =
+            selectedFiles.some(
+                existingFile =>
+                    existingFile.name === file.name &&
+                    existingFile.size === file.size
+            );
+
+        if (alreadyExists) {
+
+            duplicateFiles.push(file.name);
+
+        }
+        else {
+
+            selectedFiles.push(file);
+
+        }
+
+    });
+
+    if (duplicateFiles.length > 0) {
+
+        alert(
+            "Duplicate file(s) skipped:\n\n" +
+            duplicateFiles.join("\n")
+        );
+
+    }
+
+    renderFiles();
+
+}
+
+/* ===========================
    FILE RENDER
 =========================== */
 
-function renderFiles(){
+function renderFiles() {
 
-    if(selectedFiles.length === 0){
+    if (selectedFiles.length === 0) {
 
         summaryCard.style.display =
-        "none";
+            "none";
 
         fileListContainer.innerHTML =
-        "";
+            "";
 
         return;
 
     }
 
     summaryCard.style.display =
-    "flex";
+        "flex";
 
     let totalBytes = 0;
 
     fileListContainer.innerHTML =
-    "";
+        "";
 
     selectedFiles.forEach(
         (
@@ -154,7 +236,7 @@ function renderFiles(){
         ) => {
 
             totalBytes +=
-            file.size;
+                file.size;
 
             fileListContainer.innerHTML += `
 
@@ -216,72 +298,72 @@ function renderFiles(){
     );
 
     totalFiles.innerHTML =
-    selectedFiles.length;
+        selectedFiles.length;
 
     totalSize.innerHTML =
-    (
-        totalBytes
-        /
-        1024
-        /
-        1024
-    ).toFixed(2)
-    +
-    " MB";
+        (
+            totalBytes
+            /
+            1024
+            /
+            1024
+        ).toFixed(2)
+        +
+        " MB";
 
 }
 
 
 document
-.querySelectorAll(
-    'input[name="watermarkType"]'
-)
-.forEach(
-    radio => {
+    .querySelectorAll(
+        'input[name="watermarkType"]'
+    )
+    .forEach(
+        radio => {
 
-        radio.addEventListener(
-            "change",
-            function(){
+            radio.addEventListener(
+                "change",
+                function () {
 
-                if(this.value === "text"){
+                    if (this.value === "text") {
 
-                    document.getElementById(
-                        "textWatermarkSection"
-                    ).style.display =
-                    "block";
+                        document.getElementById(
+                            "textWatermarkSection"
+                        ).style.display =
+                            "block";
 
-                    document.getElementById(
-                        "imageWatermarkSection"
-                    ).style.display =
-                    "none";
+                        document.getElementById(
+                            "imageWatermarkSection"
+                        ).style.display =
+                            "none";
+
+                    }
+                    else {
+
+                        document.getElementById(
+                            "textWatermarkSection"
+                        ).style.display =
+                            "none";
+
+                        document.getElementById(
+                            "imageWatermarkSection"
+                        ).style.display =
+                            "block";
+
+                    }
 
                 }
-                else{
+            );
 
-                    document.getElementById(
-                        "textWatermarkSection"
-                    ).style.display =
-                    "none";
+        }
+    );
 
-                    document.getElementById(
-                        "imageWatermarkSection"
-                    ).style.display =
-                    "block";
-
-                }
-
-            }
-        );
-
-    }
-);
-     
 
 /* ===========================
    DELETE FILE
 =========================== */
 
-function deleteFile(index){
+function deleteFile(index) {
 
     selectedFiles.splice(
         index,
@@ -296,25 +378,25 @@ function deleteFile(index){
    PDF PREVIEW
 =========================== */
 
-function previewPdf(index){
+function previewPdf(index) {
 
     const file =
-    selectedFiles[index];
+        selectedFiles[index];
 
     const url =
-    URL.createObjectURL(file);
+        URL.createObjectURL(file);
 
     document.getElementById(
         "pdfPreviewFrame"
     ).src =
-    url;
+        url;
 
     const modal =
-    new bootstrap.Modal(
-        document.getElementById(
-            "pdfPreviewModal"
-        )
-    );
+        new bootstrap.Modal(
+            document.getElementById(
+                "pdfPreviewModal"
+            )
+        );
 
     modal.show();
 
@@ -323,46 +405,46 @@ function previewPdf(index){
 
 watermarkText.addEventListener(
     "input",
-    function(){
+    function () {
 
         watermarkPreviewBox.innerHTML =
-        this.value;
+            this.value;
 
         watermarkPreviewBox.style.fontSize =
-        textSize.value + "px";
+            textSize.value + "px";
 
     }
 );
 
 textSize.addEventListener(
     "input",
-    function(){
+    function () {
 
         watermarkPreviewBox.style.fontSize =
-        this.value + "px";
+            this.value + "px";
 
     }
 );
 
 watermarkImage.addEventListener(
     "change",
-    function(){
+    function () {
 
         const file = this.files[0];
 
-        if(!file) return;
+        if (!file) return;
 
         const reader =
-        new FileReader();
+            new FileReader();
 
         reader.onload =
-        function(e){
+            function (e) {
 
-            watermarkPreviewBox.innerHTML =
-            `<img src="${e.target.result}"
+                watermarkPreviewBox.innerHTML =
+                    `<img src="${e.target.result}"
                    style="max-width:${imageSize.value}px;">`;
 
-        };
+            };
 
         reader.readAsDataURL(file);
 
@@ -375,44 +457,90 @@ watermarkImage.addEventListener(
 
 opacity.addEventListener(
     "input",
-    function(){
+    function () {
 
         opacityValue.innerHTML =
-        this.value
-        +
-        "%";
+            this.value
+            +
+            "%";
 
     }
 );
-
 /* ===========================
    FORM SUBMIT
 =========================== */
 
 watermarkForm.addEventListener(
     "submit",
-    function(e){
+    function (e) {
+
         e.preventDefault();
 
-        
-         if(
-            !validateFiles(selectedFiles)
-        ){
+        if (convertBtn.disabled) {
+
             return;
+
         }
 
-        if(selectedFiles.length === 0){
+        if (
+            !validateFiles(selectedFiles)
+        ) {
+
+            return;
+
+        }
+
+        if (selectedFiles.length === 0) {
 
             alert(
-                "Please select PDF files"
+                "Please select PDF files."
             );
 
             return;
 
         }
 
+        convertBtn.disabled = true;
+
+        uploadSection.style.display =
+            "none";
+
+        progressSection.style.display =
+            "block";
+
+        document.body.classList.add(
+            "conversion-active"
+        );
+
+        progressSection.style.display = "block";
+
+        let progress = 0;
+
+        progressBar.style.width =
+            "0%";
+
+        progressBar.innerHTML =
+            "0%";
+
+        const progressInterval =
+            setInterval(function () {
+
+                if (progress < 95) {
+
+                    progress++;
+
+                    progressBar.style.width =
+                        progress + "%";
+
+                    progressBar.innerHTML =
+                        progress + "%";
+
+                }
+
+            }, 100);
+
         const formData =
-        new FormData();
+            new FormData();
 
         selectedFiles.forEach(
             file => {
@@ -446,9 +574,9 @@ watermarkForm.addEventListener(
         );
 
         const imageFile =
-        watermarkImage.files[0];
+            watermarkImage.files[0];
 
-        if(imageFile){
+        if (imageFile) {
 
             formData.append(
                 "watermarkImage",
@@ -457,84 +585,134 @@ watermarkForm.addEventListener(
 
         }
 
-        const position =
-        document.querySelector(
-            'input[name="position"]:checked'
-        ).value;
-
         formData.append(
             "position",
-            position
+            document.querySelector(
+                'input[name="position"]:checked'
+            ).value
         );
-
-        const watermarkType =
-        document.querySelector(
-            'input[name="watermarkType"]:checked'
-        ).value;
 
         formData.append(
             "watermarkType",
-            watermarkType
+            document.querySelector(
+                'input[name="watermarkType"]:checked'
+            ).value
         );
 
         fetch(
             "/watermark-pdf-ajax",
             {
-                method:"POST",
-                body:formData
+                method: "POST",
+                body: formData
             }
         )
-        .then(
-            response =>
-            response.json()
-        )
-        .then(
-            result => {
+            .then(
+                response =>
+                    response.json()
+            )
+            .then(
+                result => {
 
-                if(result.success){
-
-                    buildResult(
-                        result
+                    clearInterval(
+                        progressInterval
                     );
 
+                    progressBar.style.width =
+                        "100%";
+
+                    progressBar.innerHTML =
+                        "100%";
+
+                    conversionCompleted =
+                        true;
+
+                    if (result.success) {
+
+                        buildResult(result);
+
+                    }
+                    else {
+
+                        alert(
+                            result.message
+                        );
+
+                        uploadSection.style.display =
+                            "block";
+
+                        progressSection.style.display =
+                            "none";
+
+                        convertBtn.disabled =
+                            false;
+
+                        document.body.classList.remove(
+                            "conversion-active"
+                        );
+
+                    }
+
                 }
-                else{
+            )
+            .catch(
+                function () {
+
+                    clearInterval(
+                        progressInterval
+                    );
 
                     alert(
-                        result.message
+                        "Conversion failed. Please try again."
+                    );
+
+                    uploadSection.style.display =
+                        "block";
+
+                    progressSection.style.display =
+                        "none";
+
+                    convertBtn.disabled =
+                        false;
+
+                    document.body.classList.remove(
+                        "conversion-active"
                     );
 
                 }
-
-            }
-        );
+            );
 
     }
 );
-
 /* ===========================
    RESULT
 =========================== */
 
-function buildResult(result){
+function buildResult(result) {
 
-    document.getElementById(
-        "uploadSection"
-    ).style.display =
-    "none";
+    uploadSection.style.display =
+        "none";
+
+    progressSection.style.display =
+        "none";
 
     document.getElementById(
         "resultCard"
     ).style.display =
-    "block";
+        "block";
 
-    const container =
-    document.getElementById(
-        "resultFilesContainer"
+    convertBtn.disabled =
+        false;
+
+    document.body.classList.remove(
+        "conversion-active"
     );
+    const container =
+        document.getElementById(
+            "resultFilesContainer"
+        );
 
     container.innerHTML =
-    "";
+        "";
 
     result.files.forEach(
         file => {
@@ -598,12 +776,12 @@ function buildResult(result){
     document.getElementById(
         "resultFiles"
     ).innerHTML =
-    result.files.length;
+        result.files.length;
 
     document.getElementById(
         "resultSuccess"
     ).innerHTML =
-    result.files.length;
+        result.files.length;
 
 }
 
@@ -615,9 +793,25 @@ document.getElementById(
     "watermarkMoreBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
-        location.reload();
+        selectedFiles = [];
+
+        conversionCompleted = false;
+
+        fetch(
+            "/delete-watermark-files",
+            {
+                method: "POST"
+            }
+        )
+            .finally(
+                function () {
+
+                    location.reload();
+
+                }
+            );
 
     }
 );
@@ -630,7 +824,7 @@ document.getElementById(
     "darkModeBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
         document.body.classList.toggle(
             "dark-mode"

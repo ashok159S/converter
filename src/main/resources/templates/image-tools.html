@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
 
@@ -16,314 +14,299 @@
     </title>
 
     <meta name="description"
-          content="Free online PDF tools including Merge, Split, Compress, Crop, Watermark, Unlock and more.">
+        content="Free online PDF tools including Merge, Split, Compress, Crop, Watermark, Unlock and more.">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <link rel="stylesheet"
-          th:href="@{/css/pdf-tools.css}">
+    <link rel="stylesheet" th:href="@{/css/pdf-tools.css}">
 
 </head>
 
 <body>
 
-       
-<!-- =========================
+
+    <!-- =========================
      NAVBAR
 ========================= -->
 
-<nav class="navbar navbar-expand-lg fixed-top custom-navbar">
+    <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
 
-    <div class="container">
+        <div class="container">
 
-        <a class="navbar-brand"
-           href="/">
+            <a class="navbar-brand" href="/">
 
-            <img src="/images/logo.png"
-                 alt="ConvertNova"
-                 class="logo">
-
-        </a>
-
-        <button class="navbar-toggler"
-                data-bs-toggle="collapse"
-                data-bs-target="#navMenu">
-
-            <span class="navbar-toggler-icon"></span>
-
-        </button>
-
-        <div class="collapse navbar-collapse"
-             id="navMenu">
-
-            <ul class="navbar-nav mx-auto">
-
-                <li class="nav-item">
-                    <a class="nav-link active" href="/">Home</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/tools">All Tools</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/pdf-tools">PDF Tools</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/image-tools">Image Tools</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/office-tools">Office Tools</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/security-tools">Security Tools</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/contact-us">Contact</a>
-                </li>
-
-            </ul>
-
-            <a href="/tools"
-               class="btn start-btn">
-
-                Start Converting
+                <img src="/images/logo.png" alt="ConvertNova" class="logo">
 
             </a>
 
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+                aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation" title="Toggle navigation">
+
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+
+                <ul class="navbar-nav mx-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/tools">All Tools</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pdf-tools">PDF Tools</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/image-tools">Image Tools</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/office-tools">Office Tools</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/security-tools">Security Tools</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact-us">Contact</a>
+                    </li>
+
+                </ul>
+
+                <a href="/tools" class="btn start-btn">
+
+                    Start Converting
+
+                </a>
+
+            </div>
+
         </div>
 
-    </div>
-
-</nav>
+    </nav>
     <!-- ==========================================
      HERO SECTION
 ========================================== -->
 
-<section class="pdf-hero">
+    <section class="pdf-hero">
 
-    <div class="container">
+        <div class="container">
 
-        <div class="hero-content text-center">
+            <div class="hero-content text-center">
 
-            <h1>
+                <h1>
 
-                Image Tools
+                    Image Tools
 
-            </h1>
+                </h1>
 
-            <p>
+                <p>
 
-               Resize, Compress, Convert,
-               Optimize and edit images online.
+                    Resize, Compress, Convert,
+                    Optimize and edit images online.
 
-            </p>
+                </p>
+
+            </div>
 
         </div>
 
-    </div>
+    </section>
 
-</section>
-
-<!-- ==========================================
+    <!-- ==========================================
      SEARCH SECTION
 ========================================== -->
 
-<section class="search-section">
+    <section class="search-section">
 
-    <div class="container">
+        <div class="container">
 
-        <div class="search-wrapper">
+            <div class="search-wrapper">
 
-            <div class="search-box">
+                <div class="search-box">
 
-                <i class="bi bi-search"></i>
+                    <i class="bi bi-search"></i>
 
-                <input type="text"
-                       placeholder="Search PDF tools...">
+                    <input type="text" placeholder="Search PDF tools...">
+
+                </div>
+
+                <button class="search-btn">
+
+                    Search
+
+                </button>
 
             </div>
 
-            <button class="search-btn">
-
-                Search
-
-            </button>
-
         </div>
 
-    </div>
+    </section>
 
-</section>
-
-<!-- ==========================================
+    <!-- ==========================================
      CATEGORY FILTERS
 ========================================== -->
 
-<section class="filter-section">
+    <section class="filter-section">
 
-    <div class="container">
+        <div class="container">
 
-        <div class="category-filter">
+            <div class="category-filter">
 
-            <a href="/tools"
-               class="filter-btn ">
+                <a href="/tools" class="filter-btn ">
 
-                <i class="bi bi-grid"></i>
+                    <i class="bi bi-grid"></i>
 
-                All Tools
+                    All Tools
 
-            </a>
+                </a>
 
-            <a href="/pdf-tools"
-               class="filter-btn ">
+                <a href="/pdf-tools" class="filter-btn ">
 
-                <i class="bi bi-file-earmark-pdf"></i>
+                    <i class="bi bi-file-earmark-pdf"></i>
 
-                PDF Tools
+                    PDF Tools
 
-            </a>
+                </a>
 
-            <a href="/image-tools"
-               class="filter-btn active">
+                <a href="/image-tools" class="filter-btn active">
 
-                <i class="bi bi-image"></i>
+                    <i class="bi bi-image"></i>
 
-                Image Tools
+                    Image Tools
 
-            </a>
+                </a>
 
-            <a href="/office-tools"
-               class="filter-btn">
+                <a href="/office-tools" class="filter-btn">
 
-                <i class="bi bi-file-earmark-word"></i>
+                    <i class="bi bi-file-earmark-word"></i>
 
-                Office Tools
+                    Office Tools
 
-            </a>
+                </a>
 
-            <a href="/security-tools"
-               class="filter-btn">
+                <a href="/security-tools" class="filter-btn">
 
-                <i class="bi bi-shield-lock"></i>
+                    <i class="bi bi-shield-lock"></i>
 
-                Security Tools
+                    Security Tools
 
-            </a>
+                </a>
+
+            </div>
 
         </div>
 
-    </div>
+    </section>
 
-</section>
-
-<!-- ==========================================
+    <!-- ==========================================
      STATS SECTION
 ========================================== -->
 
-<section class="stats-section">
+    <section class="stats-section">
 
-    <div class="container">
+        <div class="container">
 
-        <div class="stats-card">
+            <div class="stats-card">
 
-            <div class="stat-item">
+                <div class="stat-item">
 
-                <img src="/images/icons/files-converted.png">
+                    <img src="/images/icons/files-converted.png" alt="Files-converter">
 
-                <div>
+                    <div>
 
-                    <h3>
+                        <h3>
 
-                        1M+
+                            1M+
 
-                    </h3>
+                        </h3>
 
-                    <p>
+                        <p>
 
-                        Files Converted
+                            Files Converted
 
-                    </p>
+                        </p>
 
-                </div>
-
-            </div>
-
-            <div class="stat-divider"></div>
-
-            <div class="stat-item">
-
-                <img src="/images/icons/tools.png">
-
-                <div>
-
-                    <h3>
-
-                        20+
-
-                    </h3>
-
-                    <p>
-
-                        Powerful Tools
-
-                    </p>
+                    </div>
 
                 </div>
 
-            </div>
+                <div class="stat-divider"></div>
 
-            <div class="stat-divider"></div>
+                <div class="stat-item">
 
-            <div class="stat-item">
+                    <img src="/images/icons/tools.png" alt="Tools">
 
-                <img src="/images/icons/security.png">
+                    <div>
 
-                <div>
+                        <h3>
 
-                    <h3>
+                            20+
 
-                        99.9%
+                        </h3>
 
-                    </h3>
+                        <p>
 
-                    <p>
+                            Powerful Tools
 
-                        Uptime
+                        </p>
 
-                    </p>
+                    </div>
 
                 </div>
 
-            </div>
+                <div class="stat-divider"></div>
 
-            <div class="stat-divider"></div>
+                <div class="stat-item">
 
-            <div class="stat-item">
+                    <img src="/images/icons/security.png" alt="Security">
 
-                <img src="/images/icons/lock.png">
+                    <div>
 
-                <div>
+                        <h3>
 
-                    <h3>
+                            99.9%
 
-                        100%
+                        </h3>
 
-                    </h3>
+                        <p>
 
-                    <p>
+                            Uptime
 
-                        Secure
+                        </p>
 
-                    </p>
+                    </div>
+
+                </div>
+
+                <div class="stat-divider"></div>
+
+                <div class="stat-item">
+
+                    <img src="/images/icons/lock.png" alt="Lock">
+
+                    <div>
+
+                        <h3>
+
+                            100%
+
+                        </h3>
+
+                        <p>
+
+                            Secure
+
+                        </p>
+
+                    </div>
 
                 </div>
 
@@ -331,347 +314,338 @@
 
         </div>
 
-    </div>
+    </section>
 
-</section>
-
-<!-- ==========================================
+    <!-- ==========================================
      IMAGE TOOLS GRID
 ========================================== -->
 
-<section class="image-tools-section">
+    <section class="image-tools-section">
 
-    <div class="container">
+        <div class="container">
 
-        <div class="row g-4">
+            <div class="row g-4">
 
-            <!-- Image Compressor -->
+                <!-- Image Compressor -->
 
-            <div class="col-lg-3 col-md-6">
+                <div class="col-lg-3 col-md-6">
 
-                <a href="/image-compressor"
-                   class="pdf-tool-card">
+                    <a href="/image-compressor" class="pdf-tool-card">
 
-                    <div class="tool-icon green">
+                        <div class="tool-icon green">
 
-                        <img src="/images/icons/image-compressor.png">
+                            <img src="/images/icons/image-compressor.png" alt="Image-Compressor">
 
-                    </div>
+                        </div>
 
-                    <h4>
+                        <h4>
 
-                        Image Compressor
+                            Image Compressor
 
-                    </h4>
+                        </h4>
 
-                    <p>
+                        <p>
 
-                        Reduce image size
-                        without losing quality.
+                            Reduce image size
+                            without losing quality.
 
-                    </p>
+                        </p>
 
-                    <span>
+                        <span>
 
-                        Open Tool →
+                            Open Tool →
 
-                    </span>
+                        </span>
 
-                </a>
+                    </a>
 
-            </div>
+                </div>
 
-            <!-- Image Resizer -->
+                <!-- Image Resizer -->
 
-            <div class="col-lg-3 col-md-6">
+                <div class="col-lg-3 col-md-6">
 
-                <a href="/image-resizer"
-                   class="pdf-tool-card">
+                    <a href="/image-resizer" class="pdf-tool-card">
 
-                    <div class="tool-icon blue">
+                        <div class="tool-icon blue">
 
-                        <img src="/images/icons/image-resizer.png">
+                            <img src="/images/icons/image-resizer.png" alt="Image-Resizer">
 
-                    </div>
+                        </div>
 
-                    <h4>
+                        <h4>
 
-                        Image Resizer
+                            Image Resizer
 
-                    </h4>
+                        </h4>
 
-                    <p>
+                        <p>
 
-                        Resize images for web,
-                        mobile and social media.
+                            Resize images for web,
+                            mobile and social media.
 
-                    </p>
+                        </p>
 
-                    <span>
+                        <span>
 
-                        Open Tool →
+                            Open Tool →
 
-                    </span>
+                        </span>
 
-                </a>
+                    </a>
 
-            </div>
+                </div>
 
-            <!-- JPG to PNG -->
+                <!-- JPG to PNG -->
 
-            <div class="col-lg-3 col-md-6">
+                <div class="col-lg-3 col-md-6">
 
-                <a href="/jpg-png-converter"
-                   class="pdf-tool-card">
+                    <a href="/jpg-png-converter" class="pdf-tool-card">
 
-                    <div class="tool-icon orange">
+                        <div class="tool-icon orange">
 
-                        <img src="/images/icons/image-format.png">
+                            <img src="/images/icons/image-format.png" alt="Image-Format">
 
-                    </div>
+                        </div>
 
-                    <h4>
+                        <h4>
 
-                        JPG → PNG
+                            JPG → PNG
 
-                    </h4>
+                        </h4>
 
-                    <p>
+                        <p>
 
-                        Convert JPG images
-                        into PNG format.
+                            Convert JPG images
+                            into PNG format.
 
-                    </p>
+                        </p>
 
-                    <span>
+                        <span>
 
-                        Open Tool →
+                            Open Tool →
 
-                    </span>
+                        </span>
 
-                </a>
+                    </a>
 
-            </div>
+                </div>
 
-            <!-- PNG to JPG -->
+                <!-- PNG to JPG -->
 
-            <div class="col-lg-3 col-md-6">
+                <div class="col-lg-3 col-md-6">
 
-                <a href="/jpg-png-converter"
-                   class="pdf-tool-card">
+                    <a href="/jpg-png-converter" class="pdf-tool-card">
 
-                    <div class="tool-icon purple">
+                        <div class="tool-icon purple">
 
-                        <img src="/images/icons/image-format.png">
+                            <img src="/images/icons/image-format.png" alt="Imae-Format">
 
-                    </div>
+                        </div>
 
-                    <h4>
+                        <h4>
 
-                        PNG → JPG
+                            PNG → JPG
 
-                    </h4>
+                        </h4>
 
-                    <p>
+                        <p>
 
-                        Convert PNG images
-                        into JPG format.
+                            Convert PNG images
+                            into JPG format.
 
-                    </p>
+                        </p>
 
-                    <span>
+                        <span>
 
-                        Open Tool →
+                            Open Tool →
 
-                    </span>
+                        </span>
 
-                </a>
+                    </a>
 
-            </div>
+                </div>
 
-            <!-- Image to PDF -->
+                <!-- Image to PDF -->
 
-            <div class="col-lg-3 col-md-6">
+                <div class="col-lg-3 col-md-6">
 
-                <a href="/image-to-pdf"
-                   class="pdf-tool-card">
+                    <a href="/image-to-pdf" class="pdf-tool-card">
 
-                    <div class="tool-icon green">
+                        <div class="tool-icon green">
 
-                        <img src="/images/icons/image.png">
+                            <img src="/images/icons/image.png" alt="Image">
 
-                    </div>
+                        </div>
 
-                    <h4>
+                        <h4>
 
-                        Image → PDF
+                            Image → PDF
 
-                    </h4>
+                        </h4>
 
-                    <p>
+                        <p>
 
-                        Convert images into
-                        PDF documents.
+                            Convert images into
+                            PDF documents.
 
-                    </p>
+                        </p>
 
-                    <span>
+                        <span>
 
-                        Open Tool →
+                            Open Tool →
 
-                    </span>
+                        </span>
 
-                </a>
+                    </a>
 
-            </div>
+                </div>
 
-            <!-- PDF to Image -->
+                <!-- PDF to Image -->
 
-            <div class="col-lg-3 col-md-6">
+                <div class="col-lg-3 col-md-6">
 
-                <a href="/pdf-to-image"
-                   class="pdf-tool-card">
+                    <a href="/pdf-to-image" class="pdf-tool-card">
 
-                    <div class="tool-icon orange">
+                        <div class="tool-icon orange">
 
-                        <img src="/images/icons/pdf.png">
+                            <img src="/images/icons/pdf.png" alt="Pdf">
 
-                    </div>
+                        </div>
 
-                    <h4>
+                        <h4>
 
-                        PDF → Image
+                            PDF → Image
 
-                    </h4>
+                        </h4>
 
-                    <p>
+                        <p>
 
-                        Convert PDF pages
-                        into image files.
+                            Convert PDF pages
+                            into image files.
 
-                    </p>
+                        </p>
 
-                    <span>
+                        <span>
 
-                        Open Tool →
+                            Open Tool →
 
-                    </span>
+                        </span>
 
-                </a>
+                    </a>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
-
-</section>
-<!-- ==========================================
+    </section>
+    <!-- ==========================================
      FEATURES SECTION
 ========================================== -->
 
-<section class="feature-section">
+    <section class="feature-section">
 
-    <div class="container">
+        <div class="container">
 
-        <div class="feature-wrapper">
+            <div class="feature-wrapper">
 
-            <!-- Secure -->
+                <!-- Secure -->
 
-            <div class="feature-box">
+                <div class="feature-box">
 
-                <div class="feature-icon blue">
+                    <div class="feature-icon blue">
 
-                    <img src="/images/icons/secure.png"
-                         alt="Security">
+                        <img src="/images/icons/secure.png" alt="Security">
 
-                </div>
+                    </div>
 
-                <div>
+                    <div>
 
-                    <h4>
+                        <h4>
 
-                        Secure Processing
+                            Secure Processing
 
-                    </h4>
+                        </h4>
 
-                    <p>
+                        <p>
 
-                        Your files are automatically
-                        deleted after processing.
-                        100% secure & private.
+                            Your files are automatically
+                            deleted after processing.
+                            100% secure & private.
 
-                    </p>
+                        </p>
 
-                </div>
-
-            </div>
-
-            <!-- Divider -->
-
-            <div class="feature-divider"></div>
-
-            <!-- Fast -->
-
-            <div class="feature-box">
-
-                <div class="feature-icon purple">
-
-                    <img src="/images/icons/fast.png"
-                         alt="Fast">
+                    </div>
 
                 </div>
 
-                <div>
+                <!-- Divider -->
 
-                    <h4>
+                <div class="feature-divider"></div>
 
-                        Fast Conversion
+                <!-- Fast -->
 
-                    </h4>
+                <div class="feature-box">
 
-                    <p>
+                    <div class="feature-icon purple">
 
-                        Our tools are optimized for
-                        speed and process files
-                        within seconds.
+                        <img src="/images/icons/fast.png" alt="Fast">
 
-                    </p>
+                    </div>
+
+                    <div>
+
+                        <h4>
+
+                            Fast Conversion
+
+                        </h4>
+
+                        <p>
+
+                            Our tools are optimized for
+                            speed and process files
+                            within seconds.
+
+                        </p>
+
+                    </div>
 
                 </div>
 
-            </div>
+                <!-- Divider -->
 
-            <!-- Divider -->
+                <div class="feature-divider"></div>
 
-            <div class="feature-divider"></div>
+                <!-- Mobile -->
 
-            <!-- Mobile -->
+                <div class="feature-box">
 
-            <div class="feature-box">
+                    <div class="feature-icon green">
 
-                <div class="feature-icon green">
+                        <img src="/images/icons/mobile.png" alt="Mobile">
 
-                    <img src="/images/icons/mobile.png"
-                         alt="Mobile">
+                    </div>
 
-                </div>
+                    <div>
 
-                <div>
+                        <h4>
 
-                    <h4>
+                            Mobile Friendly
 
-                        Mobile Friendly
+                        </h4>
 
-                    </h4>
+                        <p>
 
-                    <p>
+                            Works perfectly on Desktop,
+                            Tablet and Mobile devices.
+                            Anywhere, anytime.
 
-                        Works perfectly on Desktop,
-                        Tablet and Mobile devices.
-                        Anywhere, anytime.
+                        </p>
 
-                    </p>
+                    </div>
 
                 </div>
 
@@ -679,12 +653,10 @@
 
         </div>
 
-    </div>
-
-</section>
+    </section>
 
 
-<footer class="footer-section">
+    <footer class="footer-section">
 
         <div class="footer-card">
 
@@ -694,9 +666,7 @@
 
                 <div class="col-lg-3">
 
-                    <img src="/images/logo.png"
-                         class="footer-logo"
-                         alt="ConvertNova">
+                    <img src="/images/logo.png" class="footer-logo" alt="ConvertNova">
 
                     <p class="footer-desc">
 
@@ -791,9 +761,7 @@
                         Subscribe to get tips and updates.
                     </p>
 
-                    <input type="email"
-                           class="form-control footer-input"
-                           placeholder="Enter your email">
+                    <input type="email" class="form-control footer-input" placeholder="Enter your email">
 
                     <button class="btn footer-btn">
                         Subscribe
@@ -803,27 +771,28 @@
 
             </div>
 
+        </div>
+
+        <!-- Bottom Bar -->
+
+        <div class="footer-bottom">
+
+            <div>
+                © 2026 ConvertNova. All rights reserved.
             </div>
 
-            <!-- Bottom Bar -->
+            <div>
+                Made with ❤️ for everyone
+            </div>
 
-            <div class="footer-bottom">
 
-                <div>
-                    © 2026 ConvertNova. All rights reserved.
-                </div>
 
-                <div>
-                    Made with ❤️ for everyone
-                </div>
+        </div>
 
-            
+    </footer>
 
-    </div>
-
-</footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
 </html>
-

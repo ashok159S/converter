@@ -26,167 +26,219 @@ import java.util.Map;
 @Controller
 public class WordToPdfController {
 
-    @Autowired
-    private WordToPdfService wordToPdfService;
+        @Autowired
+        private WordToPdfService wordToPdfService;
 
-    /* ===========================
-       PAGE
-    =========================== */
+        /*
+         * ===========================
+         * PAGE
+         * ===========================
+         */
 
-    @GetMapping("/word-to-pdf")
-    public String wordToPdfPage(){
+        @GetMapping("/word-to-pdf")
+        public String wordToPdfPage() {
 
-        return "word-to-pdf";
-
-    }
-
-    /* ===========================
-       CONVERT WORD TO PDF
-    =========================== */
-
-    @PostMapping("/word-to-pdf-ajax")
-    @ResponseBody
-    public Map<String,Object> convertWordToPdf(
-
-            @RequestParam("wordFiles")
-            MultipartFile[] wordFiles
-
-    ){
-
-        return wordToPdfService.convertWordToPdf(
-                wordFiles
-        );
-
-    }
-
-    /* ===========================
-       DOWNLOAD PDF
-    =========================== */
-
-    @GetMapping("/download-word-pdf")
-    public ResponseEntity<Resource> downloadPdf(
-
-            @RequestParam("fileName")
-            String fileName
-
-    ){
-
-        try{
-
-            File file =
-                    new File(
-                            "converted-pdfs",
-                            fileName
-                    );
-
-            if(!file.exists()){
-
-                return ResponseEntity
-                        .notFound()
-                        .build();
-
-            }
-
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
-
-            return ResponseEntity.ok()
-
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\""
-                            + fileName +
-                            "\""
-                    )
-
-                    .contentLength(
-                            file.length()
-                    )
-
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
-
-                    .body(
-                            resource
-                    );
-
-        }
-        catch(Exception e){
-
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                return "word-to-pdf";
 
         }
 
-    }
+        /*
+         * ===========================
+         * CONVERT WORD TO PDF
+         * ===========================
+         */
 
-    /* ===========================
-       PREVIEW PDF
-    =========================== */
+        @PostMapping("/word-to-pdf-ajax")
+        @ResponseBody
+        public Map<String, Object> convertWordToPdf(
 
-    @GetMapping("/preview-word-pdf")
-    public ResponseEntity<Resource> previewPdf(
+                        @RequestParam("wordFiles") MultipartFile[] wordFiles
 
-            @RequestParam("fileName")
-            String fileName
+        ) {
 
-    ){
+                if (wordFiles == null || wordFiles.length == 0) {
 
-        try{
+                        return Map.of(
 
-            File file =
-                    new File(
-                            "converted-pdfs",
-                            fileName
-                    );
+                                        "success",
+                                        false,
 
-            if(!file.exists()){
+                                        "message",
+                                        "Please upload at least one Word file."
 
-                return ResponseEntity
-                        .notFound()
-                        .build();
+                        );
 
-            }
+                }
 
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
+                for (MultipartFile word : wordFiles) {
 
-            return ResponseEntity.ok()
+                        if (word.isEmpty()) {
 
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "inline; filename=\""
-                            + fileName +
-                            "\""
-                    )
+                                return Map.of(
 
-                    .contentLength(
-                            file.length()
-                    )
+                                                "success",
+                                                false,
 
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
+                                                "message",
+                                                "One of the uploaded Word files is empty."
 
-                    .body(
-                            resource
-                    );
+                                );
+
+                        }
+
+                        String fileName = word.getOriginalFilename();
+
+                        if (fileName == null
+                                        ||
+                                        !(fileName.toLowerCase().endsWith(".doc")
+                                                        ||
+                                                        fileName.toLowerCase().endsWith(".docx"))) {
+
+                                return Map.of(
+
+                                                "success",
+                                                false,
+
+                                                "message",
+                                                "Only DOC and DOCX files are allowed."
+
+                                );
+
+                        }
+
+                }
+
+                return wordToPdfService.convertWordToPdf(
+                                wordFiles);
 
         }
-        catch(Exception e){
 
-            return ResponseEntity
-                    .notFound()
-                    .build();
+        /*
+         * ===========================
+         * DOWNLOAD PDF
+         * ===========================
+         */
+
+        @GetMapping("/download-word-pdf")
+        public ResponseEntity<Resource> downloadPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        "converted-pdfs",
+                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "attachment; filename=\""
+                                                                        + fileName +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
 
         }
 
-    }
+        /*
+         * ===========================
+         * PREVIEW PDF
+         * ===========================
+         */
+
+        @GetMapping("/preview-word-pdf")
+        public ResponseEntity<Resource> previewPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        "converted-pdfs",
+                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "inline; filename=\""
+                                                                        + fileName +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
+
+        }
+
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
+
+        @PostMapping("/delete-word-pdf-files")
+        @ResponseBody
+        public void deleteTempFiles() {
+
+                wordToPdfService.deleteTempFiles();
+
+        }
 
 }

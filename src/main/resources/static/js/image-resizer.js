@@ -1075,20 +1075,7 @@ document.getElementById(
     }
 );
 
-/* ===========================
-   DELETE TEMP FILES
-=========================== */
 
-window.addEventListener(
-    "beforeunload",
-    function () {
-
-        navigator.sendBeacon(
-            "/delete-image-resizer-temp-files"
-        );
-
-    }
-);
 
 /* ===========================
    DARK MODE

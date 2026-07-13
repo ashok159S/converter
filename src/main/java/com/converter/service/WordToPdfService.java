@@ -14,198 +14,221 @@ import java.util.UUID;
 @Service
 public class WordToPdfService {
 
-    private static final String LIBRE_OFFICE_PATH =
-            "C:\\Program Files\\LibreOffice\\program\\soffice.exe";
+        private static final String LIBRE_OFFICE_PATH = "C:\\Program Files\\LibreOffice\\program\\soffice.exe";
 
-    public Map<String,Object> convertWordToPdf(
+        public Map<String, Object> convertWordToPdf(
 
-            MultipartFile[] wordFiles
+                        MultipartFile[] wordFiles
 
-    ){
+        ) {
 
-        Map<String,Object> result =
-                new HashMap<>();
+                Map<String, Object> result = new HashMap<>();
 
-        try{
+                try {
 
-            List<Map<String,String>> files =
-                    new ArrayList<>();
+                        List<Map<String, String>> files = new ArrayList<>();
 
-            File outputFolder =
-                    new File(
-                            "converted-pdfs"
-                    );
+                        File outputFolder = new File(
+                                        "converted-pdfs");
 
-            if(!outputFolder.exists()){
+                        if (!outputFolder.exists()) {
 
-                outputFolder.mkdirs();
+                                outputFolder.mkdirs();
 
-            }
+                        }
 
-            for(
-                    MultipartFile wordFile
-                    :
-                    wordFiles
-            ){
+                        for (MultipartFile wordFile : wordFiles) {
 
-                String originalName =
-                        wordFile.getOriginalFilename();
+                                String originalName = wordFile.getOriginalFilename();
 
-                if(
-                        originalName == null
-                        ||
-                        originalName.isBlank()
-                ){
+                                if (originalName == null
+                                                ||
+                                                originalName.isBlank()) {
 
-                    originalName =
-                            "document.docx";
+                                        originalName = "document.docx";
+
+                                }
+
+                                String baseName = originalName.replaceAll(
+                                                "\\.[^.]+$",
+                                                "");
+
+                                File inputFile = File.createTempFile(
+                                                UUID.randomUUID().toString(),
+                                                ".docx");
+
+                                try {
+
+                                        wordFile.transferTo(
+                                                        inputFile);
+
+                                } catch (Exception ex) {
+
+                                        result.put(
+                                                        "success",
+                                                        false);
+
+                                        result.put(
+                                                        "message",
+                                                        originalName +
+                                                                        " is corrupted or could not be uploaded.");
+
+                                        return result;
+
+                                }
+
+                                ProcessBuilder processBuilder = new ProcessBuilder(
+
+                                                LIBRE_OFFICE_PATH,
+
+                                                "--headless",
+
+                                                "--convert-to",
+
+                                                "pdf",
+
+                                                "--outdir",
+
+                                                outputFolder.getAbsolutePath(),
+
+                                                inputFile.getAbsolutePath()
+
+                                );
+
+                                processBuilder.redirectErrorStream(
+                                                true);
+
+                                Process process = processBuilder.start();
+
+                                int exitCode = process.waitFor();
+
+                                if (exitCode != 0) {
+
+                                        result.put(
+                                                        "success",
+                                                        false);
+
+                                        result.put(
+                                                        "message",
+                                                        originalName +
+                                                                        " is corrupted or could not be converted.");
+
+                                        inputFile.delete();
+
+                                        return result;
+
+                                }
+
+                                File generatedPdf = new File(
+                                                outputFolder,
+                                                inputFile.getName()
+                                                                .replaceAll(
+                                                                                "\\.[^.]+$",
+                                                                                ".pdf"));
+
+                                File finalPdf = new File(
+                                                outputFolder,
+                                                baseName
+                                                                +
+                                                                ".pdf");
+
+                                generatedPdf.renameTo(
+                                                finalPdf);
+
+                                Map<String, String> fileInfo = new HashMap<>();
+
+                                fileInfo.put(
+                                                "name",
+                                                finalPdf.getName());
+
+                                fileInfo.put(
+                                                "originalSize",
+                                                String.format(
+                                                                "%.2f MB",
+                                                                wordFile.getSize()
+                                                                                /
+                                                                                1024.0
+                                                                                /
+                                                                                1024.0));
+
+                                fileInfo.put(
+                                                "pdfSize",
+                                                String.format(
+                                                                "%.2f MB",
+                                                                finalPdf.length()
+                                                                                /
+                                                                                1024.0
+                                                                                /
+                                                                                1024.0));
+
+                                files.add(
+                                                fileInfo);
+
+                                inputFile.delete();
+
+                        }
+
+                        result.put(
+                                        "success",
+                                        true);
+
+                        result.put(
+                                        "files",
+                                        files);
+
+                } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        result.put(
+                                        "success",
+                                        false);
+
+                        result.put(
+                                        "message",
+                                        "Unable to convert the selected Word file(s).");
 
                 }
 
-                String baseName =
-                        originalName.replaceAll(
-                                "\\.[^.]+$",
-                                ""
-                        );
+                return result;
 
-                File inputFile =
-                        File.createTempFile(
-                                UUID.randomUUID().toString(),
-                                ".docx"
-                        );
+        }
 
-                wordFile.transferTo(
-                        inputFile
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
+
+        public void deleteTempFiles() {
+
+                deleteFolder(
+
+                                new File(
+                                                "converted-pdfs")
+
                 );
 
-                ProcessBuilder processBuilder =
-                        new ProcessBuilder(
+        }
 
-                                LIBRE_OFFICE_PATH,
+        private void deleteFolder(File folder) {
 
-                                "--headless",
+                if (folder.exists()) {
 
-                                "--convert-to",
+                        File[] files = folder.listFiles();
 
-                                "pdf",
+                        if (files != null) {
 
-                                "--outdir",
+                                for (File file : files) {
 
-                                outputFolder.getAbsolutePath(),
+                                        file.delete();
 
-                                inputFile.getAbsolutePath()
+                                }
 
-                        );
-
-                processBuilder.redirectErrorStream(
-                        true
-                );
-
-                Process process =
-                        processBuilder.start();
-
-                int exitCode =
-                        process.waitFor();
-
-                if(exitCode != 0){
-
-                    throw new RuntimeException(
-                            "Word to PDF conversion failed"
-                    );
+                        }
 
                 }
 
-                File generatedPdf =
-                        new File(
-                                outputFolder,
-                                inputFile.getName()
-                                         .replaceAll(
-                                                 "\\.[^.]+$",
-                                                 ".pdf"
-                                         )
-                        );
-
-                File finalPdf =
-                        new File(
-                                outputFolder,
-                                baseName
-                                +
-                                ".pdf"
-                        );
-
-                generatedPdf.renameTo(
-                        finalPdf
-                );
-
-                Map<String,String> fileInfo =
-                        new HashMap<>();
-
-                fileInfo.put(
-                        "name",
-                        finalPdf.getName()
-                );
-
-                fileInfo.put(
-                        "originalSize",
-                        String.format(
-                                "%.2f MB",
-                                wordFile.getSize()
-                                /
-                                1024.0
-                                /
-                                1024.0
-                        )
-                );
-
-                fileInfo.put(
-                        "pdfSize",
-                        String.format(
-                                "%.2f MB",
-                                finalPdf.length()
-                                /
-                                1024.0
-                                /
-                                1024.0
-                        )
-                );
-
-                files.add(
-                        fileInfo
-                );
-
-                inputFile.delete();
-
-            }
-
-            result.put(
-                    "success",
-                    true
-            );
-
-            result.put(
-                    "files",
-                    files
-            );
-
         }
-        catch(Exception e){
-
-            e.printStackTrace();
-
-            result.put(
-                    "success",
-                    false
-            );
-
-            result.put(
-                    "message",
-                    e.getMessage()
-            );
-
-        }
-
-        return result;
-
-    }
 
 }

@@ -371,31 +371,25 @@ form.addEventListener(
 
         }
 
-        uploadAreaWrapper.classList.add(
-            "hide-during-conversion"
-        );
+        uploadAreaWrapper.style.display = "none";
 
-        summaryCard.classList.add(
-            "hide-during-conversion"
-        );
+        summaryCard.style.display = "none";
 
-        fileList.classList.add(
-            "hide-during-conversion"
-        );
+        fileList.style.display = "none";
 
-        settingsCard.classList.add(
-            "hide-during-conversion"
-        );
+        settingsCard.style.display = "none";
 
-        progressSection.style.display =
-            "block";
+        progressSection.style.display = "block";
 
-        document.body.classList.add(
-            "converting"
-        );
+        progressBar.style.width = "0%";
+        progressBar.innerHTML = "Preparing...";
 
-        convertBtn.disabled =
-            true;
+        document.body.classList.add("converting");
+
+        convertBtn.disabled = true;
+
+        /* Force browser to repaint */
+        progressSection.offsetHeight;
 
         progressBar.style.width =
             "0%";
@@ -455,163 +449,180 @@ form.addEventListener(
                         percent + "%";
 
                     progressBar.innerHTML =
-                        percent + "%";
+                        "Uploading " + percent + "%";
 
                 }
 
             }
         );
 
-        xhr.onreadystatechange =
-            function () {
+        xhr.onloadstart = function () {
 
-                if (
-                    xhr.readyState === 4
-                ) {
+            progressSection.style.display = "block";
 
-                    if (
-                        xhr.status === 200
-                    ) {
+            progressBar.style.width = "5%";
 
-                        const result =
-                            JSON.parse(
-                                xhr.responseText
-                            );
+            progressBar.innerHTML = "Preparing...";
 
-                        if (
-                            result.success
-                        ) {
+        };
 
-                            conversionCompleted =
-                                true;
+        xhr.onreadystatechange = function () {
 
-                            document.body.classList.remove(
-                                "converting"
-                            );
+            if (xhr.readyState === 4) {
 
-                            convertBtn.disabled =
-                                false;
+                if (xhr.status === 200) {
+                    progressBar.style.width = "100%";
 
-                            resultCard.style.display =
-                                "block";
+                    progressBar.innerHTML = "Finalizing...";
 
-                            progressSection.style.display =
-                                "none";
+                    const result = JSON.parse(xhr.responseText);
 
-                            const downloads =
-                                imageDownloads;
+                    console.log(result);
+                    console.log(result.files);
 
-                            downloads.innerHTML =
-                                "";
+                    if (result.success) {
 
-                            result.files.forEach(
-                                (
-                                    file,
-                                    index
-                                ) => {
+                        console.log("SUCCESS");
 
-                                    downloads.innerHTML += `
+                        conversionCompleted = true;
 
-                                    <div class="card mb-2">
+                        document.body.classList.remove("converting");
 
-                                        <div class="card-body">
+                        convertBtn.disabled = false;
 
-                                            <div class="row align-items-center text-center">
+                        /* ===========================
+                           HIDE CONVERSION PAGE
+                        =========================== */
 
-                                                <div class="col-md-5 text-start">
+                        uploadAreaWrapper.style.display = "none";
+                        summaryCard.style.display = "none";
+                        fileList.style.display = "none";
+                        settingsCard.style.display = "none";
+                        progressSection.style.display = "none";
 
-                                                    <input
-                                                        type="text"
-                                                        class="form-control"
-                                                        id="fileName${index}"
-                                                        value="${file.name}">
+                        /* ===========================
+                           SHOW RESULT PAGE
+                        =========================== */
 
-                                                </div>
+                        resultCard.style.display = "block";
 
-                                                <div class="col-md-2">
+                        const downloads = imageDownloads;
 
-                                                    ${file.size}
+                        downloads.innerHTML = "";
 
-                                                </div>
+                        let html = "";
 
-                                                <div class="col-md-2">
+                        result.files.forEach((file, index) => {
 
-                                                    <button
-                                                        class="btn btn-primary btn-sm px-4"
-                                                        onclick="previewImage('${file.name}')">
+                            console.log("Creating button for:", file.name);
 
-                                                        Preview
+                            html += `
 
-                                                    </button>
+                    <div class="card mb-2">
 
-                                                </div>
+                        <div class="card-body">
 
-                                                <div class="col-md-3">
+                            <div class="row align-items-center text-center">
 
-                                                    <button
-                                                        class="btn btn-success btn-sm px-4"
-                                                        onclick="downloadImage(
-                                                            '${file.name}',
-                                                            'fileName${index}'
-                                                        )">
+                                <div class="col-md-5 text-start">
 
-                                                        Download
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        id="fileName${index}"
+                                        value="${file.name}">
 
-                                                    </button>
+                                </div>
 
-                                                </div>
+                                <div class="col-md-2">
 
-                                            </div>
+                                    ${file.size}
 
-                                        </div>
+                                </div>
 
-                                    </div>
+                                <div class="col-md-2">
 
-                                    `;
+                                    <button
+                                        type="button"
+                                        class="btn btn-primary btn-sm px-4"
+                                        onclick="previewImage('${file.name}')">
 
-                                }
-                            );
+                                        Preview
 
-                        }
-                        else {
+                                    </button>
 
-                            alert(
-                                result.message
-                            );
+                                </div>
 
-                            uploadAreaWrapper.classList.remove(
-                                "hide-during-conversion"
-                            );
+                                <div class="col-md-3">
 
-                            summaryCard.classList.remove(
-                                "hide-during-conversion"
-                            );
+                                    <button
+                                        type="button"
+                                        class="btn btn-success btn-sm px-4"
+                                        onclick="downloadImage('${file.name}','fileName${index}')">
 
-                            fileList.classList.remove(
-                                "hide-during-conversion"
-                            );
+                                        Download
 
-                            settingsCard.classList.remove(
-                                "hide-during-conversion"
-                            );
+                                    </button>
 
-                            progressSection.style.display =
-                                "none";
+                                </div>
 
-                            document.body.classList.remove(
-                                "converting"
-                            );
+                            </div>
 
-                            convertBtn.disabled =
-                                false;
+                        </div>
 
-                        }
+                    </div>
+
+                    `;
+
+                        });
+
+                        downloads.innerHTML = html;
+
+                        resultCard.scrollIntoView({
+
+                            behavior: "smooth",
+
+                            block: "start"
+
+                        });
+
+                    } else {
+
+                        alert(result.message);
+
+                        uploadAreaWrapper.style.display = "";
+                        summaryCard.style.display = "";
+                        fileList.style.display = "";
+                        settingsCard.style.display = "";
+
+                        progressSection.style.display = "none";
+
+                        document.body.classList.remove("converting");
+
+                        convertBtn.disabled = false;
 
                     }
 
+                } else {
+
+                    alert("Conversion failed. Please try again.");
+
+                    uploadAreaWrapper.style.display = "";
+                    summaryCard.style.display = "";
+                    fileList.style.display = "";
+                    settingsCard.style.display = "";
+
+                    progressSection.style.display = "none";
+
+                    document.body.classList.remove("converting");
+
+                    convertBtn.disabled = false;
+
                 }
 
-            };
+            }
+
+        };
 
         xhr.onerror =
             function () {
@@ -620,21 +631,13 @@ form.addEventListener(
                     "Conversion failed. Please try again."
                 );
 
-                uploadAreaWrapper.classList.remove(
-                    "hide-during-conversion"
-                );
+                uploadAreaWrapper.style.display = "";
 
-                summaryCard.classList.remove(
-                    "hide-during-conversion"
-                );
+                summaryCard.style.display = "";
 
-                fileList.classList.remove(
-                    "hide-during-conversion"
-                );
+                fileList.style.display = "";
 
-                settingsCard.classList.remove(
-                    "hide-during-conversion"
-                );
+                settingsCard.style.display = "";
 
                 progressSection.style.display =
                     "none";
@@ -653,9 +656,11 @@ form.addEventListener(
             "/pdf-to-image-ajax"
         );
 
-        xhr.send(
-            formData
-        );
+        setTimeout(function () {
+
+            xhr.send(formData);
+
+        }, 50);
 
     }
 );
@@ -699,31 +704,24 @@ document
                 "d-none"
             );
 
-            progressSection.style.display =
-                "none";
+
 
             progressBar.style.width =
                 "0%";
 
             progressBar.innerHTML =
                 "0%";
+            resultCard.style.display = "none";
 
-            uploadAreaWrapper.classList.remove(
-                "hide-during-conversion"
-            );
+            uploadAreaWrapper.style.display = "";
+            summaryCard.style.display = "";
+            fileList.style.display = "";
+            settingsCard.style.display = "";
 
-            summaryCard.classList.remove(
-                "hide-during-conversion"
-            );
+            progressSection.style.display = "none";
 
-            fileList.classList.remove(
-                "hide-during-conversion"
-            );
-
-            settingsCard.classList.remove(
-                "hide-during-conversion"
-            );
-
+            progressBar.style.width = "0%";
+            progressBar.innerHTML = "0%";
             document.body.classList.remove(
                 "converting"
             );
@@ -744,7 +742,6 @@ document
 
         }
     );
-
 /* ===========================
    DARK MODE
 =========================== */
@@ -838,20 +835,6 @@ function downloadImage(
         );
 
 }
-/* ===========================
-   CLEANUP ON RELOAD
-=========================== */
-
-window.addEventListener(
-    "beforeunload",
-    function () {
-
-        navigator.sendBeacon(
-            "/delete-pdf-to-image-files"
-        );
-
-    }
-);
 
 /* ===========================
    REMOVE FILE

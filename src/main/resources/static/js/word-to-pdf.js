@@ -3,49 +3,62 @@
 =========================== */
 
 const wordFiles =
-document.getElementById(
-    "wordFiles"
-);
+    document.getElementById(
+        "wordFiles"
+    );
 
 const dropZone =
-document.getElementById(
-    "dropZone"
-);
+    document.getElementById(
+        "dropZone"
+    );
 
 const convertForm =
-document.getElementById(
-    "convertForm"
-);
+    document.getElementById(
+        "convertForm"
+    );
 
 const summaryCard =
-document.getElementById(
-    "summaryCard"
-);
+    document.getElementById(
+        "summaryCard"
+    );
 
 const fileListContainer =
-document.getElementById(
-    "fileListContainer"
-);
+    document.getElementById(
+        "fileListContainer"
+    );
 
 const totalFiles =
-document.getElementById(
-    "totalFiles"
-);
+    document.getElementById(
+        "totalFiles"
+    );
 
 const totalSize =
-document.getElementById(
-    "totalSize"
-);
+    document.getElementById(
+        "totalSize"
+    );
 
 const progressSection =
-document.getElementById(
-    "progressSection"
-);
+    document.getElementById(
+        "progressSection"
+    );
+
+const uploadSection =
+    document.getElementById(
+        "uploadSection"
+    );
 
 const progressBar =
-document.getElementById(
-    "progressBar"
-);
+    document.getElementById(
+        "progressBar"
+    );
+
+const convertBtn =
+    document.getElementById(
+        "convertBtn"
+    );
+
+let conversionCompleted =
+    false;
 
 let selectedFiles = [];
 
@@ -55,14 +68,15 @@ let selectedFiles = [];
 
 wordFiles.addEventListener(
     "change",
-    function(){
+    function () {
 
-        selectedFiles =
-        Array.from(
-            this.files
+        addFiles(
+            Array.from(
+                this.files
+            )
         );
 
-        showFiles();
+        this.value = "";
 
     }
 );
@@ -73,7 +87,7 @@ wordFiles.addEventListener(
 
 dropZone.addEventListener(
     "dragover",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
@@ -86,7 +100,7 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "dragleave",
-    function(){
+    function () {
 
         dropZone.classList.remove(
             "drag-active"
@@ -97,7 +111,7 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "drop",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
@@ -105,27 +119,116 @@ dropZone.addEventListener(
             "drag-active"
         );
 
-        selectedFiles =
-        Array.from(
-            e.dataTransfer.files
+        addFiles(
+            Array.from(
+                e.dataTransfer.files
+            )
         );
-
-        showFiles();
 
     }
 );
 
 /* ===========================
-   SHOW FILES
+   ADD FILES
 =========================== */
 
-function showFiles(){
+function addFiles(newFiles) {
+
+    const duplicateFiles = [];
+
+    newFiles.forEach(file => {
+
+        const fileName =
+            file.name.toLowerCase();
+
+        if (
+            !(
+                fileName.endsWith(".doc")
+                ||
+                fileName.endsWith(".docx")
+            )
+        ) {
+
+            alert(
+                file.name +
+                " is not a Word document."
+            );
+
+            return;
+
+        }
+
+        if (file.size > 50 * 1024 * 1024) {
+
+            alert(
+                file.name +
+                " exceeds the 50 MB limit."
+            );
+
+            return;
+
+        }
+
+        const alreadyExists =
+            selectedFiles.some(
+                existingFile =>
+                    existingFile.name === file.name &&
+                    existingFile.size === file.size
+            );
+
+        if (alreadyExists) {
+
+            duplicateFiles.push(
+                file.name
+            );
+
+        }
+        else {
+
+            selectedFiles.push(
+                file
+            );
+
+        }
+
+    });
+
+    if (duplicateFiles.length > 0) {
+
+        alert(
+            "Duplicate file(s) skipped:\n\n"
+            +
+            duplicateFiles.join("\n")
+        );
+
+    }
+
+    showFiles();
+
+}
+
+/* ===========================
+   SHOW FILES
+=========================== */
+function showFiles() {
+
+    if (selectedFiles.length === 0) {
+
+        summaryCard.style.display =
+            "none";
+
+        fileListContainer.innerHTML =
+            "";
+
+        return;
+
+    }
 
     summaryCard.style.display =
-    "flex";
+        "flex";
 
     fileListContainer.innerHTML =
-    "";
+        "";
 
     let totalBytes = 0;
 
@@ -136,7 +239,7 @@ function showFiles(){
         ) => {
 
             totalBytes +=
-            file.size;
+                file.size;
 
             fileListContainer.innerHTML += `
 
@@ -198,48 +301,30 @@ function showFiles(){
     );
 
     totalFiles.innerHTML =
-    selectedFiles.length;
+        selectedFiles.length;
 
     totalSize.innerHTML =
-    (
-        totalBytes
-        /
-        1024
-        /
-        1024
-    ).toFixed(2)
-    +
-    " MB";
+        (
+            totalBytes
+            /
+            1024
+            /
+            1024
+        ).toFixed(2)
+        +
+        " MB";
 
 }
-
 /* ===========================
    DELETE FILE
 =========================== */
 
-function deleteFile(index){
+function deleteFile(index) {
 
     selectedFiles.splice(
         index,
         1
     );
-
-    if(
-        selectedFiles.length === 0
-    ){
-
-        summaryCard.style.display =
-        "none";
-
-        fileListContainer.innerHTML =
-        "";
-
-        wordFiles.value =
-        "";
-
-        return;
-
-    }
 
     showFiles();
 
@@ -250,15 +335,15 @@ function deleteFile(index){
 =========================== */
 
 
-function previewWordFile(index){
+function previewWordFile(index) {
 
     const file = selectedFiles[index];
 
     const size =
-    (file.size / 1024 / 1024).toFixed(2);
+        (file.size / 1024 / 1024).toFixed(2);
 
     const extension =
-    file.name.split(".").pop().toUpperCase();
+        file.name.split(".").pop().toUpperCase();
 
     document.getElementById(
         "previewModalBody"
@@ -284,11 +369,11 @@ function previewWordFile(index){
     `;
 
     const modal =
-    new bootstrap.Modal(
-        document.getElementById(
-            "wordPreviewModal"
-        )
-    );
+        new bootstrap.Modal(
+            document.getElementById(
+                "wordPreviewModal"
+            )
+        );
 
     modal.show();
 
@@ -299,59 +384,110 @@ function previewWordFile(index){
    PREVIEW PDF
 =========================== */
 
-function previewPdf(fileName){
+function previewPdf(fileName) {
 
     document.getElementById(
         "previewFrame"
     ).src =
-    "/preview-word-pdf?fileName="
-    +
-    encodeURIComponent(
-        fileName
-    );
+        "/preview-word-pdf?fileName="
+        +
+        encodeURIComponent(
+            fileName
+        );
 
     const modal =
-    new bootstrap.Modal(
-        document.getElementById(
-            "pdfPreviewModal"
-        )
-    );
+        new bootstrap.Modal(
+            document.getElementById(
+                "pdfPreviewModal"
+            )
+        );
 
     modal.show();
 
 }
-
 /* ===========================
    CONVERT
 =========================== */
 
 convertForm.addEventListener(
     "submit",
-    function(e){
-        
+    function (e) {
+
         e.preventDefault();
 
-        
-        if(
-            !validateFiles(selectedFiles)
-        ){
+        if (convertBtn.disabled) {
+
             return;
+
         }
 
-        if(
-            selectedFiles.length === 0
-        ){
+        if (
+            !validateFiles(selectedFiles)
+        ) {
+
+            return;
+
+        }
+
+        if (selectedFiles.length === 0) {
 
             alert(
-                "Please select Word files"
+                "Please select Word files."
             );
 
             return;
 
         }
 
+        convertBtn.disabled =
+            true;
+
+        uploadSection.style.display =
+            "none";
+
+        document.getElementById(
+            "dropZone"
+        ).style.display =
+            "none";
+
+        summaryCard.style.display =
+            "none";
+
+        fileListContainer.style.display =
+            "none";
+
+        convertBtn.style.display =
+            "none";
+
+        progressSection.style.display =
+            "block";
+        let progress = 0;
+
+        progressBar.style.width =
+            "0%";
+
+        progressBar.innerHTML =
+            "0%";
+
+        const progressInterval =
+            setInterval(function () {
+
+                if (progress < 95) {
+
+                    progress++;
+
+                    progressBar.style.width =
+                        progress + "%";
+
+                    progressBar.innerHTML =
+                        progress + "%";
+
+                }
+
+            }, 100);
+
         const formData =
-        new FormData();
+            new FormData();
 
         selectedFiles.forEach(
             file => {
@@ -364,118 +500,123 @@ convertForm.addEventListener(
             }
         );
 
-        progressSection.style.display =
-        "block";
+        fetch(
+            "/word-to-pdf-ajax",
+            {
+                method: "POST",
+                body: formData
+            }
+        )
+            .then(
+                response =>
+                    response.json()
+            )
+            .then(
+                result => {
 
-        progressBar.style.width =
-        "0%";
-
-        progressBar.innerHTML =
-        "0%";
-
-        const xhr =
-        new XMLHttpRequest();
-
-        xhr.upload.addEventListener(
-            "progress",
-            function(event){
-
-                if(
-                    event.lengthComputable
-                ){
-
-                    const percent =
-                    Math.round(
-                        (
-                            event.loaded
-                            /
-                            event.total
-                        )
-                        *
-                        100
+                    clearInterval(
+                        progressInterval
                     );
 
                     progressBar.style.width =
-                    percent + "%";
+                        "100%";
 
                     progressBar.innerHTML =
-                    percent + "%";
+                        "100%";
+
+                    conversionCompleted =
+                        true;
+
+                    if (result.success) {
+
+                        setTimeout(function () {
+
+                            buildResultTable(result);
+
+                        }, 3000);
+
+                    }
+                    else {
+
+                        alert(
+                            result.message
+                        );
+
+                        uploadSection.style.display =
+                            "block";
+
+                        progressSection.style.display =
+                            "none";
+
+                        convertBtn.disabled =
+                            false;
+
+                        document.body.classList.remove(
+                            "conversion-active"
+                        );
+
+                    }
 
                 }
+            )
+            .catch(
+                function () {
 
-            }
-        );
-
-        xhr.onreadystatechange =
-        function(){
-
-            if(
-                xhr.readyState === 4
-                &&
-                xhr.status === 200
-            ){
-
-                const result =
-                JSON.parse(
-                    xhr.responseText
-                );
-
-                if(
-                    result.success
-                ){
-
-                    document.getElementById(
-                        "uploadSection"
-                    ).style.display =
-                    "none";
-
-                    document.getElementById(
-                        "resultCard"
-                    ).style.display =
-                    "block";
-
-                    buildResultTable(
-                        result
+                    clearInterval(
+                        progressInterval
                     );
-
-                }
-                else{
 
                     alert(
-                        result.message
+                        "Conversion failed. Please try again."
+                    );
+
+                    uploadSection.style.display =
+                        "block";
+
+                    progressSection.style.display =
+                        "none";
+
+                    convertBtn.disabled =
+                        false;
+
+                    document.body.classList.remove(
+                        "conversion-active"
                     );
 
                 }
-
-            }
-
-        };
-
-        xhr.open(
-            "POST",
-            "/word-to-pdf-ajax"
-        );
-
-        xhr.send(
-            formData
-        );
+            );
 
     }
 );
-
 /* ===========================
    RESULT TABLE
 =========================== */
+function buildResultTable(result) {
 
-function buildResultTable(result){
+    progressSection.style.display =
+        "none";
 
-    const container =
+    uploadSection.style.display =
+        "none";
+
     document.getElementById(
-        "convertedFilesContainer"
+        "resultCard"
+    ).style.display =
+        "block";
+
+    convertBtn.disabled =
+        false;
+
+    document.body.classList.remove(
+        "conversion-active"
     );
 
+    const container =
+        document.getElementById(
+            "convertedFilesContainer"
+        );
     container.innerHTML =
-    "";
+        "";
 
     result.files.forEach(
         file => {
@@ -545,15 +686,14 @@ function buildResultTable(result){
     document.getElementById(
         "resultFiles"
     ).innerHTML =
-    result.files.length;
+        result.files.length;
 
     document.getElementById(
         "resultSuccess"
     ).innerHTML =
-    result.files.length;
+        result.files.length;
 
 }
-
 /* ===========================
    CONVERT MORE
 =========================== */
@@ -562,12 +702,31 @@ document.getElementById(
     "convertMoreBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
-        location.reload();
+        selectedFiles = [];
+
+        conversionCompleted = false;
+
+        fetch(
+            "/delete-word-pdf-files",
+            {
+                method: "POST"
+            }
+        )
+            .finally(
+                function () {
+
+                    location.reload();
+
+                }
+            );
 
     }
 );
+
+
+
 
 /* ===========================
    DARK MODE
@@ -577,7 +736,7 @@ document.getElementById(
     "darkModeBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
         document.body.classList.toggle(
             "dark-mode"

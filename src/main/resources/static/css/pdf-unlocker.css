@@ -280,6 +280,20 @@ h1{
    PROGRESS
 =========================== */
 
+.progress-section{
+
+    margin-top:30px;
+
+    padding:25px;
+
+    background:#f8fafc;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:18px;
+
+}
+
 .progress{
 
     height:28px;
@@ -293,7 +307,6 @@ h1{
     font-weight:600;
 
 }
-
 /* ===========================
    RESULT HEADER
 =========================== */
@@ -369,6 +382,18 @@ h1{
     height:700px;
 
     border:none;
+
+}
+
+/* ===========================
+   FREEZE DURING CONVERSION
+=========================== */
+
+.upload-section.converting{
+
+    pointer-events:none;
+
+    opacity:.65;
 
 }
 
@@ -469,6 +494,14 @@ h1{
     background:#1f2937;
 
     color:white;
+
+}
+
+.dark-mode .progress-section{
+
+    background:#374151;
+
+    border-color:#4b5563;
 
 }
 

@@ -129,19 +129,13 @@
 
                                 <i class="bi bi-cloud-arrow-up upload-icon"></i>
 
-                                <h3>
+                                <label for="images" class="upload-area">
+                                    <h3>Drag & Drop JPG Files Here</h3>
+                                    <p>Or click below to browse</p>
+                                </label>
 
-                                    Drag & Drop JPG Files Here
-
-                                </h3>
-
-                                <p>
-
-                                    Or click below to browse
-
-                                </p>
-
-                                <input type="file" id="images" name="images" class="d-none" accept=".jpg,.jpeg" multiple >
+                                <input type="file" id="images" name="images" class="d-none" accept=".jpg,.jpeg"
+                                    multiple>
 
 
                                 <p class="text-muted">
@@ -181,39 +175,28 @@
                                 <div class="row">
 
                                     <div class="col-md-6">
-
-                                        <label class="form-label fw-bold">
-
+                                        <label for="pageSize" class="form-label fw-bold">
                                             Page Size
-
                                         </label>
-                                        <select class="form-select" name="pageSize">
 
+                                        <select id="pageSize" class="form-select" name="pageSize">
                                             <option value="original">Original Size</option>
                                             <option value="a4">A4</option>
                                             <option value="letter">Letter</option>
                                             <option value="fit">Fit To Page</option>
-
                                         </select>
-
                                     </div>
 
                                     <div class="col-md-6">
-
-                                        <label class="form-label fw-bold">
-
+                                        <label for="quality" class="form-label fw-bold">
                                             PDF Quality
-
                                         </label>
 
-                                        <select class="form-select" name="quality">
-
+                                        <select id="quality" class="form-select" name="quality">
                                             <option value="high">High</option>
                                             <option value="medium">Medium</option>
                                             <option value="low">Low</option>
-
                                         </select>
-
                                     </div>
 
                                 </div>
@@ -233,28 +216,21 @@
                                 </h4>
 
                                 <div class="form-check">
+                                    <input class="form-check-input" type="radio" id="mergeMode" name="conversionMode"
+                                        value="merge" checked>
 
-                                    <input class="form-check-input" type="radio" name="conversionMode" value="merge"
-                                        checked>
-
-                                    <label class="form-check-label">
-
+                                    <label class="form-check-label" for="mergeMode">
                                         Merge All Images Into One PDF
-
                                     </label>
-
                                 </div>
 
                                 <div class="form-check mt-2">
+                                    <input class="form-check-input" type="radio" id="separateMode" name="conversionMode"
+                                        value="separate">
 
-                                    <input class="form-check-input" type="radio" name="conversionMode" value="separate">
-
-                                    <label class="form-check-label">
-
+                                    <label class="form-check-label" for="separateMode">
                                         Create Separate PDF For Each Image
-
                                     </label>
-
                                 </div>
 
                             </div>
@@ -419,16 +395,15 @@
                         Image Preview
 
                     </h5>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close preview"
+                        title="Close">
                     </button>
 
                 </div>
 
                 <div class="modal-body text-center">
 
-                    <img id="previewModalImage" class="img-fluid rounded">
+                    <img id="previewModalImage" class="img-fluid rounded" alt="Preview of the selected image">
 
                 </div>
 
@@ -449,16 +424,13 @@
             <div class="modal-content">
 
                 <div class="modal-header">
-
-                    <h5 class="modal-title">
-
-                        PDF Preview
-
+                    <h5 class="modal-title" id="previewModalLabel">
+                        Image Preview
                     </h5>
 
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close preview"
+                        title="Close">
                     </button>
-
                 </div>
 
                 <div class="modal-body p-0">

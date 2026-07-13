@@ -16,174 +16,214 @@ import java.util.Map;
 @Service
 public class PdfUnlockerService {
 
-    public Map<String,Object> unlockPdf(
+        public Map<String, Object> unlockPdf(
 
-            MultipartFile[] pdfFiles,
-            String[] passwords
+                        MultipartFile[] pdfFiles,
+                        String[] passwords
 
-    ){
+        ) {
 
-        Map<String,Object> result =
-                new HashMap<>();
+                Map<String, Object> result = new HashMap<>();
 
-        try{
+                try {
 
-            List<Map<String,String>> files =
-                    new ArrayList<>();
+                        List<Map<String, String>> files = new ArrayList<>();
 
-            File uploadFolder =
-                    new File(
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "uploaded-pdfs"
-                    );
+                        File uploadFolder = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "uploaded-pdfs");
 
-            if(!uploadFolder.exists()){
+                        if (!uploadFolder.exists()) {
 
-                uploadFolder.mkdirs();
+                                uploadFolder.mkdirs();
 
-            }
+                        }
 
-            File unlockedFolder =
-                    new File(
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "unlocked-pdfs"
-                    );
+                        File unlockedFolder = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "unlocked-pdfs");
 
-            if(!unlockedFolder.exists()){
+                        if (!unlockedFolder.exists()) {
 
-                unlockedFolder.mkdirs();
+                                unlockedFolder.mkdirs();
 
-            }
+                        }
 
-            for(
-                    int i = 0;
-                    i < pdfFiles.length;
-                    i++
-            ){
+                        for (int i = 0; i < pdfFiles.length; i++) {
 
-                MultipartFile pdfFile =
-                        pdfFiles[i];
+                                MultipartFile pdfFile = pdfFiles[i];
 
-                String password =
-                        passwords[i];
+                                String password = passwords[i];
 
-                String originalName =
-                        pdfFile.getOriginalFilename();
+                                String originalName = pdfFile.getOriginalFilename();
 
-                if(
-                        originalName == null
-                        ||
-                        originalName.isBlank()
-                ){
+                                if (originalName == null
+                                                ||
+                                                originalName.isBlank()) {
 
-                    originalName =
-                            "document.pdf";
+                                        originalName = "document.pdf";
+
+                                }
+
+                                File uploadedPdf = new File(
+                                                uploadFolder,
+                                                originalName);
+
+                                pdfFile.transferTo(
+                                                uploadedPdf);
+
+                                PDDocument document;
+
+                                try {
+
+                                        document = Loader.loadPDF(
+                                                        uploadedPdf,
+                                                        password);
+
+                                } catch (Exception ex) {
+
+                                        result.put(
+                                                        "success",
+                                                        false);
+
+                                        result.put(
+                                                        "message",
+                                                        "Invalid password or corrupted PDF: "
+                                                                        + originalName);
+
+                                        return result;
+
+                                }
+
+                                String outputName = originalName
+                                                .replace(
+                                                                ".pdf",
+                                                                "")
+                                                +
+                                                "-unlocked.pdf";
+
+                                File unlockedPdf = new File(
+                                                unlockedFolder,
+                                                outputName);
+
+                                document.setAllSecurityToBeRemoved(
+                                                true);
+
+                                document.save(
+                                                unlockedPdf);
+
+                                document.close();
+
+                                Map<String, String> fileInfo = new HashMap<>();
+
+                                fileInfo.put(
+                                                "name",
+                                                outputName);
+
+                                long fileSize = unlockedPdf.length();
+
+                                if (fileSize < 1024 * 1024) {
+
+                                        fileInfo.put(
+                                                        "size",
+                                                        String.format(
+                                                                        "%.2f KB",
+                                                                        fileSize / 1024.0));
+
+                                } else {
+
+                                        fileInfo.put(
+                                                        "size",
+                                                        String.format(
+                                                                        "%.2f MB",
+                                                                        fileSize
+                                                                                        /
+                                                                                        1024.0
+                                                                                        /
+                                                                                        1024.0));
+
+                                }
+
+                                files.add(
+                                                fileInfo);
+
+                        }
+
+                        result.put(
+                                        "success",
+                                        true);
+
+                        result.put(
+                                        "files",
+                                        files);
+
+                } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        result.put(
+                                        "success",
+                                        false);
+
+                        result.put(
+                                        "message",
+                                        "Failed to unlock PDF.");
+                }
+
+                return result;
+
+        }
+
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
+
+        public void deleteTemporaryFiles() {
+
+                deleteFolder(
+                                new File(
+                                                "uploaded-pdfs"));
+
+                deleteFolder(
+                                new File(
+                                                "unlocked-pdfs"));
+
+        }
+
+        private void deleteFolder(File folder) {
+
+                if (folder == null || !folder.exists()) {
+
+                        return;
 
                 }
 
-                File uploadedPdf =
-                        new File(
-                                uploadFolder,
-                                originalName
-                        );
+                File[] files = folder.listFiles();
 
-                pdfFile.transferTo(
-                        uploadedPdf
-                );
+                if (files == null) {
 
-                PDDocument document =
-                        Loader.loadPDF(
-                                uploadedPdf,
-                                password
-                        );
+                        return;
 
-                String outputName =
-                        originalName
-                        .replace(
-                                ".pdf",
-                                ""
-                        )
-                        +
-                        "-unlocked.pdf";
+                }
 
-                File unlockedPdf =
-                        new File(
-                                unlockedFolder,
-                                outputName
-                        );
+                for (File file : files) {
 
-                document.setAllSecurityToBeRemoved(
-                        true
-                );
+                        if (file.isFile()) {
 
-                document.save(
-                        unlockedPdf
-                );
+                                file.delete();
 
-                document.close();
+                        }
 
-                Map<String,String> fileInfo =
-                        new HashMap<>();
-
-                fileInfo.put(
-                        "name",
-                        outputName
-                );
-
-                fileInfo.put(
-                        "size",
-                        String.format(
-                                "%.2f MB",
-                                unlockedPdf.length()
-                                /
-                                1024.0
-                                /
-                                1024.0
-                        )
-                );
-
-                files.add(
-                        fileInfo
-                );
-
-            }
-
-            result.put(
-                    "success",
-                    true
-            );
-
-            result.put(
-                    "files",
-                    files
-            );
+                }
 
         }
-        catch(Exception e){
-
-            e.printStackTrace();
-
-            result.put(
-                    "success",
-                    false
-            );
-
-            result.put(
-                    "message",
-                    e.getMessage()
-            );
-
-        }
-
-        return result;
-
-    }
 
 }
-

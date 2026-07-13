@@ -3,11 +3,11 @@ css
    PAGE
 =========================== */
 
-body{
+body {
 
-    background:#f5f7fb;
+    background: #f5f7fb;
 
-    font-family:'Segoe UI',sans-serif;
+    font-family: 'Segoe UI', sans-serif;
 
 }
 
@@ -15,19 +15,77 @@ body{
    MAIN CARD
 =========================== */
 
-.converter-card{
+.converter-card {
 
-    max-width:1200px;
+    max-width: 1200px;
 
-    margin:auto;
+    margin: auto;
 
-    background:white;
+    background: white;
 
-    border-radius:25px;
+    border-radius: 25px;
 
-    padding:40px;
+    padding: 40px;
 
-    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
+
+}
+
+/* ===========================
+   FREEZE DURING CONVERSION
+=========================== */
+
+.conversion-active {
+
+    pointer-events: none;
+
+    opacity: .85;
+
+}
+
+/* ===========================
+   PROGRESS SECTION
+=========================== */
+
+#progressSection {
+
+    display: none;
+
+    margin-top: 30px;
+
+}
+
+#progressSection h4 {
+
+    font-weight: 700;
+
+    color: #2563eb;
+
+    margin-bottom: 20px;
+
+}
+
+.progress {
+
+    height: 30px;
+
+    border-radius: 30px;
+
+    overflow: hidden;
+
+    background: #e5e7eb;
+
+}
+
+#progressBar {
+
+    width: 0%;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    transition: width .3s ease;
 
 }
 
@@ -35,13 +93,13 @@ body{
    TITLE
 =========================== */
 
-h1{
+h1 {
 
-    font-size:46px;
+    font-size: 46px;
 
-    font-weight:700;
+    font-weight: 700;
 
-    color:#2563eb;
+    color: #2563eb;
 
 }
 
@@ -49,25 +107,25 @@ h1{
    SUMMARY CARD
 =========================== */
 
-.summary-card{
+.summary-card {
 
-    display:flex;
+    display: flex;
 
-    justify-content:space-between;
+    justify-content: space-between;
 
-    align-items:center;
+    align-items: center;
 
-    background:#f8fafc;
+    background: #f8fafc;
 
-    border:1px solid #e5e7eb;
+    border: 1px solid #e5e7eb;
 
-    border-radius:15px;
+    border-radius: 15px;
 
-    padding:20px 25px;
+    padding: 20px 25px;
 
-    margin-bottom:20px;
+    margin-bottom: 20px;
 
-    font-size:18px;
+    font-size: 18px;
 
 }
 
@@ -75,39 +133,39 @@ h1{
    FILE LIST
 =========================== */
 
-#fileListContainer .card{
+#fileListContainer .card {
 
-    border:none;
+    border: none;
 
-    border-radius:15px;
+    border-radius: 15px;
 
-    margin-bottom:12px;
+    margin-bottom: 12px;
 
-    box-shadow:0 2px 10px rgba(0,0,0,.05);
-
-}
-
-#fileListContainer .card-body{
-
-    padding:18px 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
 
 }
 
-.file-row-name{
+#fileListContainer .card-body {
 
-    font-size:18px;
-
-    font-weight:600;
+    padding: 18px 25px;
 
 }
 
-.file-row-name i{
+.file-row-name {
 
-    color:#2563eb;
+    font-size: 18px;
 
-    font-size:24px;
+    font-weight: 600;
 
-    margin-right:10px;
+}
+
+.file-row-name i {
+
+    color: #2563eb;
+
+    font-size: 24px;
+
+    margin-right: 10px;
 
 }
 
@@ -115,57 +173,57 @@ h1{
    UPLOAD AREA
 =========================== */
 
-.upload-area{
+.upload-area {
 
-    border:2px dashed #2563eb;
+    border: 2px dashed #2563eb;
 
-    border-radius:20px;
+    border-radius: 20px;
 
-    background:#f8fbff;
+    background: #f8fbff;
 
-    text-align:center;
+    text-align: center;
 
-    padding:60px 20px;
+    padding: 60px 20px;
 
-    margin-top:25px;
+    margin-top: 25px;
 
-    transition:.3s;
-
-}
-
-.upload-area:hover{
-
-    background:#eef6ff;
+    transition: .3s;
 
 }
 
-.drag-active{
+.upload-area:hover {
 
-    background:#dbeafe;
-
-}
-
-.upload-icon{
-
-    font-size:80px;
-
-    color:#2563eb;
-
-    margin-bottom:15px;
+    background: #eef6ff;
 
 }
 
-.upload-area h3{
+.drag-active {
 
-    font-size:24px;
-
-    font-weight:700;
+    background: #dbeafe;
 
 }
 
-.upload-area p{
+.upload-icon {
 
-    color:#6b7280;
+    font-size: 80px;
+
+    color: #2563eb;
+
+    margin-bottom: 15px;
+
+}
+
+.upload-area h3 {
+
+    font-size: 24px;
+
+    font-weight: 700;
+
+}
+
+.upload-area p {
+
+    color: #6b7280;
 
 }
 
@@ -173,33 +231,31 @@ h1{
    BUTTONS
 =========================== */
 
-.btn-primary{
+.btn-primary {
 
-    background:linear-gradient(
-        90deg,
-        #2563eb,
-        #7c3aed
-    );
+    background: linear-gradient(90deg,
+            #2563eb,
+            #7c3aed);
 
-    border:none;
+    border: none;
 
 }
 
-.btn-primary:hover{
+.btn-primary:hover {
 
-    opacity:.9;
+    opacity: .9;
 
 }
 
-#convertBtn{
+#convertBtn {
 
-    width:320px;
+    width: 320px;
 
-    height:55px;
+    height: 55px;
 
-    font-size:18px;
+    font-size: 18px;
 
-    font-weight:600;
+    font-weight: 600;
 
 }
 
@@ -207,17 +263,17 @@ h1{
    PROGRESS
 =========================== */
 
-.progress{
+.progress {
 
-    height:28px;
+    height: 28px;
 
-    border-radius:50px;
+    border-radius: 50px;
 
 }
 
-.progress-bar{
+.progress-bar {
 
-    font-weight:600;
+    font-weight: 600;
 
 }
 
@@ -225,17 +281,17 @@ h1{
    RESULT HEADER
 =========================== */
 
-.result-header{
+.result-header {
 
-    background:#f8fafc;
+    background: #f8fafc;
 
-    border:1px solid #e5e7eb;
+    border: 1px solid #e5e7eb;
 
-    border-radius:15px;
+    border-radius: 15px;
 
-    padding:15px;
+    padding: 15px;
 
-    margin-bottom:15px;
+    margin-bottom: 15px;
 
 }
 
@@ -243,21 +299,21 @@ h1{
    RESULT FILES
 =========================== */
 
-#convertedFilesContainer .card{
+#convertedFilesContainer .card {
 
-    border:none;
+    border: none;
 
-    border-radius:15px;
+    border-radius: 15px;
 
-    margin-bottom:12px;
+    margin-bottom: 12px;
 
-    box-shadow:0 2px 10px rgba(0,0,0,.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
 
 }
 
-#convertedFilesContainer .card-body{
+#convertedFilesContainer .card-body {
 
-    padding:18px 25px;
+    padding: 18px 25px;
 
 }
 
@@ -265,23 +321,23 @@ h1{
    RESULT SUMMARY
 =========================== */
 
-.result-summary{
+.result-summary {
 
-    margin-top:20px;
+    margin-top: 20px;
 
-    padding:15px;
+    padding: 15px;
 
-    background:#f8fafc;
+    background: #f8fafc;
 
-    border:1px solid #e5e7eb;
+    border: 1px solid #e5e7eb;
 
-    border-radius:15px;
+    border-radius: 15px;
 
-    text-align:center;
+    text-align: center;
 
-    font-size:16px;
+    font-size: 16px;
 
-    font-weight:600;
+    font-weight: 600;
 
 }
 
@@ -289,13 +345,13 @@ h1{
    PDF PREVIEW
 =========================== */
 
-#previewFrame{
+#previewFrame {
 
-    width:100%;
+    width: 100%;
 
-    height:700px;
+    height: 700px;
 
-    border:none;
+    border: none;
 
 }
 
@@ -303,112 +359,137 @@ h1{
    DARK MODE
 =========================== */
 
-.dark-mode{
+.dark-mode {
 
-    background:#111827;
+    background: #111827;
 
-    color:white;
-
-}
-
-.dark-mode .converter-card{
-
-    background:#1f2937;
-
-    color:white;
+    color: white;
 
 }
 
-.dark-mode .summary-card{
+.dark-mode .converter-card {
 
-    background:#374151;
+    background: #1f2937;
 
-    border-color:#4b5563;
-
-}
-
-.dark-mode .card{
-
-    background:#374151;
-
-    color:white;
+    color: white;
 
 }
 
-.dark-mode .upload-area{
+.dark-mode .summary-card {
 
-    background:#374151;
+    background: #374151;
 
-    border-color:#60a5fa;
-
-}
-
-.dark-mode .result-header{
-
-    background:#374151;
-
-    border-color:#4b5563;
+    border-color: #4b5563;
 
 }
 
-.dark-mode .result-summary{
+.dark-mode .card {
 
-    background:#374151;
+    background: #374151;
 
-    border-color:#4b5563;
+    color: white;
+
+}
+
+.dark-mode .upload-area {
+
+    background: #374151;
+
+    border-color: #60a5fa;
 
 }
 
-.dark-mode .modal-content{
+.dark-mode .result-header {
 
-    background:#1f2937;
+    background: #374151;
 
-    color:white;
+    border-color: #4b5563;
 
 }
+
+.dark-mode .result-summary {
+
+    background: #374151;
+
+    border-color: #4b5563;
+
+}
+
+.dark-mode .modal-content {
+
+    background: #1f2937;
+
+    color: white;
+
+}
+
+.dark-mode #progressSection h4 {
+
+    color: white;
+
+}
+
+.dark-mode .progress {
+
+    background: #374151;
+
+}
+
 /* ===================================
    TABLET (768px - 991px)
 =================================== */
 
-@media (max-width:991px){
+@media (max-width:991px) {
 
-    .converter-card{
-        padding:30px;
-        margin-bottom:100px;
+    .converter-card {
+        padding: 30px;
+        margin-bottom: 100px;
     }
 
-    h1{
-        font-size:38px;
-        text-align:center;
+    h1 {
+        font-size: 38px;
+        text-align: center;
     }
 
-    .summary-card{
-        font-size:16px;
-        padding:16px 20px;
+    .summary-card {
+        font-size: 16px;
+        padding: 16px 20px;
     }
 
-    .upload-area{
-        padding:40px 20px;
+    .upload-area {
+        padding: 40px 20px;
     }
 
-    .upload-icon{
-        font-size:60px;
+    .upload-icon {
+        font-size: 60px;
     }
 
-    .upload-area h3{
-        font-size:22px;
+    .upload-area h3 {
+        font-size: 22px;
     }
 
-    .file-row-name{
-        font-size:16px;
+    .file-row-name {
+        font-size: 16px;
     }
 
-    .result-header{
-        display:none;
+    .result-header {
+        display: none;
     }
 
-    #previewFrame{
-        height:600px;
+    #previewFrame {
+        height: 600px;
+    }
+
+    .progress {
+
+        height: 24px;
+
+    }
+
+    #progressBar {
+
+        font-size: 13px;
+
     }
 }
 
@@ -416,98 +497,110 @@ h1{
    MOBILE (576px - 767px)
 =================================== */
 
-@media (max-width:767px){
+@media (max-width:767px) {
 
-    .container{
-        padding-left:15px;
-        padding-right:15px;
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
     }
 
-    .converter-card{
-        padding:20px 15px;
-        border-radius:18px;
-        margin-bottom:100px;
+    .converter-card {
+        padding: 20px 15px;
+        border-radius: 18px;
+        margin-bottom: 100px;
     }
 
-    h1{
-        font-size:30px;
-        text-align:center;
+    h1 {
+        font-size: 30px;
+        text-align: center;
     }
 
-    .summary-card{
-        flex-direction:column;
-        gap:10px;
-        text-align:center;
-        padding:15px;
-        font-size:15px;
+    .summary-card {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+        padding: 15px;
+        font-size: 15px;
     }
 
-    .upload-area{
-        padding:30px 15px;
-        border-radius:16px;
+    .upload-area {
+        padding: 30px 15px;
+        border-radius: 16px;
     }
 
-    .upload-icon{
-        font-size:50px;
+    .upload-icon {
+        font-size: 50px;
     }
 
-    .upload-area h3{
-        font-size:20px;
+    .upload-area h3 {
+        font-size: 20px;
     }
 
-    .upload-area p{
-        font-size:14px;
+    .upload-area p {
+        font-size: 14px;
     }
 
-    .upload-area .btn{
-        width:100%;
+    .upload-area .btn {
+        width: 100%;
     }
 
-    #convertBtn{
-        width:100%;
-        font-size:16px;
+    #convertBtn {
+        width: 100%;
+        font-size: 16px;
     }
 
     /* Upload File Cards */
 
-    #fileListContainer .card{
-        border-radius:14px;
+    #fileListContainer .card {
+        border-radius: 14px;
     }
 
-    #fileListContainer .card-body{
-        padding:15px;
-        text-align:center;
+    #fileListContainer .card-body {
+        padding: 15px;
+        text-align: center;
     }
 
-    .file-row-name{
-        font-size:15px;
-        margin-bottom:8px;
-        word-break:break-word;
+    .file-row-name {
+        font-size: 15px;
+        margin-bottom: 8px;
+        word-break: break-word;
     }
 
     /* Result Cards */
 
-    .result-header{
-        display:none;
+    .result-header {
+        display: none;
     }
 
-    #convertedFilesContainer .card{
-        border-radius:14px;
-        margin-bottom:15px;
+    #convertedFilesContainer .card {
+        border-radius: 14px;
+        margin-bottom: 15px;
     }
 
-    #convertedFilesContainer .card-body{
-        padding:15px;
-        text-align:center;
+    #convertedFilesContainer .card-body {
+        padding: 15px;
+        text-align: center;
     }
 
-    .result-summary{
-        font-size:14px;
-        line-height:1.7;
+    .result-summary {
+        font-size: 14px;
+        line-height: 1.7;
     }
 
-    #previewFrame{
-        height:500px;
+    #previewFrame {
+        height: 500px;
+    }
+
+    .progress {
+
+        height: 24px;
+
+    }
+
+    #progressBar {
+
+        font-size: 13px;
+
     }
 
 }
@@ -516,58 +609,70 @@ h1{
    SMALL MOBILE (320px - 575px)
 =================================== */
 
-@media (max-width:575px){
+@media (max-width:575px) {
 
-    .converter-card{
-        padding:15px 12px;
-        margin-bottom:100px;
+    .converter-card {
+        padding: 15px 12px;
+        margin-bottom: 100px;
     }
 
-    h1{
-        font-size:26px;
+    h1 {
+        font-size: 26px;
     }
 
-    .summary-card{
-        font-size:14px;
-        padding:12px;
+    .summary-card {
+        font-size: 14px;
+        padding: 12px;
     }
 
-    .upload-area{
-        padding:25px 10px;
+    .upload-area {
+        padding: 25px 10px;
     }
 
-    .upload-icon{
-        font-size:42px;
+    .upload-icon {
+        font-size: 42px;
     }
 
-    .upload-area h3{
-        font-size:18px;
+    .upload-area h3 {
+        font-size: 18px;
     }
 
-    .upload-area p{
-        font-size:13px;
+    .upload-area p {
+        font-size: 13px;
     }
 
-    .file-row-name{
-        font-size:14px;
+    .file-row-name {
+        font-size: 14px;
     }
 
-    .result-summary{
-        font-size:13px;
+    .result-summary {
+        font-size: 13px;
     }
 
-    #convertBtn{
-        width:100%;
-        height:50px;
-        font-size:15px;
+    #convertBtn {
+        width: 100%;
+        height: 50px;
+        font-size: 15px;
     }
 
-    #previewFrame{
-        height:400px;
+    #previewFrame {
+        height: 400px;
     }
 
     .btn-primary,
-    .btn-secondary{
-        font-size:14px;
+    .btn-secondary {
+        font-size: 14px;
+    }
+
+    .progress {
+
+        height: 22px;
+
+    }
+
+    #progressBar {
+
+        font-size: 12px;
+
     }
 }

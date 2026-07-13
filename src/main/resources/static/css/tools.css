@@ -966,6 +966,51 @@ MOBILE (320px - 767px)
     padding:15px;
 }
 
+/* ==========================
+   TABLET NAVBAR
+========================== */
+
+.custom-navbar{
+
+    height:auto;
+
+}
+
+.navbar-collapse{
+
+    background:#ffffff;
+
+    margin-top:12px;
+
+    padding:20px;
+
+    border-radius:16px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+
+}
+
+.navbar-nav{
+
+    text-align:center;
+
+}
+
+.navbar-nav .nav-item{
+
+    margin:8px 0;
+
+}
+
+.start-btn{
+
+    display:block;
+
+    width:100%;
+
+    margin-top:15px;
+
+}
 
 }
 
@@ -1015,6 +1060,51 @@ SMALL MOBILE (320px - 480px)
 .filter-btn{
     font-size:12px;
     padding:8px 12px;
+}
+
+
+.custom-navbar{
+
+    height:auto;
+
+    padding:10px 0;
+
+}
+
+.navbar-collapse{
+
+    background:#ffffff;
+
+    margin-top:12px;
+
+    padding:20px;
+
+    border-radius:16px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+
+}
+
+.navbar-nav{
+
+    text-align:center;
+
+}
+
+.navbar-nav .nav-item{
+
+    margin:8px 0;
+
+}
+
+.start-btn{
+
+    display:block;
+
+    width:100%;
+
+    margin-top:15px;
+
 }
 
 
@@ -1085,5 +1175,50 @@ TABLET (768px - 1024px)
     flex-direction:row;
 }
 
+/* ==========================
+   TABLET NAVBAR
+========================== */
+
+.custom-navbar{
+
+    height:auto;
+
+}
+
+.navbar-collapse{
+
+    background:#ffffff;
+
+    margin-top:12px;
+
+    padding:20px;
+
+    border-radius:16px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.12);
+
+}
+
+.navbar-nav{
+
+    text-align:center;
+
+}
+
+.navbar-nav .nav-item{
+
+    margin:8px 0;
+
+}
+
+.start-btn{
+
+    display:block;
+
+    width:100%;
+
+    margin-top:15px;
+
+}
 
 }

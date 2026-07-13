@@ -874,18 +874,3 @@ convertMoreBtn.addEventListener(
     }
 );
 
-/* ===========================
-   DELETE TEMP FILE
-   ON RELOAD / TAB CLOSE
-=========================== */
-
-window.addEventListener(
-    "beforeunload",
-    function () {
-
-        navigator.sendBeacon(
-            "/delete-numbered-pdf"
-        );
-
-    }
-);

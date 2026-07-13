@@ -312,27 +312,54 @@ function deleteFile(index) {
 
 function previewExcel(index) {
 
-    const file =
-        selectedFiles[index];
+    const file = selectedFiles[index];
 
-    document.getElementById(
-        "pdfPreviewFrame"
-    ).src =
-        "";
+    const reader = new FileReader();
 
-    document.querySelector(
-        "#pdfPreviewModal .modal-title"
-    ).innerHTML =
-        file.name;
+    reader.onload = function (e) {
 
-    const modal =
+        const data = new Uint8Array(e.target.result);
+
+        const workbook = XLSX.read(data, {
+            type: "array"
+        });
+
+        const firstSheet =
+            workbook.SheetNames[0];
+
+        const worksheet =
+            workbook.Sheets[firstSheet];
+
+        const html =
+            XLSX.utils.sheet_to_html(worksheet);
+
+        document.querySelector(
+            "#pdfPreviewModal .modal-title"
+        ).innerHTML =
+            file.name;
+
+        document.getElementById(
+            "excelPreviewContainer"
+        ).style.display = "block";
+
+        document.getElementById(
+            "pdfPreviewFrame"
+        ).style.display = "none";
+
+        document.getElementById(
+            "excelPreviewContainer"
+        ).innerHTML =
+            html;
+
         new bootstrap.Modal(
             document.getElementById(
                 "pdfPreviewModal"
             )
-        );
+        ).show();
 
-    modal.show();
+    };
+
+    reader.readAsArrayBuffer(file);
 
 }
 /* ===========================
@@ -447,60 +474,111 @@ excelToPdfForm.addEventListener(
 
         progressBar.innerHTML =
             "25%";
-        
+
         setTimeout(() => {
-        fetch(
-            "/excel-to-pdf-ajax",
-            {
-                method: "POST",
-                body: formData
-            }
-        )
-            .then(
-                response => {
-
-                    if (
-                        !response.ok
-                    ) {
-                        throw new Error(
-                            "Server error"
-                        );
-                    }
-
-                    return response.json();
-
+            fetch(
+                "/excel-to-pdf-ajax",
+                {
+                    method: "POST",
+                    body: formData
                 }
             )
-            .then(
-                result => {
+                .then(
+                    response => {
 
-                    progressBar.style.width =
-                        "75%";
+                        if (
+                            !response.ok
+                        ) {
+                            throw new Error(
+                                "Server error"
+                            );
+                        }
 
-                    progressBar.innerHTML =
-                        "75%";
+                        return response.json();
 
-                    if (
-                        result.success
-                    ) {
+                    }
+                )
+                .then(
+                    result => {
+
                         progressBar.style.width =
-                            "100%";
+                            "75%";
 
                         progressBar.innerHTML =
-                            "100%";
+                            "75%";
 
-                        setTimeout(() => {
+                        if (
+                            result.success
+                        ) {
+                            progressBar.style.width =
+                                "100%";
+
+                            progressBar.innerHTML =
+                                "100%";
+
+                            setTimeout(() => {
+
+                                progressContainer.style.display =
+                                    "none";
+
+                            }, 500);
+                            buildResult(
+                                result
+                            );
+
+                        }
+                        else {
+
+                            convertBtn.disabled =
+                                false;
+
+                            excelFiles.disabled =
+                                false;
+
+                            document
+                                .querySelectorAll(
+                                    ".btn-danger"
+                                )
+                                .forEach(
+                                    btn =>
+                                        btn.disabled =
+                                        false
+                                );
+
+                            document
+                                .querySelectorAll(
+                                    ".btn-primary"
+                                )
+                                .forEach(
+                                    btn =>
+                                        btn.disabled =
+                                        false
+                                );
+
+                            document.getElementById(
+                                "uploadSection"
+                            ).style.display =
+                                "block";
 
                             progressContainer.style.display =
                                 "none";
 
-                        }, 500);
-                        buildResult(
-                            result
-                        );
+                            progressBar.style.width =
+                                "0%";
+
+                            progressBar.innerHTML =
+                                "0%";
+
+                            alert(
+                                result.message
+                            );
+
+                        }
 
                     }
-                    else {
+                )
+                .catch(
+                    error => {
 
                         convertBtn.disabled =
                             false;
@@ -532,7 +610,6 @@ excelToPdfForm.addEventListener(
                             "uploadSection"
                         ).style.display =
                             "block";
-
                         progressContainer.style.display =
                             "none";
 
@@ -541,63 +618,13 @@ excelToPdfForm.addEventListener(
 
                         progressBar.innerHTML =
                             "0%";
-
                         alert(
-                            result.message
+                            error.message ||
+                            "Conversion failed."
                         );
 
                     }
-
-                }
-            )
-            .catch(
-                error => {
-
-                    convertBtn.disabled =
-                        false;
-
-                    excelFiles.disabled =
-                        false;
-
-                    document
-                        .querySelectorAll(
-                            ".btn-danger"
-                        )
-                        .forEach(
-                            btn =>
-                                btn.disabled =
-                                false
-                        );
-
-                    document
-                        .querySelectorAll(
-                            ".btn-primary"
-                        )
-                        .forEach(
-                            btn =>
-                                btn.disabled =
-                                false
-                        );
-
-                    document.getElementById(
-                        "uploadSection"
-                    ).style.display =
-                        "block";
-                    progressContainer.style.display =
-                        "none";
-
-                    progressBar.style.width =
-                        "0%";
-
-                    progressBar.innerHTML =
-                        "0%";
-                    alert(
-                        error.message ||
-                        "Conversion failed."
-                    );
-
-                }
-            );
+                );
         }, 100);
 
     }
@@ -702,8 +729,15 @@ function buildResult(result) {
 /* ===========================
    RESULT PREVIEW
 =========================== */
+function previewResultPdf(fileName){
 
-function previewResultPdf(fileName) {
+    document.getElementById(
+        "excelPreviewContainer"
+    ).style.display = "none";
+
+    document.getElementById(
+        "pdfPreviewFrame"
+    ).style.display = "block";
 
     document.getElementById(
         "pdfPreviewFrame"
@@ -731,7 +765,7 @@ document.getElementById(
     "convertMoreBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
         fetch(
             "/delete-temp-files",
@@ -739,13 +773,13 @@ document.getElementById(
                 method: "POST"
             }
         )
-        .finally(
-            () => {
+            .finally(
+                () => {
 
-                location.reload();
+                    location.reload();
 
-            }
-        );
+                }
+            );
 
     }
 );

@@ -26,337 +26,393 @@ import java.util.Map;
 @Service
 public class PdfWatermarkService {
 
-    public Map<String,Object> watermarkPdf(
+        public Map<String, Object> watermarkPdf(
 
-            MultipartFile[] pdfFiles,
+                        MultipartFile[] pdfFiles,
 
-            String watermarkType,
+                        String watermarkType,
 
-            String watermarkText,
+                        String watermarkText,
 
-            int textSize,
+                        int textSize,
 
-            int imageSize,
+                        int imageSize,
 
-            int opacity,
+                        int opacity,
 
-            String position,
+                        String position,
 
-            MultipartFile watermarkImage
+                        MultipartFile watermarkImage
 
-    ){
+        ) {
 
-        Map<String,Object> result =
-                new HashMap<>();
+                Map<String, Object> result = new HashMap<>();
 
-        try{
+                try {
 
-            List<Map<String,String>> files =
-                    new ArrayList<>();
+                        List<Map<String, String>> files = new ArrayList<>();
 
-            File uploadFolder =
-                    new File(
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "uploaded-pdfs"
-                    );
+                        File uploadFolder = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "uploaded-pdfs");
 
-            if(!uploadFolder.exists()){
+                        if (!uploadFolder.exists()) {
 
-                uploadFolder.mkdirs();
+                                uploadFolder.mkdirs();
 
-            }
+                        }
 
-            File outputFolder =
-                    new File(
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "watermarked-pdfs"
-                    );
+                        File outputFolder = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "watermarked-pdfs");
 
-            if(!outputFolder.exists()){
+                        if (!outputFolder.exists()) {
 
-                outputFolder.mkdirs();
+                                outputFolder.mkdirs();
 
-            }
+                        }
 
-            File imageFile = null;
+                        File imageFile = null;
 
-            if(
-                    watermarkImage != null
-                    &&
-                    !watermarkImage.isEmpty()
-            ){
+                        if (watermarkImage != null
+                                        &&
+                                        !watermarkImage.isEmpty()) {
 
-                imageFile =
-                        new File(
-                                outputFolder,
-                                watermarkImage.getOriginalFilename()
-                        );
+                                String imageName = watermarkImage.getOriginalFilename();
 
-                watermarkImage.transferTo(
-                        imageFile
-                );
+                                if (imageName == null
+                                                ||
+                                                !(imageName.toLowerCase().endsWith(".png")
+                                                                ||
+                                                                imageName.toLowerCase().endsWith(".jpg")
+                                                                ||
+                                                                imageName.toLowerCase().endsWith(".jpeg"))) {
 
-            }
+                                        result.put(
+                                                        "success",
+                                                        false);
 
-            for(
-                    MultipartFile pdfFile
-                    :
-                    pdfFiles
-            ){
+                                        result.put(
+                                                        "message",
+                                                        "Only PNG, JPG and JPEG watermark images are allowed.");
 
-                String originalName =
-                        pdfFile.getOriginalFilename();
+                                        return result;
 
-                if(
-                        originalName == null
-                        ||
-                        originalName.isBlank()
-                ){
+                                }
 
-                    originalName =
-                            "document.pdf";
+                                imageFile = new File(
 
-                }
+                                                outputFolder,
 
-                File uploadedPdf =
-                        new File(
-                                uploadFolder,
-                                originalName
-                        );
-
-                pdfFile.transferTo(
-                        uploadedPdf
-                );
-
-                PDDocument document =
-                        Loader.loadPDF(
-                                uploadedPdf
-                        );
-
-                for(
-                        PDPage page
-                        :
-                        document.getPages()
-                ){
-
-                    float pageWidth =
-                            page.getMediaBox()
-                                    .getWidth();
-
-                    float pageHeight =
-                            page.getMediaBox()
-                                    .getHeight();
-
-                    float x =
-                            pageWidth / 2;
-
-                    float y =
-                            pageHeight / 2;
-
-                    switch(position){
-
-                        case "TOP_LEFT":
-
-                            x = 50;
-                            y = pageHeight - 50;
-
-                            break;
-
-                        case "TOP_RIGHT":
-
-                            x = pageWidth - 200;
-                            y = pageHeight - 50;
-
-                            break;
-
-                        case "BOTTOM_LEFT":
-
-                            x = 50;
-                            y = 50;
-
-                            break;
-
-                        case "BOTTOM_RIGHT":
-
-                            x = pageWidth - 200;
-                            y = 50;
-
-                            break;
-
-                        default:
-
-                            x = pageWidth / 2;
-                            y = pageHeight / 2;
-
-                    }
-
-                    PDPageContentStream contentStream =
-                            new PDPageContentStream(
-
-                                    document,
-
-                                    page,
-
-                                    PDPageContentStream.AppendMode.APPEND,
-
-                                    true,
-
-                                    true
-
-                            );
-
-                    if(
-                            "text".equalsIgnoreCase(
-                                    watermarkType
-                            )
-                    ){
-
-                        contentStream.beginText();
-
-                        contentStream.setFont(
-
-                                new PDType1Font(
-                                        Standard14Fonts.FontName.HELVETICA_BOLD
-                                ),
-
-                                textSize
-
-                        );
-
-                        contentStream.setNonStrokingColor(
-                                Color.LIGHT_GRAY
-                        );
-
-                        contentStream.newLineAtOffset(
-                                x,
-                                y
-                        );
-
-                        contentStream.showText(
-                                watermarkText
-                        );
-
-                        contentStream.endText();
-
-                    }
-                    else if(
-                            imageFile != null
-                    ){
-
-                        PDImageXObject image =
-                                PDImageXObject.createFromFile(
-
-                                        imageFile.getAbsolutePath(),
-
-                                        document
+                                                imageName
 
                                 );
 
-                        contentStream.drawImage(
+                                watermarkImage.transferTo(
+                                                imageFile);
 
-                                image,
+                        }
 
-                                x,
+                        for (MultipartFile pdfFile : pdfFiles) {
 
-                                y,
+                                String originalName = pdfFile.getOriginalFilename();
 
-                                imageSize,
+                                if (originalName == null
+                                                ||
+                                                originalName.isBlank()) {
 
-                                imageSize
+                                        originalName = "document.pdf";
 
-                        );
+                                }
 
-                    }
+                                File uploadedPdf = new File(
+                                                uploadFolder,
+                                                originalName);
 
-                    contentStream.close();
+                                pdfFile.transferTo(
+                                                uploadedPdf);
+
+                                PDDocument document;
+
+                                try {
+
+                                        document = Loader.loadPDF(
+                                                        uploadedPdf);
+
+                                } catch (Exception ex) {
+
+                                        result.put(
+                                                        "success",
+                                                        false);
+
+                                        result.put(
+                                                        "message",
+                                                        originalName +
+                                                                        " is corrupted or not a valid PDF.");
+
+                                        return result;
+
+                                }
+
+                                if ("text".equalsIgnoreCase(watermarkType)
+                                                &&
+                                                (watermarkText == null
+                                                                ||
+                                                                watermarkText.isBlank())) {
+
+                                        result.put(
+                                                        "success",
+                                                        false);
+
+                                        result.put(
+                                                        "message",
+                                                        "Please enter watermark text.");
+
+                                        return result;
+
+                                }
+
+                                for (PDPage page : document.getPages()) {
+
+                                        float pageWidth = page.getMediaBox()
+                                                        .getWidth();
+
+                                        float pageHeight = page.getMediaBox()
+                                                        .getHeight();
+
+                                        float x = pageWidth / 2;
+
+                                        float y = pageHeight / 2;
+
+                                        switch (position) {
+
+                                                case "TOP_LEFT":
+
+                                                        x = 50;
+                                                        y = pageHeight - 50;
+
+                                                        break;
+
+                                                case "TOP_RIGHT":
+
+                                                        x = pageWidth - 200;
+                                                        y = pageHeight - 50;
+
+                                                        break;
+
+                                                case "BOTTOM_LEFT":
+
+                                                        x = 50;
+                                                        y = 50;
+
+                                                        break;
+
+                                                case "BOTTOM_RIGHT":
+
+                                                        x = pageWidth - 200;
+                                                        y = 50;
+
+                                                        break;
+
+                                                default:
+
+                                                        x = pageWidth / 2;
+                                                        y = pageHeight / 2;
+
+                                        }
+
+                                        PDPageContentStream contentStream = new PDPageContentStream(
+
+                                                        document,
+
+                                                        page,
+
+                                                        PDPageContentStream.AppendMode.APPEND,
+
+                                                        true,
+
+                                                        true
+
+                                        );
+
+                                        if ("text".equalsIgnoreCase(
+                                                        watermarkType)) {
+
+                                                contentStream.beginText();
+
+                                                contentStream.setFont(
+
+                                                                new PDType1Font(
+                                                                                Standard14Fonts.FontName.HELVETICA_BOLD),
+
+                                                                textSize
+
+                                                );
+
+                                                contentStream.setNonStrokingColor(
+                                                                Color.LIGHT_GRAY);
+
+                                                contentStream.newLineAtOffset(
+                                                                x,
+                                                                y);
+
+                                                contentStream.showText(
+                                                                watermarkText);
+
+                                                contentStream.endText();
+
+                                        } else if (imageFile != null) {
+
+                                                PDImageXObject image = PDImageXObject.createFromFile(
+
+                                                                imageFile.getAbsolutePath(),
+
+                                                                document
+
+                                                );
+
+                                                contentStream.drawImage(
+
+                                                                image,
+
+                                                                x,
+
+                                                                y,
+
+                                                                imageSize,
+
+                                                                imageSize
+
+                                                );
+
+                                        }
+
+                                        contentStream.close();
+
+                                }
+
+                                String outputName = originalName.replace(
+                                                ".pdf",
+                                                "")
+                                                +
+                                                "-watermarked.pdf";
+
+                                File outputFile = new File(
+                                                outputFolder,
+                                                outputName);
+
+                                document.save(
+                                                outputFile);
+
+                                document.close();
+
+                                Map<String, String> fileInfo = new HashMap<>();
+
+                                fileInfo.put(
+                                                "name",
+                                                outputName);
+
+                                fileInfo.put(
+                                                "size",
+                                                String.format(
+
+                                                                "%.2f MB",
+
+                                                                outputFile.length()
+                                                                                /
+                                                                                1024.0
+                                                                                /
+                                                                                1024.0
+
+                                                ));
+
+                                files.add(
+                                                fileInfo);
+
+                        }
+
+                        result.put(
+                                        "success",
+                                        true);
+
+                        result.put(
+                                        "files",
+                                        files);
+
+                } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        result.put(
+                                        "success",
+                                        false);
+
+                        result.put(
+                                        "message",
+                                        "Unable to watermark the selected PDF(s).");
 
                 }
 
-                String outputName =
-                        originalName.replace(
-                                ".pdf",
-                                ""
-                        )
-                        +
-                        "-watermarked.pdf";
-
-                File outputFile =
-                        new File(
-                                outputFolder,
-                                outputName
-                        );
-
-                document.save(
-                        outputFile
-                );
-
-                document.close();
-
-                Map<String,String> fileInfo =
-                        new HashMap<>();
-
-                fileInfo.put(
-                        "name",
-                        outputName
-                );
-
-                fileInfo.put(
-                        "size",
-                        String.format(
-
-                                "%.2f MB",
-
-                                outputFile.length()
-                                /
-                                1024.0
-                                /
-                                1024.0
-
-                        )
-                );
-
-                files.add(
-                        fileInfo
-                );
-
-            }
-
-            result.put(
-                    "success",
-                    true
-            );
-
-            result.put(
-                    "files",
-                    files
-            );
-
-        }
-        catch(Exception e){
-
-            e.printStackTrace();
-
-            result.put(
-                    "success",
-                    false
-            );
-
-            result.put(
-                    "message",
-                    e.getMessage()
-            );
+                return result;
 
         }
 
-        return result;
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
 
-    }
+        public void deleteTempFiles() {
+
+                deleteFolder(
+
+                                new File(
+                                                System.getProperty("user.dir")
+                                                                +
+                                                                File.separator
+                                                                +
+                                                                "uploaded-pdfs")
+
+                );
+
+                deleteFolder(
+
+                                new File(
+                                                System.getProperty("user.dir")
+                                                                +
+                                                                File.separator
+                                                                +
+                                                                "watermarked-pdfs")
+
+                );
+
+        }
+
+        private void deleteFolder(File folder) {
+
+                if (folder.exists()) {
+
+                        File[] files = folder.listFiles();
+
+                        if (files != null) {
+
+                                for (File file : files) {
+
+                                        file.delete();
+
+                                }
+
+                        }
+
+                }
+
+        }
 
 }
-

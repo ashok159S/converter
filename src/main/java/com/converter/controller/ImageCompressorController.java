@@ -132,8 +132,14 @@ public class ImageCompressorController {
                         }
 
                         File file = new File(
-                                        "compressed-images",
-                                        fileName);
+                                        System.getProperty("user.dir")
+                                                        + File.separator
+                                                        + "compressed-images"
+                                                        + File.separator
+                                                        + fileName);
+
+                        System.out.println("Looking for: " + file.getAbsolutePath());
+                        System.out.println("Exists: " + file.exists());
 
                         if (!file.exists()) {
 
@@ -203,8 +209,14 @@ public class ImageCompressorController {
                         }
 
                         File file = new File(
-                                        "compressed-images",
-                                        fileName);
+                                        System.getProperty("user.dir")
+                                                        + File.separator
+                                                        + "compressed-images"
+                                                        + File.separator
+                                                        + fileName);
+
+                        System.out.println("Looking for: " + file.getAbsolutePath());
+                        System.out.println("Exists: " + file.exists());
 
                         if (!file.exists()) {
 

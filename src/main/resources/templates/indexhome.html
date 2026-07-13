@@ -1,306 +1,156 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
         ConvertNova - Fast & Secure File Conversion
     </title>
 
-    <link rel="icon"
-          href="/images/logo.png">
+    <link rel="icon" href="/images/logo.png">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
 
-    <link rel="stylesheet"
-          th:href="@{/css/homepage.css}">
+    <link rel="stylesheet" th:href="@{/css/homepage.css}">
 
 </head>
 
 <body>
 
-<!-- =========================
+    <!-- =========================
      NAVBAR
 ========================= -->
 
-<nav class="navbar navbar-expand-lg fixed-top custom-navbar">
+    <nav class="navbar navbar-expand-lg fixed-top custom-navbar">
 
-    <div class="container">
+        <div class="container">
 
-        <a class="navbar-brand"
-           href="/">
+            <a class="navbar-brand" href="/">
 
-            <img src="/images/logo.png"
-                 alt="ConvertNova"
-                 class="logo">
-
-        </a>
-
-        <button type="button"
-        class="navbar-toggler"
-        data-bs-toggle="collapse"
-        data-bs-target="#navMenu"
-        aria-controls="navMenu"
-        aria-expanded="false"
-        aria-label="Toggle navigation">
-
-            <span class="navbar-toggler-icon"></span>
-
-        </button>
-
-        <div class="collapse navbar-collapse"
-             id="navMenu">
-
-            <ul class="navbar-nav mx-auto">
-
-                <li class="nav-item">
-                    <a class="nav-link active" href="/">Home</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/tools">All Tools</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/pdf-tools">PDF Tools</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/image-tools">Image Tools</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/office-tools">Office Tools</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/security-tools">Security Tools</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="/contact-us">Contact</a>
-                </li>
-
-            </ul>
-
-            <a href="/tools"
-               class="btn start-btn">
-
-                Start Converting
+                <img src="/images/logo.png" alt="ConvertNova" class="logo">
 
             </a>
 
-        </div>
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navMenu"
+                aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
 
-    </div>
+                <span class="navbar-toggler-icon"></span>
 
-</nav>
+            </button>
 
-<!-- =========================
-     HERO
-========================= -->
+            <div class="collapse navbar-collapse" id="navMenu">
 
-<section class="hero-section">
+                <ul class="navbar-nav mx-auto">
 
-    <div class="container">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
 
-        <div class="row align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/tools">All Tools</a>
+                    </li>
 
-            <div class="col-lg-6">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/pdf-tools">PDF Tools</a>
+                    </li>
 
-                <div class="hero-badge">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/image-tools">Image Tools</a>
+                    </li>
 
-                    ⚡ 100% Free Online File Converter
+                    <li class="nav-item">
+                        <a class="nav-link" href="/office-tools">Office Tools</a>
+                    </li>
 
-                </div>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/security-tools">Security Tools</a>
+                    </li>
 
-                <h1 class="hero-title">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact-us">Contact</a>
+                    </li>
 
-                    Convert Files Online
+                </ul>
 
-                    <span>
+                <a href="/tools" class="btn start-btn">
 
-                        In Seconds
+                    Start Converting
 
-                    </span>
-
-                </h1>
-
-                <p class="hero-text">
-
-                    Convert PDF, Image, Word,
-                    Excel and PowerPoint files instantly
-                    and securely. No registration,
-                    no limits.
-
-                </p>
-
-                <div class="hero-features">
-
-                    <div>✓ No Registration</div>
-
-                    <div>✓ Secure Processing</div>
-
-                    <div>✓ Mobile Friendly</div>
-
-                </div>
-
-                <div class="hero-buttons">
-
-                    <a href="/tools"
-                       class="btn hero-btn">
-
-                        Start Converting Now 
-
-                    </a>
-
-                    <a href="/tools"
-                       class="btn browse-btn">
-
-                        Browse All Tools  
-
-                    </a>
-
-                </div>
+                </a>
 
             </div>
 
-            <div class="col-lg-6">
+        </div>
 
-                <div class="quick-card">
+    </nav>
 
-                    <h3>
+    <!-- =========================
+     HERO
+========================= -->
 
-                        Quick Conversions
+    <section class="hero-section">
 
-                    </h3>
+        <div class="container">
 
-                    <div class="quick-row">
+            <div class="row align-items-center">
 
-                        <div class="tool-box">
+                <div class="col-lg-6">
 
-                            <img src="/images/icons/pdf.png" alt="PDF Icon">
+                    <div class="hero-badge">
 
-                            <span>PDF</span>
-
-                        </div>
-
-                        <span class="swap-arrow">↔</span>
-
-                        <div class="tool-box">
-
-                            <img src="/images/icons/word.png" alt="Word Icon">
-
-                            <span>Word</span>
-
-                        </div>
+                        ⚡ 100% Free Online File Converter
 
                     </div>
 
-                    <div class="quick-row">
+                    <h1 class="hero-title">
 
-                        <div class="tool-box">
+                        Convert Files Online
 
-                            <img src="/images/icons/pdf.png" alt="PDF Icon">
+                        <span>
 
-                            <span>PDF</span>
+                            In Seconds
 
-                        </div>
+                        </span>
 
-                        <span class="swap-arrow">↔</span>
+                    </h1>
 
-                        <div class="tool-box">
+                    <p class="hero-text">
 
-                            <img src="/images/icons/excel.png" alt="Excel  Icons">
+                        Convert PDF, Image, Word,
+                        Excel and PowerPoint files instantly
+                        and securely. No registration,
+                        no limits.
 
-                            <span>Excel</span>
+                    </p>
 
-                        </div>
+                    <div class="hero-features">
 
-                    </div>
+                        <div>✓ No Registration</div>
 
-                    <div class="quick-row">
+                        <div>✓ Secure Processing</div>
 
-                        <div class="tool-box">
-
-                            <img src="/images/icons/pdf.png" alt="PDF Icon">
-
-                            <span>PDF</span>
-
-                        </div>
-
-                        <span class="swap-arrow">↔</span>
-
-                        <div class="tool-box">
-
-                            <img src="/images/icons/powerpoint.png" alt="PPT Icon">
-
-                            <span>PowerPoint</span>
-
-                        </div>
+                        <div>✓ Mobile Friendly</div>
 
                     </div>
 
-                    <div class="quick-row">
+                    <div class="hero-buttons">
 
-                        <div class="tool-box">
+                        <a href="/tools" class="btn hero-btn">
 
-                            <img src="/images/icons/image.png" alt="Image Icon">
+                            Start Converting Now
 
-                            <span>Image</span>
+                        </a>
 
-                        </div>
+                        <a href="/tools" class="btn browse-btn">
 
-                        <span class="swap-arrow">↔</span>
-
-                        <div class="tool-box">
-
-                            <img src="/images/icons/pdf.png" alt="PDF Icon">
-
-                            <span>PDF</span>
-
-                        </div>
-
-                    </div>
-
-                    <div class="quick-row">
-
-                        <div class="tool-box">
-
-                            <img src="/images/icons/word.png" alt="Word Icon">
-
-                            <span>Word</span>
-
-                        </div>
-
-                        <span class="swap-arrow">↔</span>
-
-                        <div class="tool-box">
-
-                            <img src="/images/icons/pdf.png" alt="PDF Icon">
-
-                            <span>PDF</span>
-
-                        </div>
-
-                    </div>
-
-                    <div class="text-center mt-3">
-
-                        <a href="/all-tools"
-                           class="more-link">
-
-                            And many more conversions...
+                            Browse All Tools
 
                         </a>
 
@@ -308,79 +158,209 @@
 
                 </div>
 
+                <div class="col-lg-6">
+
+                    <div class="quick-card">
+
+                        <h3>
+
+                            Quick Conversions
+
+                        </h3>
+
+                        <div class="quick-row">
+
+                            <div class="tool-box">
+
+                                <img src="/images/icons/pdf.png" alt="PDF Icon">
+
+                                <span>PDF</span>
+
+                            </div>
+
+                            <span class="swap-arrow">↔</span>
+
+                            <div class="tool-box">
+
+                                <img src="/images/icons/word.png" alt="Word Icon">
+
+                                <span>Word</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="quick-row">
+
+                            <div class="tool-box">
+
+                                <img src="/images/icons/pdf.png" alt="PDF Icon">
+
+                                <span>PDF</span>
+
+                            </div>
+
+                            <span class="swap-arrow">↔</span>
+
+                            <div class="tool-box">
+
+                                <img src="/images/icons/excel.png" alt="Excel  Icons">
+
+                                <span>Excel</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="quick-row">
+
+                            <div class="tool-box">
+
+                                <img src="/images/icons/pdf.png" alt="PDF Icon">
+
+                                <span>PDF</span>
+
+                            </div>
+
+                            <span class="swap-arrow">↔</span>
+
+                            <div class="tool-box">
+
+                                <img src="/images/icons/powerpoint.png" alt="PPT Icon">
+
+                                <span>PowerPoint</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="quick-row">
+
+                            <div class="tool-box">
+
+                                <img src="/images/icons/image.png" alt="Image Icon">
+
+                                <span>Image</span>
+
+                            </div>
+
+                            <span class="swap-arrow">↔</span>
+
+                            <div class="tool-box">
+
+                                <img src="/images/icons/pdf.png" alt="PDF Icon">
+
+                                <span>PDF</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="quick-row">
+
+                            <div class="tool-box">
+
+                                <img src="/images/icons/word.png" alt="Word Icon">
+
+                                <span>Word</span>
+
+                            </div>
+
+                            <span class="swap-arrow">↔</span>
+
+                            <div class="tool-box">
+
+                                <img src="/images/icons/pdf.png" alt="PDF Icon">
+
+                                <span>PDF</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="text-center mt-3">
+
+                            <a href="/all-tools" class="more-link">
+
+                                And many more conversions...
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
 
         </div>
 
-    </div>
+    </section>
 
-</section>
-
-<!-- =========================
+    <!-- =========================
      STATISTICS
 ========================= -->
 
-<section class="stats-section">
+    <section class="stats-section">
 
-    <div class="container">
+        <div class="container">
 
-        <div class="stats-wrapper">
+            <div class="stats-wrapper">
 
-            <div class="stat-item">
+                <div class="stat-item">
 
-                <img src="/images/icons/files-converted.png"
-                     class="stat-img" alt="Files-converter Icon">
+                    <img src="/images/icons/files-converted.png" class="stat-img" alt="Files-converter Icon">
 
-                <div>
+                    <div>
 
-                    <h3>1M+</h3>
+                        <h3>1M+</h3>
 
-                    <p>Files Converted</p>
+                        <p>Files Converted</p>
 
-                </div>
-
-            </div>
-
-            <div class="stat-item">
-
-                <img src="/images/icons/tools.png"
-                     class="stat-img" alt="Tools Icon">
-
-                <div>
-
-                    <h3>20+</h3>
-
-                    <p>Powerful Tools</p>
+                    </div>
 
                 </div>
 
-            </div>
+                <div class="stat-item">
 
-            <div class="stat-item">
+                    <img src="/images/icons/tools.png" class="stat-img" alt="Tools Icon">
 
-                <img src="/images/icons/security.png"
-                     class="stat-img" alt="Security Icon">
+                    <div>
 
-                <div>
+                        <h3>20+</h3>
 
-                    <h3>99.9%</h3>
+                        <p>Powerful Tools</p>
 
-                    <p>Uptime</p>
+                    </div>
 
                 </div>
 
-            </div>
+                <div class="stat-item">
 
-            <div class="stat-item">
+                    <img src="/images/icons/security.png" class="stat-img" alt="Security Icon">
 
-                <img src="/images/icons/lock.png"
-                     class="stat-img" alt="Lock Icon">
+                    <div>
 
-                <div>
+                        <h3>99.9%</h3>
 
-                    <h3>100%</h3>
+                        <p>Uptime</p>
 
-                    <p>Secure & Private</p>
+                    </div>
+
+                </div>
+
+                <div class="stat-item">
+
+                    <img src="/images/icons/lock.png" class="stat-img" alt="Lock Icon">
+
+                    <div>
+
+                        <h3>100%</h3>
+
+                        <p>Secure & Private</p>
+
+                    </div>
 
                 </div>
 
@@ -388,255 +368,243 @@
 
         </div>
 
-    </div>
+    </section>
 
-</section>
-
-<!-- =========================
+    <!-- =========================
      POPULAR TOOLS
 ========================= -->
 
-<section class="popular-tools">
+    <section class="popular-tools">
 
-    <div class="container">
+        <div class="container">
 
-        <h2 class="section-title text-center">
+            <h2 class="section-title text-center">
 
-            🔥 Most Popular Tools
+                🔥 Most Popular Tools
 
-        </h2>
+            </h2>
 
-        <div class="row g-4 mt-4">
+            <div class="row g-4 mt-4">
 
-            <div class="col-lg-2">
+                <div class="col-lg-2">
 
-                <a href="/pdf-merger"
-                   class="popular-card">
+                    <a href="/pdf-merger" class="popular-card">
 
-                    <img src="/images/icons/merge.png"
-                         class="tool-icon" alt="Merge Icon">
+                        <img src="/images/icons/merge.png" class="tool-icon" alt="Merge Icon">
 
-                    <h5>PDF Merge</h5>
+                        <h5>PDF Merge</h5>
 
-                    <p>
-                        Merge multiple PDF
-                        files into one.
-                    </p>
+                        <p>
+                            Merge multiple PDF
+                            files into one.
+                        </p>
 
-                    <span class="card-arrow">
-                        →
-                    </span>
+                        <span class="card-arrow">
+                            →
+                        </span>
 
-                </a>
+                    </a>
 
-            </div>
+                </div>
 
-            <div class="col-lg-2">
+                <div class="col-lg-2">
 
-                <a href="/pdf-splitter"
-                   class="popular-card">
+                    <a href="/pdf-splitter" class="popular-card">
 
-                    <img src="/images/icons/split.png"
-                         class="tool-icon" alt="Split Icon">
+                        <img src="/images/icons/split.png" class="tool-icon" alt="Split Icon">
 
-                    <h5>PDF Split</h5>
+                        <h5>PDF Split</h5>
 
-                    <p>
-                        Split PDF pages
-                        instantly.
-                    </p>
+                        <p>
+                            Split PDF pages
+                            instantly.
+                        </p>
 
-                    <span class="card-arrow">
-                        →
-                    </span>
+                        <span class="card-arrow">
+                            →
+                        </span>
 
-                </a>
+                    </a>
 
-            </div>
+                </div>
 
-            <div class="col-lg-2">
+                <div class="col-lg-2">
 
-                <a href="/pdf-compressor"
-                   class="popular-card">
+                    <a href="/pdf-compressor" class="popular-card">
 
-                    <img src="/images/icons/compress.png"
-                         class="tool-icon" alt="Compress Icon">
+                        <img src="/images/icons/compress.png" class="tool-icon" alt="Compress Icon">
 
-                    <h5>PDF Compress</h5>
+                        <h5>PDF Compress</h5>
 
-                    <p>
-                        Reduce PDF size
-                        easily.
-                    </p>
+                        <p>
+                            Reduce PDF size
+                            easily.
+                        </p>
 
-                    <span class="card-arrow">
-                        →
-                    </span>
+                        <span class="card-arrow">
+                            →
+                        </span>
 
-                </a>
+                    </a>
 
-            </div>
+                </div>
 
-            <div class="col-lg-2">
+                <div class="col-lg-2">
 
-                <a href="/word-to-pdf"
-                   class="popular-card">
+                    <a href="/word-to-pdf" class="popular-card">
 
-                    <img src="/images/icons/word.png"
-                         class="tool-icon" alt="Word Icon">
+                        <img src="/images/icons/word.png" class="tool-icon" alt="Word Icon">
 
-                    <h5>Word to PDF</h5>
+                        <h5>Word to PDF</h5>
 
-                    <p>
-                        Convert DOCX
-                        to PDF.
-                    </p>
+                        <p>
+                            Convert DOCX
+                            to PDF.
+                        </p>
 
-                    <span class="card-arrow">
-                        →
-                    </span>
+                        <span class="card-arrow">
+                            →
+                        </span>
 
-                </a>
+                    </a>
 
-            </div>
+                </div>
 
-            <div class="col-lg-2">
+                <div class="col-lg-2">
 
-                <a href="/excel-to-pdf"
-                   class="popular-card">
+                    <a href="/excel-to-pdf" class="popular-card">
 
-                    <img src="/images/icons/excel.png"
-                         class="tool-icon" alt="Excel Icon">
+                        <img src="/images/icons/excel.png" class="tool-icon" alt="Excel Icon">
 
-                    <h5>Excel to PDF</h5>
+                        <h5>Excel to PDF</h5>
 
-                    <p>
-                        Convert spreadsheets
-                        to PDF.
-                    </p>
+                        <p>
+                            Convert spreadsheets
+                            to PDF.
+                        </p>
 
-                    <span class="card-arrow">
-                        →
-                    </span>
+                        <span class="card-arrow">
+                            →
+                        </span>
 
-                </a>
+                    </a>
 
-            </div>
+                </div>
 
-            <div class="col-lg-2">
+                <div class="col-lg-2">
 
-                <a href="/image-to-pdf"
-                   class="popular-card">
+                    <a href="/image-to-pdf" class="popular-card">
 
-                    <img src="/images/icons/image.png"
-                         class="tool-icon" alt="Image Icon">
+                        <img src="/images/icons/image.png" class="tool-icon" alt="Image Icon">
 
-                    <h5>Image to PDF</h5>
+                        <h5>Image to PDF</h5>
 
-                    <p>
-                        Convert images
-                        to PDF.
-                    </p>
+                        <p>
+                            Convert images
+                            to PDF.
+                        </p>
 
-                    <span class="card-arrow">
-                        →
-                    </span>
+                        <span class="card-arrow">
+                            →
+                        </span>
 
-                </a>
+                    </a>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
+    </section>
 
-</section>
-
-<!-- ===================================
+    <!-- ===================================
      HOW IT WORKS
 =================================== -->
 
-<section class="how-it-works-section">
+    <section class="how-it-works-section">
 
-    <div class="container">
+        <div class="container">
 
-        <h2 class="section-title text-center">
-            How It Works
-        </h2>
+            <h2 class="section-title text-center">
+                How It Works
+            </h2>
 
-        <div class="process-wrapper">
+            <div class="process-wrapper">
 
-            <!-- STEP 1 -->
-            <div class="process-item">
+                <!-- STEP 1 -->
+                <div class="process-item">
 
-                <div class="process-icon purple">
-                    <img src="/images/icons/upload.png" alt="Upload">
-                </div>
-
-                <div class="process-content">
-
-                    <div class="step-number purple-number">
-                        1
+                    <div class="process-icon purple">
+                        <img src="/images/icons/upload.png" alt="Upload">
                     </div>
 
-                    <h4>Upload File</h4>
+                    <div class="process-content">
 
-                    <p>
-                        Choose and upload<br>
-                        your file.
-                    </p>
+                        <div class="step-number purple-number">
+                            1
+                        </div>
 
-                </div>
+                        <h4>Upload File</h4>
 
-            </div>
+                        <p>
+                            Choose and upload<br>
+                            your file.
+                        </p>
 
-            <div class="process-line"></div>
-
-            <!-- STEP 2 -->
-            <div class="process-item">
-
-                <div class="process-icon blue">
-                    <img src="/images/icons/uploadtools.png" alt="Tools">
-                </div>
-
-                <div class="process-content">
-
-                    <div class="step-number blue-number">
-                        2
                     </div>
 
-                    <h4>Select Tool</h4>
-
-                    <p>
-                        Select the conversion<br>
-                        tool you need.
-                    </p>
-
                 </div>
 
-            </div>
+                <div class="process-line"></div>
 
-            <div class="process-line"></div>
+                <!-- STEP 2 -->
+                <div class="process-item">
 
-            <!-- STEP 3 -->
-            <div class="process-item">
-
-                <div class="process-icon green">
-                    <img src="/images/icons/download.png" alt="Download">
-                </div>
-
-                <div class="process-content">
-
-                    <div class="step-number green-number">
-                        3
+                    <div class="process-icon blue">
+                        <img src="/images/icons/uploadtools.png" alt="Tools">
                     </div>
 
-                    <h4>Download</h4>
+                    <div class="process-content">
 
-                    <p>
-                        Convert and download<br>
-                        your file instantly.
-                    </p>
+                        <div class="step-number blue-number">
+                            2
+                        </div>
+
+                        <h4>Select Tool</h4>
+
+                        <p>
+                            Select the conversion<br>
+                            tool you need.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="process-line"></div>
+
+                <!-- STEP 3 -->
+                <div class="process-item">
+
+                    <div class="process-icon green">
+                        <img src="/images/icons/download.png" alt="Download">
+                    </div>
+
+                    <div class="process-content">
+
+                        <div class="step-number green-number">
+                            3
+                        </div>
+
+                        <h4>Download</h4>
+
+                        <p>
+                            Convert and download<br>
+                            your file instantly.
+                        </p>
+
+                    </div>
 
                 </div>
 
@@ -644,258 +612,248 @@
 
         </div>
 
-    </div>
-
-</section>
-<!-- ===================================
+    </section>
+    <!-- ===================================
      BROWSE BY CATEGORY
 =================================== -->
 
-<section class="category-section">
+    <section class="category-section">
 
-    <div class="container">
+        <div class="container">
 
-        <h2 class="section-title text-center">
+            <h2 class="section-title text-center">
 
-            Browse By Category
+                Browse By Category
 
-        </h2>
+            </h2>
 
-        <div class="row g-4 mt-4">
+            <div class="row g-4 mt-4">
 
-            <div class="col-lg-3">
+                <div class="col-lg-3">
 
-                <a href="/pdf-tools"
-                   class="category-card">
+                    <a href="/pdf-tools" class="category-card">
 
-                    <img src="/images/icons/pdf-tools.png"
-                         class="category-img" alt="Pdf-tools Icon">
+                        <img src="/images/icons/pdf-tools.png" class="category-img" alt="Pdf-tools Icon">
 
-                    <h4>
+                        <h4>
 
-                        PDF Tools
+                            PDF Tools
 
-                    </h4>
+                        </h4>
 
-                    <p>
+                        <p>
 
-                        Merge, Split,
-                        Compress, Crop,
-                        Protect and more.
+                            Merge, Split,
+                            Compress, Crop,
+                            Protect and more.
 
-                    </p>
+                        </p>
 
-                    <span>
+                        <span>
 
-                        Explore Tools →
+                            Explore Tools →
 
-                    </span>
+                        </span>
 
-                </a>
+                    </a>
 
-            </div>
+                </div>
 
-            <div class="col-lg-3">
+                <div class="col-lg-3">
 
-                <a href="/image-tools"
-                   class="category-card">
+                    <a href="/image-tools" class="category-card">
 
-                    <img src="/images/icons/image-tools.png"
-                         class="category-img" alt="Image-tools Icon">
+                        <img src="/images/icons/image-tools.png" class="category-img" alt="Image-tools Icon">
 
-                    <h4>
+                        <h4>
 
-                        Image Tools
+                            Image Tools
 
-                    </h4>
+                        </h4>
 
-                    <p>
+                        <p>
 
-                        Resize, Compress
-                        and Convert images.
+                            Resize, Compress
+                            and Convert images.
 
-                    </p>
+                        </p>
 
-                    <span>
+                        <span>
 
-                        Explore Tools →
+                            Explore Tools →
 
-                    </span>
+                        </span>
 
-                </a>
+                    </a>
 
-            </div>
+                </div>
 
-            <div class="col-lg-3">
+                <div class="col-lg-3">
 
-                <a href="/office-tools"
-                   class="category-card">
+                    <a href="/office-tools" class="category-card">
 
-                    <img src="/images/icons/office-tools.png"
-                         class="category-img" alt="office-tools Icon">
+                        <img src="/images/icons/office-tools.png" class="category-img" alt="office-tools Icon">
 
-                    <h4>
+                        <h4>
 
-                        Office Tools
+                            Office Tools
 
-                    </h4>
+                        </h4>
 
-                    <p>
+                        <p>
 
-                        Word, Excel and
-                        PowerPoint conversions.
+                            Word, Excel and
+                            PowerPoint conversions.
 
-                    </p>
+                        </p>
 
-                    <span>
+                        <span>
 
-                        Explore Tools →
+                            Explore Tools →
 
-                    </span>
+                        </span>
 
-                </a>
+                    </a>
 
-            </div>
+                </div>
 
-            <div class="col-lg-3">
+                <div class="col-lg-3">
 
-                <a href="/security-tools"
-                   class="category-card">
+                    <a href="/security-tools" class="category-card">
 
-                    <img src="/images/icons/security-tools.png"
-                         class="category-img" alt="Security-tools Icon">
+                        <img src="/images/icons/security-tools.png" class="category-img" alt="Security-tools Icon">
 
-                    <h4>
+                        <h4>
 
-                        Security Tools
+                            Security Tools
 
-                    </h4>
+                        </h4>
 
-                    <p>
+                        <p>
 
-                        Protect and Unlock
-                        PDFs securely.
+                            Protect and Unlock
+                            PDFs securely.
 
-                    </p>
+                        </p>
 
-                    <span>
+                        <span>
 
-                        Explore Tools →
+                            Explore Tools →
 
-                    </span>
+                        </span>
 
-                </a>
+                    </a>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
+    </section>
 
-</section>
-
-<!-- ===================================
+    <!-- ===================================
      ALL CONVERSION TOOLS
 =================================== -->
 
-<section class="all-tools-section">
+    <section class="all-tools-section">
 
-    <div class="container">
+        <div class="container">
 
-        <h2 class="section-title text-center">
+            <h2 class="section-title text-center">
 
-            All Conversion Tools
+                All Conversion Tools
 
-        </h2>
+            </h2>
 
-        <div class="tools-grid">
+            <div class="tools-grid">
 
-            <a href="/image-to-pdf" class="tool-pill">
-                <img src="/images/icons/image.png" alt="Image Icon">
-                Image to PDF
-            </a>
+                <a href="/image-to-pdf" class="tool-pill">
+                    <img src="/images/icons/image.png" alt="Image Icon">
+                    Image to PDF
+                </a>
 
-            <a href="/pdf-to-image" class="tool-pill">
-                <img src="/images/icons/pdf.png" alt="Pdf Icon">
-                PDF to Image
-            </a>
+                <a href="/pdf-to-image" class="tool-pill">
+                    <img src="/images/icons/pdf.png" alt="Pdf Icon">
+                    PDF to Image
+                </a>
 
-            <a href="/pdf-merger" class="tool-pill">
-                <img src="/images/icons/merge.png" alt="Merge Icon">
-                PDF Merger
-            </a>
+                <a href="/pdf-merger" class="tool-pill">
+                    <img src="/images/icons/merge.png" alt="Merge Icon">
+                    PDF Merger
+                </a>
 
-            <a href="/pdf-splitter" class="tool-pill">
-                <img src="/images/icons/split.png" alt="Split Icon">
-                PDF Splitter
-            </a>
+                <a href="/pdf-splitter" class="tool-pill">
+                    <img src="/images/icons/split.png" alt="Split Icon">
+                    PDF Splitter
+                </a>
 
-            <a href="/pdf-compressor" class="tool-pill">
-                <img src="/images/icons/compress.png" alt="Compress Icon">
-                PDF Compressor
-            </a>
+                <a href="/pdf-compressor" class="tool-pill">
+                    <img src="/images/icons/compress.png" alt="Compress Icon">
+                    PDF Compressor
+                </a>
 
-            <a href="/image-compressor" class="tool-pill">
-                <img src="/images/icons/image-compressor.png" alt="Image-compressor Icon">
-                Image Compressor
-            </a>
+                <a href="/image-compressor" class="tool-pill">
+                    <img src="/images/icons/image-compressor.png" alt="Image-compressor Icon">
+                    Image Compressor
+                </a>
 
-            <a href="/image-resizer" class="tool-pill">
-                <img src="/images/icons/image-resizer.png" alt="image-resizer Icon">
-                Image Resizer
-            </a>
+                <a href="/image-resizer" class="tool-pill">
+                    <img src="/images/icons/image-resizer.png" alt="image-resizer Icon">
+                    Image Resizer
+                </a>
 
-            <a href="/pdf-rotator" class="tool-pill">
-                <img src="/images/icons/rotate.png" alt="Rotate Icon">
-                PDF Rotator
-            </a>
+                <a href="/pdf-rotator" class="tool-pill">
+                    <img src="/images/icons/rotate.png" alt="Rotate Icon">
+                    PDF Rotator
+                </a>
 
-            <a href="/pdf-page-remover" class="tool-pill">
-                <img src="/images/icons/remove.png" alt="Remove Icon">
-                Page Remover
-            </a>
+                <a href="/pdf-page-remover" class="tool-pill">
+                    <img src="/images/icons/remove.png" alt="Remove Icon">
+                    Page Remover
+                </a>
 
-            <a href="/jpg-png-converter" class="tool-pill">
-                <img src="/images/icons/jpg-png.png" alt="Jpg Image Icon">
-                JPG <-> PNG
-            </a>
+                <a href="/jpg-png-converter" class="tool-pill">
+                    <img src="/images/icons/jpg-png.png" alt="Jpg Image Icon">
+                    JPG <-> PNG
+                </a>
 
-            <a href="/word-to-pdf" class="tool-pill">
-                <img src="/images/icons/word.png" alt="word Icon">
-                Word to PDF
-            </a>
+                <a href="/word-to-pdf" class="tool-pill">
+                    <img src="/images/icons/word.png" alt="word Icon">
+                    Word to PDF
+                </a>
 
-            <a href="/pdf-to-word" class="tool-pill">
-                <img src="/images/icons/pdf-word.png" alt="pdf-word Icon">
-                PDF to Word
-            </a>
+                <a href="/pdf-to-word" class="tool-pill">
+                    <img src="/images/icons/pdf-word.png" alt="pdf-word Icon">
+                    PDF to Word
+                </a>
 
-            <a href="/pdf-unlocker" class="tool-pill">
-                <img src="/images/icons/unlock.png" alt="Unlock Icon">
-                PDF Unlocker
-            </a>
+                <a href="/pdf-unlocker" class="tool-pill">
+                    <img src="/images/icons/unlock.png" alt="Unlock Icon">
+                    PDF Unlocker
+                </a>
 
-            <a href="/pdf-protector" class="tool-pill">
-                <img src="/images/icons/protect.png" alt="Protect Icon">
-                PDF Protector
-            </a>
+                <a href="/pdf-protector" class="tool-pill">
+                    <img src="/images/icons/protect.png" alt="Protect Icon">
+                    PDF Protector
+                </a>
 
-            <a href="/pdf-page-numbers" class="tool-pill">
-                <img src="/images/icons/page-number.png" alt="Page-Number Icon">
-                PDF Page Numbers
-            </a>
+                <a href="/pdf-page-numbers" class="tool-pill">
+                    <img src="/images/icons/page-number.png" alt="Page-Number Icon">
+                    PDF Page Numbers
+                </a>
+
+            </div>
 
         </div>
 
-    </div>
+    </section>
 
-</section>
-
-<!-- ===================================
+    <!-- ===================================
      FOOTER
 =================================== -->
 
-<footer class="footer-section">
+    <footer class="footer-section">
 
         <div class="footer-card">
 
@@ -905,9 +863,7 @@
 
                 <div class="col-lg-3">
 
-                    <img src="/images/logo.png"
-                         class="footer-logo"
-                         alt="ConvertNova">
+                    <img src="/images/logo.png" class="footer-logo" alt="ConvertNova">
 
                     <p class="footer-desc">
 
@@ -1001,39 +957,43 @@
                     <p>
                         Subscribe to get tips and updates.
                     </p>
+                    <input type="email" id="footerEmail" class="form-control footer-input"
+                        placeholder="Enter your email">
 
-                    <input type="email"
-                           class="form-control footer-input"
-                           placeholder="Enter your email">
+                    <small id="emailError" class="text-danger">
+                    </small>
 
-                    <button class="btn footer-btn">
+                    <button type="button" class="btn footer-btn" id="subscribeBtn">
+
                         Subscribe
+
                     </button>
 
                 </div>
 
             </div>
 
+        </div>
+
+        <!-- Bottom Bar -->
+
+        <div class="footer-bottom">
+
+            <div>
+                © 2026 ConvertNova. All rights reserved.
             </div>
 
-            <!-- Bottom Bar -->
-
-            <div class="footer-bottom">
-
-                <div>
-                    © 2026 ConvertNova. All rights reserved.
-                </div>
-
-                <div>
-                    Made with ❤️ for everyone
-                </div>
-
+            <div>
+                Made with ❤️ for everyone
             </div>
-</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="/js/homepage.js"></script>
 
 </body>
 
 </html>
-

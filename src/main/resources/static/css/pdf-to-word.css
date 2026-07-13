@@ -209,15 +209,23 @@ h1{
 
 .progress{
 
-    height:28px;
+    height:30px;
 
     border-radius:50px;
+
+    overflow:hidden;
+
+    background:#e5e7eb;
 
 }
 
 .progress-bar{
 
-    font-weight:600;
+    font-weight:700;
+
+    font-size:15px;
+
+    transition:width .25s linear;
 
 }
 
@@ -618,4 +626,90 @@ h1{
     #previewFrame{
         height:400px;
     }
+}
+
+/* ===========================
+   UPLOAD SECTION FREEZE
+=========================== */
+
+.upload-section.converting{
+
+    pointer-events: none;
+
+    -webkit-user-select: none;
+
+    -moz-user-select: none;
+
+    -ms-user-select: none;
+
+    user-select: none;
+
+    opacity: .65;
+
+}
+
+/* ===========================
+   PROGRESS SECTION
+=========================== */
+
+.progress-section{
+
+    max-width:700px;
+
+    margin:50px auto;
+
+}
+
+.progress-section h5{
+
+    font-weight:700;
+
+    color:#2563eb;
+
+}
+
+.progress-section p{
+
+    color:#6b7280;
+
+    font-size:16px;
+
+}
+
+/* ===========================
+   DISABLED BUTTONS
+=========================== */
+
+button:disabled{
+
+    cursor:not-allowed;
+
+    opacity:.65;
+
+}
+
+/* ===========================
+   HIDE UPLOAD AREA
+=========================== */
+
+.hide-during-convert{
+
+    display:none !important;
+
+}
+
+/* ===========================
+   DARK MODE PROGRESS
+=========================== */
+
+.dark-mode .progress{
+
+    background:#374151;
+
+}
+
+.dark-mode .progress-section p{
+
+    color:#d1d5db;
+
 }

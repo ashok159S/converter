@@ -670,21 +670,6 @@ convertMoreBtn.addEventListener(
     }
 );
 
-/* ===========================
-   DELETE TEMP FILE
-   ON RELOAD / TAB CLOSE
-=========================== */
-
-window.addEventListener(
-    "beforeunload",
-    function () {
-
-        navigator.sendBeacon(
-            "/delete-merged-pdf"
-        );
-
-    }
-);
 
 /* ===========================
    DARK MODE

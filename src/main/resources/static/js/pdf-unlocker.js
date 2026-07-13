@@ -3,59 +3,59 @@
 =========================== */
 
 const pdfFiles =
-document.getElementById(
-    "pdfFiles"
-);
+    document.getElementById(
+        "pdfFiles"
+    );
 
 const dropZone =
-document.getElementById(
-    "dropZone"
-);
+    document.getElementById(
+        "dropZone"
+    );
 
 const unlockForm =
-document.getElementById(
-    "unlockForm"
-);
+    document.getElementById(
+        "unlockForm"
+    );
 
 const summaryCard =
-document.getElementById(
-    "summaryCard"
-);
+    document.getElementById(
+        "summaryCard"
+    );
 
 const fileListContainer =
-document.getElementById(
-    "fileListContainer"
-);
+    document.getElementById(
+        "fileListContainer"
+    );
 
 const passwordSection =
-document.getElementById(
-    "passwordSection"
-);
+    document.getElementById(
+        "passwordSection"
+    );
 
 const passwordContainer =
-document.getElementById(
-    "passwordContainer"
-);
+    document.getElementById(
+        "passwordContainer"
+    );
 
 const totalFiles =
-document.getElementById(
-    "totalFiles"
-);
+    document.getElementById(
+        "totalFiles"
+    );
 
 const totalSize =
-document.getElementById(
-    "totalSize"
-);
+    document.getElementById(
+        "totalSize"
+    );
 
 const progressSection =
-document.getElementById(
-    "progressSection"
-);
+    document.getElementById(
+        "progressSection"
+    );
 
 const progressBar =
-document.getElementById(
-    "progressBar"
-);
+    document.getElementById(
+        "progressBar"
+    );
 
 let selectedFiles = [];
 
@@ -65,25 +65,66 @@ let selectedFiles = [];
 
 pdfFiles.addEventListener(
     "change",
-    function(){
+    function () {
 
-        selectedFiles =
-        Array.from(
-            this.files
-        );
+        const newFiles =
+            Array.from(this.files);
+
+        const duplicateFiles = [];
+
+        newFiles.forEach(file => {
+
+            const exists =
+                selectedFiles.some(
+
+                    existingFile =>
+
+                        existingFile.name === file.name
+                        &&
+                        existingFile.size === file.size
+
+                );
+
+            if (exists) {
+
+                duplicateFiles.push(file.name);
+
+            }
+            else {
+
+                selectedFiles.push(file);
+
+            }
+
+        });
+
+        if (duplicateFiles.length > 0) {
+
+            alert(
+
+                "Duplicate file(s):\n\n"
+
+                +
+
+                duplicateFiles.join("\n")
+
+            );
+
+        }
 
         renderFiles();
 
+        pdfFiles.value = "";
+
     }
 );
-
 /* ===========================
    DRAG & DROP
 =========================== */
 
 dropZone.addEventListener(
     "dragover",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
@@ -96,7 +137,7 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "dragleave",
-    function(){
+    function () {
 
         dropZone.classList.remove(
             "drag-active"
@@ -107,7 +148,7 @@ dropZone.addEventListener(
 
 dropZone.addEventListener(
     "drop",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
@@ -115,10 +156,52 @@ dropZone.addEventListener(
             "drag-active"
         );
 
-        selectedFiles =
-        Array.from(
-            e.dataTransfer.files
-        );
+        const newFiles =
+            Array.from(
+                e.dataTransfer.files
+            );
+
+        const duplicateFiles = [];
+
+        newFiles.forEach(file => {
+
+            const exists =
+                selectedFiles.some(
+
+                    existingFile =>
+
+                        existingFile.name === file.name
+                        &&
+                        existingFile.size === file.size
+
+                );
+
+            if (exists) {
+
+                duplicateFiles.push(file.name);
+
+            }
+            else {
+
+                selectedFiles.push(file);
+
+            }
+
+        });
+
+        if (duplicateFiles.length > 0) {
+
+            alert(
+
+                "Duplicate file(s):\n\n"
+
+                +
+
+                duplicateFiles.join("\n")
+
+            );
+
+        }
 
         renderFiles();
 
@@ -129,37 +212,37 @@ dropZone.addEventListener(
    RENDER FILES
 =========================== */
 
-function renderFiles(){
+function renderFiles() {
 
-    if(selectedFiles.length === 0){
+    if (selectedFiles.length === 0) {
 
         summaryCard.style.display =
-        "none";
+            "none";
 
         passwordSection.style.display =
-        "none";
+            "none";
 
         fileListContainer.innerHTML =
-        "";
+            "";
 
         passwordContainer.innerHTML =
-        "";
+            "";
 
         return;
 
     }
 
     summaryCard.style.display =
-    "flex";
+        "flex";
 
     passwordSection.style.display =
-    "block";
+        "block";
 
     fileListContainer.innerHTML =
-    "";
+        "";
 
     passwordContainer.innerHTML =
-    "";
+        "";
 
     let totalBytes = 0;
 
@@ -255,31 +338,51 @@ function renderFiles(){
     );
 
     totalFiles.innerHTML =
-    selectedFiles.length;
+        selectedFiles.length;
 
     totalSize.innerHTML =
-    (
-        totalBytes
-        /
-        1024
-        /
-        1024
-    ).toFixed(2)
-    +
-    " MB";
+        (
+            totalBytes
+            /
+            1024
+            /
+            1024
+        ).toFixed(2)
+        +
+        " MB";
+
+    document.getElementById(
+        "unlockBtn"
+    ).disabled = false;
 
 }
 
 /* ===========================
    DELETE FILE
 =========================== */
+function deleteFile(index) {
 
-function deleteFile(index){
+    selectedFiles.splice(index, 1);
 
-    selectedFiles.splice(
-        index,
-        1
-    );
+    if (selectedFiles.length === 0) {
+
+        summaryCard.style.display = "none";
+
+        passwordSection.style.display = "none";
+
+        fileListContainer.innerHTML = "";
+
+        passwordContainer.innerHTML = "";
+
+        pdfFiles.value = "";
+
+        document.getElementById(
+            "unlockBtn"
+        ).disabled = true;
+
+        return;
+
+    }
 
     renderFiles();
 
@@ -289,55 +392,71 @@ function deleteFile(index){
    PDF PREVIEW
 =========================== */
 
-function previewPdf(index){
+function previewPdf(index) {
 
     const file =
-    selectedFiles[index];
+        selectedFiles[index];
 
     const fileURL =
-    URL.createObjectURL(
-        file
-    );
+        URL.createObjectURL(
+            file
+        );
 
     document.getElementById(
         "previewFrame"
     ).src =
-    fileURL;
+        fileURL;
 
     const modal =
-    new bootstrap.Modal(
-        document.getElementById(
-            "pdfPreviewModal"
-        )
-    );
+        new bootstrap.Modal(
+            document.getElementById(
+                "pdfPreviewModal"
+            )
+        );
 
     modal.show();
+
+    document
+        .getElementById(
+            "pdfPreviewModal"
+        )
+        .addEventListener(
+            "hidden.bs.modal",
+            function () {
+
+                URL.revokeObjectURL(
+                    fileURL
+                );
+
+            },
+            {
+                once: true
+            }
+        );
 
 }
 
 /* ===========================
    UNLOCK PDF
 =========================== */
-
 unlockForm.addEventListener(
     "submit",
-    function(e){
+    function (e) {
 
         e.preventDefault();
 
-        
-         if(
+        if (
             !validateFiles(selectedFiles)
-        ){
+        ) {
             return;
         }
 
-        if(
+        if (
             selectedFiles.length === 0
-        ){
+        ) {
 
             alert(
-                "Please select PDF files"
+                "Please select PDF files."
             );
 
             return;
@@ -345,9 +464,10 @@ unlockForm.addEventListener(
         }
 
         const formData =
-        new FormData();
+            new FormData();
 
         selectedFiles.forEach(
+
             (
                 file,
                 index
@@ -366,84 +486,181 @@ unlockForm.addEventListener(
                 );
 
             }
+
         );
 
+        document.getElementById(
+            "uploadSection"
+        ).classList.add(
+            "converting"
+        );
+
+        summaryCard.style.display =
+            "none";
+
+        fileListContainer.style.display =
+            "none";
+
+        passwordSection.style.display =
+            "none";
+
+        dropZone.style.display =
+            "none";
+
+        document.getElementById(
+            "unlockBtn"
+        ).style.display =
+            "none";
+
         progressSection.style.display =
-        "block";
+            "block";
 
         progressBar.style.width =
-        "0%";
+            "0%";
 
         progressBar.innerHTML =
-        "0%";
+            "0%";
+
+        progressBar.setAttribute(
+            "aria-valuenow",
+            "0"
+        );
 
         const xhr =
-        new XMLHttpRequest();
+            new XMLHttpRequest();
 
         xhr.upload.addEventListener(
-            "progress",
-            function(event){
 
-                if(
+            "progress",
+
+            function (event) {
+
+                if (
                     event.lengthComputable
-                ){
+                ) {
 
                     const percent =
-                    Math.round(
-                        (
-                            event.loaded
-                            /
-                            event.total
-                        )
-                        *
-                        100
-                    );
+                        Math.round(
+
+                            (
+                                event.loaded
+                                /
+                                event.total
+                            )
+                            *
+                            100
+
+                        );
 
                     progressBar.style.width =
-                    percent + "%";
+                        percent + "%";
 
                     progressBar.innerHTML =
-                    percent + "%";
+                        percent + "%";
+
+                    progressBar.setAttribute(
+                        "aria-valuenow",
+                        percent
+                    );
 
                 }
 
             }
+
         );
 
         xhr.onreadystatechange =
-        function(){
+            function () {
 
-            if(
-                xhr.readyState === 4
-                &&
-                xhr.status === 200
-            ){
+                if (
+                    xhr.readyState === 4
+                ) {
 
-                const result =
-                JSON.parse(
-                    xhr.responseText
-                );
-
-                if(
-                    result.success
-                ){
-
-                    buildResult(
-                        result
+                    document.getElementById(
+                        "uploadSection"
+                    ).classList.remove(
+                        "converting"
                     );
 
+                    if (
+                        xhr.status === 200
+                    ) {
+
+                        const result =
+                            JSON.parse(
+                                xhr.responseText
+                            );
+
+                        if (
+                            result.success
+                        ) {
+
+                            buildResult(
+                                result
+                            );
+
+                        }
+                        else {
+
+                            progressSection.style.display =
+                                "none";
+
+                            summaryCard.style.display =
+                                "flex";
+
+                            fileListContainer.style.display =
+                                "block";
+
+                            passwordSection.style.display =
+                                "block";
+
+                            dropZone.style.display =
+                                "block";
+
+                            document.getElementById(
+                                "unlockBtn"
+                            ).style.display =
+                                "inline-block";
+
+                            alert(
+                                result.message
+                            );
+
+                        }
+
+                    }
+
+                    else {
+
+                        progressSection.style.display =
+                            "none";
+
+                        summaryCard.style.display =
+                            "flex";
+
+                        fileListContainer.style.display =
+                            "block";
+
+                        passwordSection.style.display =
+                            "block";
+
+                        dropZone.style.display =
+                            "block";
+
+                        document.getElementById(
+                            "unlockBtn"
+                        ).style.display =
+                            "inline-block";
+
+                        alert(
+                            "Unlock failed. Please try again."
+                        );
+
+                    }
+
                 }
-                else{
 
-                    alert(
-                        result.message
-                    );
-
-                }
-
-            }
-
-        };
+            };
 
         xhr.open(
             "POST",
@@ -461,25 +678,25 @@ unlockForm.addEventListener(
    RESULT PAGE
 =========================== */
 
-function buildResult(result){
+function buildResult(result) {
 
     document.getElementById(
         "uploadSection"
     ).style.display =
-    "none";
+        "none";
 
     document.getElementById(
         "resultCard"
     ).style.display =
-    "block";
+        "block";
 
     const container =
-    document.getElementById(
-        "unlockedFilesContainer"
-    );
+        document.getElementById(
+            "unlockedFilesContainer"
+        );
 
     container.innerHTML =
-    "";
+        "";
 
     result.files.forEach(
         file => {
@@ -536,12 +753,12 @@ function buildResult(result){
     document.getElementById(
         "resultFiles"
     ).innerHTML =
-    result.files.length;
+        result.files.length;
 
     document.getElementById(
         "resultSuccess"
     ).innerHTML =
-    result.files.length;
+        result.files.length;
 
 }
 
@@ -553,9 +770,19 @@ document.getElementById(
     "unlockMoreBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
-        location.reload();
+        fetch(
+            "/delete-pdf-unlocker-temp-files",
+            {
+                method: "POST"
+            }
+        )
+            .finally(() => {
+
+                location.reload();
+
+            });
 
     }
 );
@@ -568,7 +795,7 @@ document.getElementById(
     "darkModeBtn"
 ).addEventListener(
     "click",
-    function(){
+    function () {
 
         document.body.classList.toggle(
             "dark-mode"

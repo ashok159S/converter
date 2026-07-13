@@ -37,6 +37,29 @@ document.getElementById(
     "powerPointToPdfForm"
 );
 
+const uploadSection =
+document.getElementById(
+    "uploadSection"
+);
+
+const progressSection =
+document.getElementById(
+    "progressSection"
+);
+
+const progressBar =
+document.getElementById(
+    "progressBar"
+);
+
+const convertBtn =
+document.getElementById(
+    "convertBtn"
+);
+
+let conversionCompleted =
+false;
+
 let selectedFiles = [];
 
 /* ===========================
@@ -47,16 +70,14 @@ pptFiles.addEventListener(
     "change",
     function(){
 
-        selectedFiles =
-        Array.from(
-            this.files
+        addFiles(
+            Array.from(this.files)
         );
 
-        renderFiles();
+        this.value = "";
 
     }
 );
-
 /* ===========================
    DRAG DROP
 =========================== */
@@ -76,15 +97,93 @@ dropZone.addEventListener(
 
         e.preventDefault();
 
-        selectedFiles =
-        Array.from(
-            e.dataTransfer.files
+        addFiles(
+            Array.from(
+                e.dataTransfer.files
+            )
         );
-
-        renderFiles();
 
     }
 );
+
+/* ===========================
+   ADD FILES
+=========================== */
+
+function addFiles(newFiles){
+
+    const duplicateFiles = [];
+
+    newFiles.forEach(file => {
+
+        const fileName =
+        file.name.toLowerCase();
+
+        if(
+            !(
+                fileName.endsWith(".ppt")
+                ||
+                fileName.endsWith(".pptx")
+            )
+        ){
+
+            alert(
+                file.name +
+                " is not a PowerPoint file."
+            );
+
+            return;
+
+        }
+
+        if(file.size > 50 * 1024 * 1024){
+
+            alert(
+                file.name +
+                " exceeds the 50 MB limit."
+            );
+
+            return;
+
+        }
+
+        const alreadyExists =
+        selectedFiles.some(
+            existingFile =>
+                existingFile.name === file.name &&
+                existingFile.size === file.size
+        );
+
+        if(alreadyExists){
+
+            duplicateFiles.push(
+                file.name
+            );
+
+        }
+        else{
+
+            selectedFiles.push(
+                file
+            );
+
+        }
+
+    });
+
+    if(duplicateFiles.length > 0){
+
+        alert(
+            "Duplicate file(s) skipped:\n\n"
+            +
+            duplicateFiles.join("\n")
+        );
+
+    }
+
+    renderFiles();
+
+}
 
 /* ===========================
    RENDER FILES
@@ -237,7 +336,6 @@ function previewPowerPoint(index){
     modal.show();
 
 }
-
 /* ===========================
    CONVERT
 =========================== */
@@ -248,22 +346,66 @@ powerPointToPdfForm.addEventListener(
 
         e.preventDefault();
 
-        
-         if(
+        if(convertBtn.disabled){
+
+            return;
+
+        }
+
+        if(
             !validateFiles(selectedFiles)
         ){
+
             return;
+
         }
 
         if(selectedFiles.length === 0){
 
             alert(
-                "Please select PowerPoint files"
+                "Please select PowerPoint files."
             );
 
             return;
 
         }
+
+        convertBtn.disabled = true;
+
+        uploadSection.style.display =
+        "none";
+
+        progressSection.style.display =
+        "block";
+
+        document.body.classList.add(
+            "conversion-active"
+        );
+
+        let progress = 0;
+
+        progressBar.style.width =
+        "0%";
+
+        progressBar.innerHTML =
+        "0%";
+
+        const progressInterval =
+        setInterval(function(){
+
+            if(progress < 95){
+
+                progress++;
+
+                progressBar.style.width =
+                progress + "%";
+
+                progressBar.innerHTML =
+                progress + "%";
+
+            }
+
+        },100);
 
         const formData =
         new FormData();
@@ -321,6 +463,19 @@ powerPointToPdfForm.addEventListener(
         .then(
             result => {
 
+                clearInterval(
+                    progressInterval
+                );
+
+                progressBar.style.width =
+                "100%";
+
+                progressBar.innerHTML =
+                "100%";
+
+                conversionCompleted =
+                true;
+
                 if(result.success){
 
                     buildResult(
@@ -334,15 +489,45 @@ powerPointToPdfForm.addEventListener(
                         result.message
                     );
 
+                    uploadSection.style.display =
+                    "block";
+
+                    progressSection.style.display =
+                    "none";
+
+                    convertBtn.disabled =
+                    false;
+
+                    document.body.classList.remove(
+                        "conversion-active"
+                    );
+
                 }
 
             }
         )
         .catch(
-            error => {
+            function(){
+
+                clearInterval(
+                    progressInterval
+                );
 
                 alert(
-                    "Conversion failed"
+                    "Conversion failed. Please try again."
+                );
+
+                uploadSection.style.display =
+                "block";
+
+                progressSection.style.display =
+                "none";
+
+                convertBtn.disabled =
+                false;
+
+                document.body.classList.remove(
+                    "conversion-active"
                 );
 
             }
@@ -357,15 +542,23 @@ powerPointToPdfForm.addEventListener(
 
 function buildResult(result){
 
-    document.getElementById(
-        "uploadSection"
-    ).style.display =
-    "none";
+    uploadSection.style.display =
+"none";
 
-    document.getElementById(
-        "resultCard"
-    ).style.display =
-    "block";
+progressSection.style.display =
+"none";
+
+document.getElementById(
+    "resultCard"
+).style.display =
+"block";
+
+convertBtn.disabled =
+false;
+
+document.body.classList.remove(
+    "conversion-active"
+);
 
     const container =
     document.getElementById(
@@ -481,7 +674,23 @@ document.getElementById(
     "click",
     function(){
 
-        location.reload();
+        selectedFiles = [];
+
+        conversionCompleted = false;
+
+        fetch(
+            "/delete-powerpoint-pdf-files",
+            {
+                method:"POST"
+            }
+        )
+        .finally(
+            function(){
+
+                location.reload();
+
+            }
+        );
 
     }
 );

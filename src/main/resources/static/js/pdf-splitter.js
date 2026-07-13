@@ -379,6 +379,8 @@ splitForm.addEventListener(
                     result.success
                 ) {
 
+                    clearInterval(timer);
+
                     conversionCompleted =
                         true;
 
@@ -391,6 +393,8 @@ splitForm.addEventListener(
 
                 }
                 else {
+
+                    clearInterval(timer);
 
                     uploadAreaWrapper.classList.remove(
                         "hide-during-conversion"
@@ -413,6 +417,8 @@ splitForm.addEventListener(
 
         xhr.onerror =
             function () {
+
+                clearInterval(timer);
 
                 splitBtn.disabled =
                     false;
@@ -443,9 +449,39 @@ splitForm.addEventListener(
             "/pdf-splitter-ajax"
         );
 
-        xhr.send(
-            formData
-        );
+        // Show progress immediately
+        progressSection.style.display = "block";
+
+        progressBar.style.width = "5%";
+
+        progressBar.innerHTML = "Preparing...";
+
+        // Force browser to repaint
+        progressSection.offsetHeight;
+
+        // Fake progress while server processes the PDF
+        let fakeProgress = 5;
+
+        const timer = setInterval(() => {
+
+            if (fakeProgress < 90) {
+
+                fakeProgress += 5;
+
+                progressBar.style.width = fakeProgress + "%";
+
+                progressBar.innerHTML = fakeProgress + "%";
+
+            }
+
+        }, 200);
+
+        // Give browser time to render the progress bar
+        setTimeout(() => {
+
+            xhr.send(formData);
+
+        }, 150);
 
     }
 );
@@ -602,26 +638,7 @@ document
     );
 
 
-/* ===========================
-PAGE CLEANUP
-=========================== */
 
-window.addEventListener(
-    "beforeunload",
-    function () {
-
-        if (
-            conversionCompleted
-        ) {
-
-            navigator.sendBeacon(
-                "/delete-split-pdf-files"
-            );
-
-        }
-
-    }
-);
 /* ===========================
    DARK MODE
 =========================== */

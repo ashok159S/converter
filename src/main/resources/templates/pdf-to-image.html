@@ -141,6 +141,10 @@
 
                                     </p>
 
+                                    <label for="pdfFile" class="visually-hidden">
+                                        Select PDF file
+                                    </label>
+
                                     <input type="file" id="pdfFile" name="pdfFiles" class="d-none" accept=".pdf"
                                         multiple>
                                     <p class="text-muted">
@@ -183,25 +187,15 @@
 
                                     <div class="col-md-6">
 
-                                        <label class="form-label fw-bold">
-
+                                        <label for="outputFormat" class="form-label fw-bold">
                                             Output Format
-
                                         </label>
 
-                                        <select class="form-select" name="outputFormat">
+                                        <select id="outputFormat" name="outputFormat" class="form-select"
+                                            title="Select output image format">
 
-                                            <option value="jpg">
-
-                                                JPG
-
-                                            </option>
-
-                                            <option value="png">
-
-                                                PNG
-
-                                            </option>
+                                            <option value="jpg">JPG</option>
+                                            <option value="png">PNG</option>
 
                                         </select>
 
@@ -209,13 +203,12 @@
 
                                     <div class="col-md-6">
 
-                                        <label class="form-label fw-bold">
-
+                                        <label for="quality" class="form-label fw-bold">
                                             Image Quality
-
                                         </label>
 
-                                        <select class="form-select" name="quality">
+                                        <select id="quality" name="quality" class="form-select"
+                                            title="Select image quality">
 
                                             <option value="high">High</option>
                                             <option value="medium">Medium</option>
@@ -227,51 +220,48 @@
 
                                 </div>
 
-                            </div>
-
-                            <!-- ===========================
+                                <!-- ===========================
                              CONVERT BUTTON
                         ============================ -->
 
-                            <div class="d-grid mt-5">
+                                <div class="d-grid mt-5">
 
-                                <button id="convertBtn" type="submit" class="btn btn-primary btn-lg">
+                                    <button id="convertBtn" type="submit" class="btn btn-primary btn-lg">
 
-                                    <i class="bi bi-file-earmark-pdf"></i>
+                                        <i class="bi bi-file-earmark-pdf"></i>
 
-                                    Convert To JPG
+                                        Convert To JPG
 
-                                </button>
+                                    </button>
 
+                                </div>
                             </div>
 
-                            <!-- ===========================
+                        </form>
+
+                        <!-- ===========================
                              PROGRESS BAR
                         ============================ -->
 
-                            <div id="progressSection" class="mt-5" style="display:none;">
+                        <div id="progressSection" class="mt-5" style="display:none;">
 
-                                <h5 class="mb-3">
+                            <h5 class="mb-3">
 
-                                    Processing Files...
+                                Processing Files...
 
-                                </h5>
+                            </h5>
 
-                                <div class="progress">
+                            <div class="progress">
 
-                                    <div id="progressBar"
-                                        class="progress-bar progress-bar-striped progress-bar-animated"
-                                        role="progressbar" style="width:0%;">
+                                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated"
+                                    role="progressbar" style="width:0%;">
 
-                                        0%
-
-                                    </div>
+                                    0%
 
                                 </div>
 
                             </div>
-
-                        </form>
+                        </div>
 
                         <!-- ===========================
                          PDF RESULT CARD
@@ -343,115 +333,104 @@
                             </div>
                         </div>
 
+                    </div>
 
+                </div>
+                <!-- IMAGE PREVIEW MODAL -->
 
+                <div class="modal fade" id="imagePreviewModal" tabindex="-1">
+
+                    <div class="modal-dialog modal-xl modal-dialog-centered">
+
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+
+                                <h5 class="modal-title">
+
+                                    Image Preview
+
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                    title="Close">
+                                </button>
+
+                            </div>
+
+                            <div class="modal-body text-center">
+
+                                <img id="previewModalImage" class="img-fluid rounded" alt="previewModalImage">
+
+                            </div>
+
+                        </div>
 
                     </div>
 
                 </div>
 
-            </div>
+                <div class="modal fade" id="imageResultPreviewModal">
 
-        </div>
+                    <div class="modal-dialog modal-xl">
 
-    </div>
+                        <div class="modal-content">
 
-    </div>
-    <!-- IMAGE PREVIEW MODAL -->
+                            <div class="modal-header">
 
-    <div class="modal fade" id="imagePreviewModal" tabindex="-1">
+                                <h5>
 
-        <div class="modal-dialog modal-xl modal-dialog-centered">
+                                    Image Preview
 
-            <div class="modal-content">
+                                </h5>
 
-                <div class="modal-header">
+                            </div>
 
-                    <h5 class="modal-title">
+                            <div class="modal-body text-center">
 
-                        Image Preview
+                                <img id="resultPreviewImage" class="img-fluid rounded" alt="resultPreviewImage">
 
-                    </h5>
+                            </div>
 
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                        </div>
 
-                    </button>
-
-                </div>
-
-                <div class="modal-body text-center">
-
-                    <img id="previewModalImage" class="img-fluid rounded">
+                    </div>
 
                 </div>
 
-            </div>
+                <div class="modal fade" id="pdfPreviewModal">
 
-        </div>
+                    <div class="modal-dialog modal-xl">
 
-    </div>
+                        <div class="modal-content">
 
-    <div class="modal fade" id="imageResultPreviewModal">
+                            <div class="modal-header">
 
-        <div class="modal-dialog modal-xl">
+                                <h5>PDF Preview</h5>
 
-            <div class="modal-content">
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                    title="Close">
+                                </button>
 
-                <div class="modal-header">
+                            </div>
 
-                    <h5>
+                            <div class="modal-body">
 
-                        Image Preview
+                                <iframe id="pdfPreviewFrame" width="100%" height="600">
+                                </iframe>
 
-                    </h5>
+                            </div>
 
-                </div>
+                        </div>
 
-                <div class="modal-body text-center">
-
-                    <img id="resultPreviewImage" class="img-fluid rounded">
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="modal fade" id="pdfPreviewModal">
-
-        <div class="modal-dialog modal-xl">
-
-            <div class="modal-content">
-
-                <div class="modal-header">
-
-                    <h5>PDF Preview</h5>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-                    </button>
+                    </div>
 
                 </div>
 
-                <div class="modal-body">
+                <script src="/js/common-validation.js"></script>
 
-                    <iframe id="pdfPreviewFrame" width="100%" height="600">
-                    </iframe>
+                <script th:src="@{/js/pdf-to-image.js}"></script>
 
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <script src="/js/common-validation.js"></script>
-
-    <script th:src="@{/js/pdf-to-image.js}"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

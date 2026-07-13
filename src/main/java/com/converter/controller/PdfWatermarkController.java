@@ -26,226 +26,265 @@ import java.util.Map;
 @Controller
 public class PdfWatermarkController {
 
-    @Autowired
-    private PdfWatermarkService pdfWatermarkService;
+        @Autowired
+        private PdfWatermarkService pdfWatermarkService;
 
-    /* ===========================
-       PAGE
-    =========================== */
+        /*
+         * ===========================
+         * PAGE
+         * ===========================
+         */
 
-    @GetMapping("/pdf-watermark")
-    public String pdfWatermarkPage(){
+        @GetMapping("/pdf-watermark")
+        public String pdfWatermarkPage() {
 
-        return "pdf-watermark";
-
-    }
-
-    /* ===========================
-       WATERMARK PDF
-    =========================== */
-
-    @PostMapping("/watermark-pdf-ajax")
-    @ResponseBody
-    public Map<String,Object> watermarkPdf(
-
-            @RequestParam("pdfFiles")
-            MultipartFile[] pdfFiles,
-
-            @RequestParam("watermarkType")
-            String watermarkType,
-
-            @RequestParam("watermarkText")
-            String watermarkText,
-
-            @RequestParam("textSize")
-            int textSize,
-
-            @RequestParam("imageSize")
-            int imageSize,
-
-            @RequestParam("opacity")
-            int opacity,
-
-            @RequestParam("position")
-            String position,
-
-            @RequestParam(
-                    value = "watermarkImage",
-                    required = false
-            )
-            MultipartFile watermarkImage
-
-    ){
-
-        return pdfWatermarkService.watermarkPdf(
-
-                pdfFiles,
-
-                watermarkType,
-
-                watermarkText,
-
-                textSize,
-
-                imageSize,
-
-                opacity,
-
-                position,
-
-                watermarkImage
-
-        );
-
-    }
-
-    /* ===========================
-       DOWNLOAD WATERMARKED PDF
-    =========================== */
-
-    @GetMapping("/download-watermarked-pdf")
-    public ResponseEntity<Resource> downloadWatermarkedPdf(
-
-            @RequestParam("fileName")
-            String fileName
-
-    ){
-
-        try{
-
-            File file =
-                    new File(
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "watermarked-pdfs"
-                            +
-                            File.separator
-                            +
-                            fileName
-                    );
-
-            if(!file.exists()){
-
-                return ResponseEntity
-                        .notFound()
-                        .build();
-
-            }
-
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
-
-            return ResponseEntity.ok()
-
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\""
-                            +
-                            file.getName()
-                            +
-                            "\""
-                    )
-
-                    .contentLength(
-                            file.length()
-                    )
-
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
-
-                    .body(
-                            resource
-                    );
-
-        }
-        catch(Exception e){
-
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                return "pdf-watermark";
 
         }
 
-    }
+        /*
+         * ===========================
+         * WATERMARK PDF
+         * ===========================
+         */
 
-    /* ===========================
-       PREVIEW WATERMARKED PDF
-    =========================== */
+        @PostMapping("/watermark-pdf-ajax")
+        @ResponseBody
+        public Map<String, Object> watermarkPdf(
 
-    @GetMapping("/preview-watermarked-pdf")
-    public ResponseEntity<Resource> previewWatermarkedPdf(
+                        @RequestParam("pdfFiles") MultipartFile[] pdfFiles,
 
-            @RequestParam("fileName")
-            String fileName
+                        @RequestParam("watermarkType") String watermarkType,
 
-    ){
+                        @RequestParam("watermarkText") String watermarkText,
 
-        try{
+                        @RequestParam("textSize") int textSize,
 
-            File file =
-                    new File(
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "watermarked-pdfs"
-                            +
-                            File.separator
-                            +
-                            fileName
-                    );
+                        @RequestParam("imageSize") int imageSize,
 
-            if(!file.exists()){
+                        @RequestParam("opacity") int opacity,
 
-                return ResponseEntity
-                        .notFound()
-                        .build();
+                        @RequestParam("position") String position,
 
-            }
+                        @RequestParam(value = "watermarkImage", required = false) MultipartFile watermarkImage
 
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
+        ) {
 
-            return ResponseEntity.ok()
+                if (pdfFiles == null || pdfFiles.length == 0) {
 
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "inline; filename=\""
-                            +
-                            file.getName()
-                            +
-                            "\""
-                    )
+                        return Map.of(
 
-                    .contentLength(
-                            file.length()
-                    )
+                                        "success",
+                                        false,
 
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
+                                        "message",
+                                        "Please upload at least one PDF."
 
-                    .body(
-                            resource
-                    );
+                        );
+
+                }
+
+                for (MultipartFile pdf : pdfFiles) {
+
+                        if (pdf.isEmpty()) {
+
+                                return Map.of(
+
+                                                "success",
+                                                false,
+
+                                                "message",
+                                                "One of the uploaded PDFs is empty."
+
+                                );
+
+                        }
+
+                        String fileName = pdf.getOriginalFilename();
+
+                        if (fileName == null ||
+                                        !fileName.toLowerCase().endsWith(".pdf")) {
+
+                                return Map.of(
+
+                                                "success",
+                                                false,
+
+                                                "message",
+                                                "Only PDF files are allowed."
+
+                                );
+
+                        }
+
+                }
+
+                return pdfWatermarkService.watermarkPdf(
+
+                                pdfFiles,
+
+                                watermarkType,
+
+                                watermarkText,
+
+                                textSize,
+
+                                imageSize,
+
+                                opacity,
+
+                                position,
+
+                                watermarkImage
+
+                );
 
         }
-        catch(Exception e){
 
-            return ResponseEntity
-                    .notFound()
-                    .build();
+        /*
+         * ===========================
+         * DOWNLOAD WATERMARKED PDF
+         * ===========================
+         */
+
+        @GetMapping("/download-watermarked-pdf")
+        public ResponseEntity<Resource> downloadWatermarkedPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "watermarked-pdfs"
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "attachment; filename=\""
+                                                                        +
+                                                                        file.getName()
+                                                                        +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
 
         }
 
-    }
+        /*
+         * ===========================
+         * PREVIEW WATERMARKED PDF
+         * ===========================
+         */
+
+        @GetMapping("/preview-watermarked-pdf")
+        public ResponseEntity<Resource> previewWatermarkedPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "watermarked-pdfs"
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "inline; filename=\""
+                                                                        +
+                                                                        file.getName()
+                                                                        +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
+
+        }
+
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
+
+        @PostMapping("/delete-watermark-files")
+        @ResponseBody
+        public void deleteTempFiles() {
+
+                pdfWatermarkService.deleteTempFiles();
+
+        }
 
 }
-

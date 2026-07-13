@@ -26,218 +26,270 @@ import java.util.Map;
 @Controller
 public class PowerPointToPdfController {
 
-    @Autowired
-    private PowerPointToPdfService powerPointToPdfService;
+        @Autowired
+        private PowerPointToPdfService powerPointToPdfService;
 
-    /* ===========================
-       PAGE
-    =========================== */
+        /*
+         * ===========================
+         * PAGE
+         * ===========================
+         */
 
-    @GetMapping("/powerpoint-to-pdf")
-    public String powerPointToPdfPage(){
+        @GetMapping("/powerpoint-to-pdf")
+        public String powerPointToPdfPage() {
 
-        return "powerpoint-to-pdf";
-
-    }
-
-    /* ===========================
-       CONVERT POWERPOINT TO PDF
-    =========================== */
-
-    @PostMapping("/powerpoint-to-pdf-ajax")
-    @ResponseBody
-    public Map<String,Object> convertPowerPointToPdf(
-
-            @RequestParam("pptFiles")
-            MultipartFile[] pptFiles,
-
-            @RequestParam("conversionMode")
-            String conversionMode,
-
-            @RequestParam("pdfLayout")
-            String pdfLayout,
-
-            @RequestParam("orientation")
-            String orientation,
-
-            @RequestParam("quality")
-            String quality
-
-    ){
-
-        return powerPointToPdfService.convertPowerPointToPdf(
-
-                pptFiles,
-
-                conversionMode,
-
-                pdfLayout,
-
-                orientation,
-
-                quality
-
-        );
-
-    }
-
-    /* ===========================
-       DOWNLOAD PDF
-    =========================== */
-
-    @GetMapping("/download-converted-ppt-pdf")
-    public ResponseEntity<Resource> downloadPdf(
-
-            @RequestParam("fileName")
-            String fileName
-
-    ){
-
-        try{
-
-            File file =
-                    new File(
-
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "converted-pdfs"
-                            +
-                            File.separator
-                            +
-                            fileName
-
-                    );
-
-            if(!file.exists()){
-
-                return ResponseEntity
-                        .notFound()
-                        .build();
-
-            }
-
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
-
-            return ResponseEntity.ok()
-
-                    .header(
-
-                            HttpHeaders.CONTENT_DISPOSITION,
-
-                            "attachment; filename=\""
-                            +
-                            file.getName()
-                            +
-                            "\""
-
-                    )
-
-                    .contentLength(
-                            file.length()
-                    )
-
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
-
-                    .body(
-                            resource
-                    );
-
-        }
-        catch(Exception e){
-
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                return "powerpoint-to-pdf";
 
         }
 
-    }
+        /*
+         * ===========================
+         * CONVERT POWERPOINT TO PDF
+         * ===========================
+         */
 
-    /* ===========================
-       PDF PREVIEW
-    =========================== */
+        @PostMapping("/powerpoint-to-pdf-ajax")
+        @ResponseBody
+        public Map<String, Object> convertPowerPointToPdf(
 
-    @GetMapping("/preview-converted-ppt-pdf")
-    public ResponseEntity<Resource> previewPdf(
+                        @RequestParam("pptFiles") MultipartFile[] pptFiles,
 
-            @RequestParam("fileName")
-            String fileName
+                        @RequestParam("conversionMode") String conversionMode,
 
-    ){
+                        @RequestParam("pdfLayout") String pdfLayout,
 
-        try{
+                        @RequestParam("orientation") String orientation,
 
-            File file =
-                    new File(
+                        @RequestParam("quality") String quality
 
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "converted-pdfs"
-                            +
-                            File.separator
-                            +
-                            fileName
+        ) {
 
-                    );
+                if (pptFiles == null || pptFiles.length == 0) {
 
-            if(!file.exists()){
+                        return Map.of(
 
-                return ResponseEntity
-                        .notFound()
-                        .build();
+                                        "success",
+                                        false,
 
-            }
+                                        "message",
+                                        "Please upload at least one PowerPoint file."
 
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
+                        );
 
-            return ResponseEntity.ok()
+                }
 
-                    .header(
+                for (MultipartFile ppt : pptFiles) {
 
-                            HttpHeaders.CONTENT_DISPOSITION,
+                        if (ppt.isEmpty()) {
 
-                            "inline; filename=\""
-                            +
-                            file.getName()
-                            +
-                            "\""
+                                return Map.of(
 
-                    )
+                                                "success",
+                                                false,
 
-                    .contentLength(
-                            file.length()
-                    )
+                                                "message",
+                                                "One of the uploaded PowerPoint files is empty."
 
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
+                                );
 
-                    .body(
-                            resource
-                    );
+                        }
+
+                        String fileName = ppt.getOriginalFilename();
+
+                        if (fileName == null
+                                        ||
+                                        !(fileName.toLowerCase().endsWith(".ppt")
+                                                        ||
+                                                        fileName.toLowerCase().endsWith(".pptx"))) {
+
+                                return Map.of(
+
+                                                "success",
+                                                false,
+
+                                                "message",
+                                                "Only PPT and PPTX files are allowed."
+
+                                );
+
+                        }
+
+                }
+
+                return powerPointToPdfService.convertPowerPointToPdf(
+
+                                pptFiles,
+
+                                conversionMode,
+
+                                pdfLayout,
+
+                                orientation,
+
+                                quality
+
+                );
 
         }
-        catch(Exception e){
 
-            return ResponseEntity
-                    .notFound()
-                    .build();
+        /*
+         * ===========================
+         * DOWNLOAD PDF
+         * ===========================
+         */
+
+        @GetMapping("/download-converted-ppt-pdf")
+        public ResponseEntity<Resource> downloadPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "converted-pdfs"
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        fileName
+
+                        );
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+
+                                                        "attachment; filename=\""
+                                                                        +
+                                                                        file.getName()
+                                                                        +
+                                                                        "\""
+
+                                        )
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
 
         }
 
-    }
+        /*
+         * ===========================
+         * PDF PREVIEW
+         * ===========================
+         */
+
+        @GetMapping("/preview-converted-ppt-pdf")
+        public ResponseEntity<Resource> previewPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "converted-pdfs"
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        fileName
+
+                        );
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+
+                                                        "inline; filename=\""
+                                                                        +
+                                                                        file.getName()
+                                                                        +
+                                                                        "\""
+
+                                        )
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
+
+        }
+
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
+
+        @PostMapping("/delete-powerpoint-pdf-files")
+        @ResponseBody
+        public void deleteTempFiles() {
+
+                powerPointToPdfService.deleteTempFiles();
+
+        }
 
 }
-

@@ -13,218 +13,266 @@ import java.util.Map;
 @Service
 public class PowerPointToPdfService {
 
-    public Map<String,Object> convertPowerPointToPdf(
+        public Map<String, Object> convertPowerPointToPdf(
 
-            MultipartFile[] pptFiles,
+                        MultipartFile[] pptFiles,
 
-            String conversionMode,
+                        String conversionMode,
 
-            String pdfLayout,
+                        String pdfLayout,
 
-            String orientation,
+                        String orientation,
 
-            String quality
+                        String quality
 
-    ){
+        ) {
 
-        Map<String,Object> result =
-                new HashMap<>();
+                Map<String, Object> result = new HashMap<>();
 
-        try{
+                try {
 
-            List<Map<String,String>> files =
-                    new ArrayList<>();
+                        List<Map<String, String>> files = new ArrayList<>();
 
-            File uploadFolder =
-                    new File(
+                        File uploadFolder = new File(
 
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "uploaded-powerpoints"
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "uploaded-powerpoints"
 
-                    );
+                        );
 
-            if(!uploadFolder.exists()){
+                        if (!uploadFolder.exists()) {
 
-                uploadFolder.mkdirs();
+                                uploadFolder.mkdirs();
 
-            }
+                        }
 
-            File outputFolder =
-                    new File(
+                        File outputFolder = new File(
 
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "converted-pdfs"
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "converted-pdfs"
 
-                    );
+                        );
 
-            if(!outputFolder.exists()){
+                        if (!outputFolder.exists()) {
 
-                outputFolder.mkdirs();
+                                outputFolder.mkdirs();
 
-            }
+                        }
 
-            for(
+                        for (
 
-                    MultipartFile pptFile
-                    :
-                    pptFiles
+                        MultipartFile pptFile : pptFiles
 
-            ){
+                        ) {
 
-                String originalName =
-                        pptFile.getOriginalFilename();
+                                String originalName = pptFile.getOriginalFilename();
 
-                if(
+                                if (
 
-                        originalName == null
-                        ||
-                        originalName.isBlank()
+                                originalName == null
+                                                ||
+                                                originalName.isBlank()
 
-                ){
+                                ) {
 
-                    originalName =
-                            "presentation.pptx";
+                                        originalName = "presentation.pptx";
+
+                                }
+
+                                File uploadedFile = new File(
+
+                                                uploadFolder,
+
+                                                originalName
+
+                                );
+
+                                try {
+
+                                        pptFile.transferTo(
+                                                        uploadedFile);
+
+                                } catch (Exception ex) {
+
+                                        result.put(
+                                                        "success",
+                                                        false);
+
+                                        result.put(
+                                                        "message",
+                                                        originalName +
+                                                                        " is corrupted or could not be uploaded.");
+
+                                        return result;
+
+                                }
+
+                                ProcessBuilder processBuilder = new ProcessBuilder(
+
+                                                "C:\\Program Files\\LibreOffice\\program\\soffice.exe",
+
+                                                "--headless",
+
+                                                "--convert-to",
+
+                                                "pdf",
+
+                                                uploadedFile.getAbsolutePath(),
+
+                                                "--outdir",
+
+                                                outputFolder.getAbsolutePath()
+
+                                );
+
+                                processBuilder.redirectErrorStream(
+                                                true);
+
+                                Process process = processBuilder.start();
+
+                                int exitCode = process.waitFor();
+
+                                if (exitCode != 0) {
+
+                                        result.put(
+                                                        "success",
+                                                        false);
+
+                                        result.put(
+                                                        "message",
+                                                        originalName +
+                                                                        " is corrupted or could not be converted.");
+
+                                        return result;
+
+                                }
+
+                                String pdfName = originalName.replaceAll(
+                                                "\\.(ppt|pptx)$",
+                                                ".pdf");
+
+                                File pdfFile = new File(
+                                                outputFolder,
+                                                pdfName);
+
+                                if (!pdfFile.exists()) {
+
+                                        throw new RuntimeException(
+                                                        "PDF file not generated");
+
+                                }
+
+                                Map<String, String> fileInfo = new HashMap<>();
+
+                                fileInfo.put(
+                                                "name",
+                                                pdfName);
+
+                                fileInfo.put(
+
+                                                "size",
+
+                                                String.format(
+
+                                                                "%.2f MB",
+
+                                                                pdfFile.length()
+                                                                                /
+                                                                                1024.0
+                                                                                /
+                                                                                1024.0
+
+                                                )
+
+                                );
+
+                                files.add(
+                                                fileInfo);
+
+                        }
+
+                        result.put(
+                                        "success",
+                                        true);
+
+                        result.put(
+                                        "files",
+                                        files);
+
+                } catch (Exception e) {
+
+                        e.printStackTrace();
+
+                        result.put(
+                                        "success",
+                                        false);
+
+                        result.put(
+                                        "message",
+                                        "Unable to convert the selected PowerPoint file(s).");
 
                 }
 
-                File uploadedFile =
-                        new File(
-
-                                uploadFolder,
-
-                                originalName
-
-                        );
-
-                pptFile.transferTo(
-                        uploadedFile
-                );
-
-                ProcessBuilder processBuilder =
-                        new ProcessBuilder(
-
-                                "C:\\Program Files\\LibreOffice\\program\\soffice.exe",
-
-                                "--headless",
-
-                                "--convert-to",
-
-                                "pdf",
-
-                                uploadedFile.getAbsolutePath(),
-
-                                "--outdir",
-
-                                outputFolder.getAbsolutePath()
-
-                        );
-
-                processBuilder.redirectErrorStream(
-                        true
-                );
-
-                Process process =
-                        processBuilder.start();
-
-                int exitCode =
-                        process.waitFor();
-
-                if(exitCode != 0){
-
-                    throw new RuntimeException(
-                            "LibreOffice conversion failed"
-                    );
-
-                }
-
-                String pdfName =
-                        originalName.replaceAll(
-                                "\\.(ppt|pptx)$",
-                                ".pdf"
-                        );
-
-                File pdfFile =
-                        new File(
-                                outputFolder,
-                                pdfName
-                        );
-
-                if(!pdfFile.exists()){
-
-                    throw new RuntimeException(
-                            "PDF file not generated"
-                    );
-
-                }
-
-                Map<String,String> fileInfo =
-                        new HashMap<>();
-
-                fileInfo.put(
-                        "name",
-                        pdfName
-                );
-
-                fileInfo.put(
-
-                        "size",
-
-                        String.format(
-
-                                "%.2f MB",
-
-                                pdfFile.length()
-                                /
-                                1024.0
-                                /
-                                1024.0
-
-                        )
-
-                );
-
-                files.add(
-                        fileInfo
-                );
-
-            }
-
-            result.put(
-                    "success",
-                    true
-            );
-
-            result.put(
-                    "files",
-                    files
-            );
+                return result;
 
         }
-        catch(Exception e){
 
-            e.printStackTrace();
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
 
-            result.put(
-                    "success",
-                    false
-            );
+        public void deleteTempFiles() {
 
-            result.put(
-                    "message",
-                    e.getMessage()
-            );
+                deleteFolder(
+
+                                new File(
+                                                System.getProperty("user.dir")
+                                                                +
+                                                                File.separator
+                                                                +
+                                                                "uploaded-powerpoints")
+
+                );
+
+                deleteFolder(
+
+                                new File(
+                                                System.getProperty("user.dir")
+                                                                +
+                                                                File.separator
+                                                                +
+                                                                "converted-pdfs")
+
+                );
 
         }
 
-        return result;
+        private void deleteFolder(File folder) {
 
-    }
+                if (folder.exists()) {
+
+                        File[] files = folder.listFiles();
+
+                        if (files != null) {
+
+                                for (File file : files) {
+
+                                        file.delete();
+
+                                }
+
+                        }
+
+                }
+
+        }
 
 }
-

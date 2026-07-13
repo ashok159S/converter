@@ -26,170 +26,207 @@ import java.util.Map;
 @Controller
 public class PdfToWordController {
 
-    @Autowired
-    private PdfToWordService pdfToWordService;
+        @Autowired
+        private PdfToWordService pdfToWordService;
 
-    /* ===========================
-       PAGE
-    =========================== */
+        /*
+         * ===========================
+         * PAGE
+         * ===========================
+         */
 
-    @GetMapping("/pdf-to-word")
-    public String pdfToWordPage(){
+        @GetMapping("/pdf-to-word")
+        public String pdfToWordPage() {
 
-        return "pdf-to-word";
-
-    }
-
-    /* ===========================
-       CONVERT PDF TO WORD
-    =========================== */
-
-    @PostMapping("/pdf-to-word-ajax")
-    @ResponseBody
-    public Map<String,Object> convertPdfToWord(
-
-            @RequestParam("pdfFiles")
-            MultipartFile[] pdfFiles
-
-    ){
-
-        return pdfToWordService.convertPdfToWord(
-                pdfFiles
-        );
-
-    }
-
-    /* ===========================
-       DOWNLOAD DOCX
-    =========================== */
-
-    @GetMapping("/download-word-file")
-    public ResponseEntity<Resource> downloadWordFile(
-
-            @RequestParam("fileName")
-            String fileName
-
-    ){
-
-        try{
-
-            File file =
-                    new File(
-                            "converted-word-files",
-                            fileName
-                    );
-
-            if(!file.exists()){
-
-                return ResponseEntity
-                        .notFound()
-                        .build();
-
-            }
-
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
-
-            return ResponseEntity.ok()
-
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\""
-                            + fileName +
-                            "\""
-                    )
-
-                    .contentLength(
-                            file.length()
-                    )
-
-                    .contentType(
-                            MediaType.parseMediaType(
-                                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                            )
-                    )
-
-                    .body(
-                            resource
-                    );
-
-        }
-        catch(Exception e){
-
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                return "pdf-to-word";
 
         }
 
-    }
+        /*
+         * ===========================
+         * CONVERT PDF TO WORD
+         * ===========================
+         */
+        @PostMapping("/pdf-to-word-ajax")
+        @ResponseBody
+        public Map<String, Object> convertPdfToWord(
 
-    /* ===========================
-       PDF PREVIEW
-    =========================== */
+                        @RequestParam("pdfFiles") MultipartFile[] pdfFiles
 
-    @GetMapping("/preview-pdf-file")
-    public ResponseEntity<Resource> previewPdf(
+        ) {
 
-            @RequestParam("fileName")
-            String fileName
+                if (pdfFiles == null || pdfFiles.length == 0) {
 
-    ){
+                        return Map.of(
 
-        try{
+                                        "success", false,
 
-            File file =
-                    new File(
-                            "uploaded-pdfs",
-                            fileName
-                    );
+                                        "message", "Please upload at least one PDF file."
 
-            if(!file.exists()){
+                        );
 
-                return ResponseEntity
-                        .notFound()
-                        .build();
+                }
 
-            }
+                for (MultipartFile file : pdfFiles) {
 
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
+                        if (file.isEmpty()) {
 
-            return ResponseEntity.ok()
+                                return Map.of(
 
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "inline; filename=\""
-                            + fileName +
-                            "\""
-                    )
+                                                "success", false,
 
-                    .contentLength(
-                            file.length()
-                    )
+                                                "message", "One or more uploaded files are empty."
 
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
+                                );
 
-                    .body(
-                            resource
-                    );
+                        }
 
-        }
-        catch(Exception e){
+                        if (!file.getOriginalFilename().toLowerCase().endsWith(".pdf")) {
 
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                                return Map.of(
+
+                                                "success", false,
+
+                                                "message", "Only PDF files are allowed."
+
+                                );
+
+                        }
+
+                }
+
+                return pdfToWordService.convertPdfToWord(
+                                pdfFiles);
 
         }
 
-    }
+        /*
+         * ===========================
+         * DOWNLOAD DOCX
+         * ===========================
+         */
+
+        @GetMapping("/download-word-file")
+        public ResponseEntity<Resource> downloadWordFile(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        "converted-word-files",
+                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "attachment; filename=\""
+                                                                        + fileName +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.parseMediaType(
+                                                                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
+
+        }
+
+        /*
+         * ===========================
+         * PDF PREVIEW
+         * ===========================
+         */
+
+        @GetMapping("/preview-pdf-file")
+        public ResponseEntity<Resource> previewPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        "uploaded-pdfs",
+                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "inline; filename=\""
+                                                                        + fileName +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
+
+        }
+
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
+
+        @PostMapping("/delete-pdf-to-word-temp-files")
+        @ResponseBody
+        public void deleteTempFiles() {
+
+                pdfToWordService.deleteTemporaryFiles();
+
+        }
 
 }
-

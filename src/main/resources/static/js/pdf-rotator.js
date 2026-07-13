@@ -52,6 +52,9 @@ const uploadSection =
         "uploadSection"
     );
 
+const settingsCard =
+    document.getElementById("settingsCard");
+
 const uploadAreaWrapper =
     document.getElementById(
         "uploadAreaWrapper"
@@ -402,67 +405,47 @@ rotateForm.addEventListener(
 
         }
 
-        if (
-            selectedFiles.length === 0
-        ) {
+        if (selectedFiles.length === 0) {
 
-            alert(
-                "Please select one or more PDF files."
-            );
+            alert("Please select one or more PDF files.");
 
             return;
 
         }
 
-        if (
-            !validateFiles(selectedFiles)
-        ) {
+        if (!validateFiles(selectedFiles)) {
 
             return;
 
         }
 
-        rotateBtn.disabled =
-            true;
+        rotateBtn.disabled = true;
 
-        rotateForm.classList.add(
-            "converting"
-        );
+        rotateForm.classList.add("converting");
 
-        uploadAreaWrapper.classList.add(
-            "hide-during-conversion"
-        );
+        /* ===========================
+           SHOW PROGRESS PAGE
+        =========================== */
 
-        fileListContainer.classList.add(
-            "hide-during-conversion"
-        );
+        uploadSection.style.display = "none";
 
-        summaryCard.classList.add(
-            "hide-during-conversion"
-        );
+        resultCard.style.display = "none";
 
-        progressSection.style.display =
-            "block";
+        progressSection.style.display = "block";
 
-        progressBar.style.width =
-            "0%";
+        progressBar.style.width = "5%";
 
-        progressBar.innerHTML =
-            "0%";
+        progressBar.innerHTML = "Preparing...";
 
-        const formData =
-            new FormData();
+        progressSection.offsetHeight;
 
-        selectedFiles.forEach(
-            file => {
+        const formData = new FormData();
 
-                formData.append(
-                    "pdfFiles",
-                    file
-                );
+        selectedFiles.forEach(file => {
 
-            }
-        );
+            formData.append("pdfFiles", file);
+
+        });
 
         formData.append(
             "rotation",
@@ -471,171 +454,111 @@ rotateForm.addEventListener(
             ).value
         );
 
-        const xhr =
-            new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
 
-        xhr.upload.addEventListener(
-            "progress",
-            function (event) {
+        let fakeProgress = 5;
 
-                if (
-                    event.lengthComputable
-                ) {
+        const timer = setInterval(() => {
 
-                    const percent =
-                        Math.round(
-                            (
-                                event.loaded
-                                /
-                                event.total
-                            ) * 100
-                        );
+            if (fakeProgress < 90) {
 
-                    progressBar.style.width =
-                        percent + "%";
+                fakeProgress += 5;
 
-                    progressBar.innerHTML =
-                        percent + "%";
+                progressBar.style.width = fakeProgress + "%";
 
-                }
+                progressBar.innerHTML = fakeProgress + "%";
 
             }
-        );
 
-        xhr.onreadystatechange =
-            function () {
+        }, 200);
 
-                if (
-                    xhr.readyState !== 4
-                ) {
+        xhr.onreadystatechange = function () {
 
-                    return;
+            if (xhr.readyState !== 4) {
 
-                }
+                return;
 
-                rotateBtn.disabled =
-                    false;
+            }
 
-                rotateForm.classList.remove(
-                    "converting"
-                );
+            clearInterval(timer);
 
-                if (
-                    xhr.status !== 200
-                ) {
+            rotateBtn.disabled = false;
 
-                    alert(
-                        "Conversion failed. Please try again."
-                    );
+            rotateForm.classList.remove("converting");
 
-                    uploadAreaWrapper.classList.remove(
-                        "hide-during-conversion"
-                    );
+            if (xhr.status !== 200) {
 
-                    fileListContainer.classList.remove(
-                        "hide-during-conversion"
-                    );
+                uploadSection.style.display = "block";
 
-                    summaryCard.classList.remove(
-                        "hide-during-conversion"
-                    );
+                progressSection.style.display = "none";
 
-                    progressSection.style.display =
-                        "none";
+                alert("Conversion failed. Please try again.");
 
-                    return;
+                return;
 
-                }
+            }
 
-                const result =
-                    JSON.parse(
-                        xhr.responseText
-                    );
+            const result = JSON.parse(xhr.responseText);
 
-                if (
-                    result.success
-                ) {
+            if (result.success) {
 
-                    conversionCompleted =
-                        true;
+                progressBar.style.width = "100%";
 
-                    uploadSection.style.display =
-                        "none";
+                progressBar.innerHTML = "100%";
 
-                    resultCard.style.display =
-                        "block";
+                setTimeout(() => {
 
-                    progressSection.style.display =
-                        "none";
+                    conversionCompleted = true;
 
-                    buildResultTable(
-                        result
-                    );
+                    progressSection.style.display = "none";
 
-                }
-                else {
+                    uploadSection.style.display = "none";
 
-                    uploadAreaWrapper.classList.remove(
-                        "hide-during-conversion"
-                    );
+                    resultCard.style.display = "block";
 
-                    fileListContainer.classList.remove(
-                        "hide-during-conversion"
-                    );
+                    buildResultTable(result);
 
-                    summaryCard.classList.remove(
-                        "hide-during-conversion"
-                    );
+                }, 300);
 
-                    progressSection.style.display =
-                        "none";
+            }
+            else {
 
-                    alert(
-                        result.message
-                    );
+                uploadSection.style.display = "block";
 
-                }
+                progressSection.style.display = "none";
 
-            };
+                alert(result.message);
 
-        xhr.onerror =
-            function () {
+            }
 
-                rotateBtn.disabled = false;
+        };
 
-                rotateForm.classList.remove(
-                    "converting"
-                );
+        xhr.onerror = function () {
 
-                uploadAreaWrapper.classList.remove(
-                    "hide-during-conversion"
-                );
+            clearInterval(timer);
 
-                fileListContainer.classList.remove(
-                    "hide-during-conversion"
-                );
+            rotateBtn.disabled = false;
 
-                summaryCard.classList.remove(
-                    "hide-during-conversion"
-                );
+            rotateForm.classList.remove("converting");
 
-                progressSection.style.display =
-                    "none";
+            uploadSection.style.display = "block";
 
-                alert(
-                    "Unable to connect to the server."
-                );
+            progressSection.style.display = "none";
 
-            };
+            alert("Unable to connect to the server.");
+
+        };
 
         xhr.open(
             "POST",
             "/pdf-rotator-ajax"
         );
 
-        xhr.send(
-            formData
-        );
+        setTimeout(() => {
+
+            xhr.send(formData);
+
+        }, 150);
 
     }
 );
@@ -768,28 +691,6 @@ document.getElementById(
 
     }
 );
-
-/* ===========================
-   PAGE CLEANUP
-=========================== */
-
-window.addEventListener(
-    "beforeunload",
-    function () {
-
-        if (
-            conversionCompleted
-        ) {
-
-            navigator.sendBeacon(
-                "/delete-rotated-pdf-files"
-            );
-
-        }
-
-    }
-);
-
 
 
 /* ===========================

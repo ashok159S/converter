@@ -26,190 +26,234 @@ import java.util.Map;
 @Controller
 public class PdfUnlockerController {
 
-    @Autowired
-    private PdfUnlockerService pdfUnlockerService;
+        @Autowired
+        private PdfUnlockerService pdfUnlockerService;
 
-    /* ===========================
-       PAGE
-    =========================== */
+        /*
+         * ===========================
+         * PAGE
+         * ===========================
+         */
 
-    @GetMapping("/pdf-unlocker")
-    public String pdfUnlockerPage(){
+        @GetMapping("/pdf-unlocker")
+        public String pdfUnlockerPage() {
 
-        return "pdf-unlocker";
-
-    }
-
-    /* ===========================
-       UNLOCK PDF
-    =========================== */
-
-    @PostMapping("/unlock-pdf-ajax")
-    @ResponseBody
-    public Map<String,Object> unlockPdf(
-
-            @RequestParam("pdfFiles")
-            MultipartFile[] pdfFiles,
-
-            @RequestParam("passwords")
-            String[] passwords
-
-    ){
-
-        return pdfUnlockerService.unlockPdf(
-                pdfFiles,
-                passwords
-        );
-
-    }
-
-    /* ===========================
-       DOWNLOAD UNLOCKED PDF
-    =========================== */
-
-    @GetMapping("/download-unlocked-pdf")
-    public ResponseEntity<Resource> downloadUnlockedPdf(
-
-            @RequestParam("fileName")
-            String fileName
-
-    ){
-
-        try{
-
-            File file =
-                    new File(
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "unlocked-pdfs"
-                            +
-                            File.separator
-                            +
-                            fileName
-                    );
-
-            if(!file.exists()){
-
-                return ResponseEntity
-                        .notFound()
-                        .build();
-
-            }
-
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
-
-            return ResponseEntity.ok()
-
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=\""
-                            +
-                            file.getName()
-                            +
-                            "\""
-                    )
-
-                    .contentLength(
-                            file.length()
-                    )
-
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
-
-                    .body(
-                            resource
-                    );
-
-        }
-        catch(Exception e){
-
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                return "pdf-unlocker";
 
         }
 
-    }
+        /*
+         * ===========================
+         * UNLOCK PDF
+         * ===========================
+         */
 
-    /* ===========================
-       PDF PREVIEW
-    =========================== */
+        @PostMapping("/unlock-pdf-ajax")
+        @ResponseBody
+        public Map<String, Object> unlockPdf(
 
-    @GetMapping("/preview-unlock-pdf")
-    public ResponseEntity<Resource> previewPdf(
+                        @RequestParam("pdfFiles") MultipartFile[] pdfFiles,
 
-            @RequestParam("fileName")
-            String fileName
+                        @RequestParam("passwords") String[] passwords
 
-    ){
+        ) {
 
-        try{
+                if (pdfFiles == null || pdfFiles.length == 0) {
 
-            File file =
-                    new File(
-                            System.getProperty("user.dir")
-                            +
-                            File.separator
-                            +
-                            "uploaded-pdfs"
-                            +
-                            File.separator
-                            +
-                            fileName
-                    );
+                        return Map.of(
 
-            if(!file.exists()){
+                                        "success", false,
 
-                return ResponseEntity
-                        .notFound()
-                        .build();
+                                        "message", "Please upload at least one PDF file."
 
-            }
+                        );
 
-            Resource resource =
-                    new FileSystemResource(
-                            file
-                    );
+                }
 
-            return ResponseEntity.ok()
+                for (MultipartFile file : pdfFiles) {
 
-                    .header(
-                            HttpHeaders.CONTENT_DISPOSITION,
-                            "inline; filename=\""
-                            +
-                            file.getName()
-                            +
-                            "\""
-                    )
+                        if (file.isEmpty()) {
 
-                    .contentLength(
-                            file.length()
-                    )
+                                return Map.of(
 
-                    .contentType(
-                            MediaType.APPLICATION_PDF
-                    )
+                                                "success", false,
 
-                    .body(
-                            resource
-                    );
+                                                "message", "One or more uploaded files are empty."
 
-        }
-        catch(Exception e){
+                                );
 
-            return ResponseEntity
-                    .notFound()
-                    .build();
+                        }
+
+                        if (!file.getOriginalFilename()
+                                        .toLowerCase()
+                                        .endsWith(".pdf")) {
+
+                                return Map.of(
+
+                                                "success", false,
+
+                                                "message", "Only PDF files are allowed."
+
+                                );
+
+                        }
+
+                }
+
+                return pdfUnlockerService.unlockPdf(
+
+                                pdfFiles,
+
+                                passwords
+
+                );
 
         }
 
-    }
+        /*
+         * ===========================
+         * DOWNLOAD UNLOCKED PDF
+         * ===========================
+         */
+
+        @GetMapping("/download-unlocked-pdf")
+        public ResponseEntity<Resource> downloadUnlockedPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "unlocked-pdfs"
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "attachment; filename=\""
+                                                                        +
+                                                                        file.getName()
+                                                                        +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
+
+        }
+
+        /*
+         * ===========================
+         * PDF PREVIEW
+         * ===========================
+         */
+
+        @GetMapping("/preview-unlock-pdf")
+        public ResponseEntity<Resource> previewPdf(
+
+                        @RequestParam("fileName") String fileName
+
+        ) {
+
+                try {
+
+                        File file = new File(
+                                        System.getProperty("user.dir")
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        "uploaded-pdfs"
+                                                        +
+                                                        File.separator
+                                                        +
+                                                        fileName);
+
+                        if (!file.exists()) {
+
+                                return ResponseEntity
+                                                .notFound()
+                                                .build();
+
+                        }
+
+                        Resource resource = new FileSystemResource(
+                                        file);
+
+                        return ResponseEntity.ok()
+
+                                        .header(
+                                                        HttpHeaders.CONTENT_DISPOSITION,
+                                                        "inline; filename=\""
+                                                                        +
+                                                                        file.getName()
+                                                                        +
+                                                                        "\"")
+
+                                        .contentLength(
+                                                        file.length())
+
+                                        .contentType(
+                                                        MediaType.APPLICATION_PDF)
+
+                                        .body(
+                                                        resource);
+
+                } catch (Exception e) {
+
+                        return ResponseEntity
+                                        .notFound()
+                                        .build();
+
+                }
+
+        }
+
+        /*
+         * ===========================
+         * DELETE TEMP FILES
+         * ===========================
+         */
+
+        @PostMapping("/delete-pdf-unlocker-temp-files")
+        @ResponseBody
+        public void deleteTempFiles() {
+
+                pdfUnlockerService.deleteTemporaryFiles();
+
+        }
 
 }
-

@@ -25,6 +25,9 @@ public class PdfToImageService {
 
         ) {
 
+                // Delete old converted images
+                deleteTemporaryFiles();
+
                 Map<String, Object> response = new HashMap<>();
 
                 List<Map<String, String>> files = new ArrayList<>();
@@ -218,7 +221,7 @@ public class PdfToImageService {
                                         "files",
                                         files);
 
-                }  catch (Exception e) {
+                } catch (Exception e) {
 
                         e.printStackTrace();
 

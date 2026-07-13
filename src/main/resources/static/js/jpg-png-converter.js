@@ -853,17 +853,22 @@ function buildResultTable(result) {
    CONVERT MORE
 =========================== */
 
-document.getElementById(
-    "convertMoreBtn"
-).addEventListener(
-    "click",
-    function () {
+document.getElementById("convertMoreBtn")
+.addEventListener("click", function () {
 
+    fetch("/delete-converted-images", {
+        method: "POST"
+    })
+    .then(response => response.json())
+    .then(data => {
         location.reload();
+    })
+    .catch(error => {
+        console.error(error);
+        location.reload();
+    });
 
-    }
-);
-
+});
 /* ===========================
    DARK MODE
 =========================== */

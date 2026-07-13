@@ -824,6 +824,7 @@ function buildResultTable(
 
     result.files.forEach(
         file => {
+         console.log("Result file:", file.name);
 
             totalOriginal +=
                 parseFloat(
@@ -834,6 +835,7 @@ function buildResultTable(
                 parseFloat(
                     file.compressedSize
                 );
+
 
             container.innerHTML += `
 
@@ -996,13 +998,3 @@ document.getElementById(
     }
 );
 
-window.addEventListener(
-    "beforeunload",
-    function () {
-
-        navigator.sendBeacon(
-            "/delete-image-temp-files"
-        );
-
-    }
-);

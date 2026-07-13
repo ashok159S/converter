@@ -129,83 +129,59 @@
 
                         <div class="tool-section">
 
-                            <h4>
-
-                                Crop Amount
-
-                            </h4>
+                            <h4>Crop Amount</h4>
 
                             <div class="form-check">
+                                <input class="form-check-input" type="radio" id="cropSmall" name="cropAmount"
+                                    value="SMALL" title="Small Crop">
 
-                                <input class="form-check-input" type="radio" name="cropAmount" value="SMALL">
-
-                                <label class="form-check-label">
-
+                                <label class="form-check-label" for="cropSmall">
                                     Small Crop
-
                                 </label>
-
                             </div>
 
                             <div class="form-check">
+                                <input class="form-check-input" type="radio" id="cropMedium" name="cropAmount"
+                                    value="MEDIUM" checked title="Medium Crop">
 
-                                <input class="form-check-input" type="radio" name="cropAmount" value="MEDIUM" checked>
-
-                                <label class="form-check-label">
-
+                                <label class="form-check-label" for="cropMedium">
                                     Medium Crop
-
                                 </label>
-
                             </div>
 
                             <div class="form-check">
+                                <input class="form-check-input" type="radio" id="cropLarge" name="cropAmount"
+                                    value="LARGE" title="Large Crop">
 
-                                <input class="form-check-input" type="radio" name="cropAmount" value="LARGE">
-
-                                <label class="form-check-label">
-
+                                <label class="form-check-label" for="cropLarge">
                                     Large Crop
-
                                 </label>
-
                             </div>
 
                         </div>
 
-                        <!-- APPLY TO -->
-
                         <div class="tool-section">
 
-                            <h4>
-
-                                Apply Crop To
-
-                            </h4>
+                            <h4>Apply Crop To</h4>
 
                             <div class="form-check">
+                                <input class="form-check-input" type="radio" id="applyAll" name="applyTo" value="ALL"
+                                    checked title="Apply crop to all pages">
 
-                                <input class="form-check-input" type="radio" name="applyTo" value="ALL" checked>
-
-                                <label class="form-check-label">
-
+                                <label class="form-check-label" for="applyAll">
                                     All Pages
-
                                 </label>
-
                             </div>
 
                             <div class="form-check">
+                                <input class="form-check-input" type="radio" id="applyFirst" name="applyTo"
+                                    value="FIRST" title="Apply crop to first page only">
 
-                                <input class="form-check-input" type="radio" name="applyTo" value="FIRST">
-
-                                <label class="form-check-label">
-
+                                <label class="form-check-label" for="applyFirst">
                                     First Page Only
-
                                 </label>
-
                             </div>
+
                         </div>
 
                     </div>
@@ -339,7 +315,8 @@
 
                     </h5>
 
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" title="Close">
+                    </button>
 
                     </button>
 

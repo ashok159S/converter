@@ -39,7 +39,9 @@ public class ImageCompressorService {
                         List<Map<String, String>> files = new ArrayList<>();
 
                         File outputFolder = new File(
-                                        "compressed-images");
+                                        System.getProperty("user.dir")
+                                                        + File.separator
+                                                        + "compressed-images");
 
                         if (!outputFolder.exists()) {
 
@@ -169,6 +171,9 @@ public class ImageCompressorService {
 
                                 }
 
+                                System.out.println("Saved File: " + outputFile.getAbsolutePath());
+                                System.out.println("Exists: " + outputFile.exists());
+
                                 double originalSize = imageFile.getSize()
                                                 /
                                                 1024.0
@@ -268,9 +273,10 @@ public class ImageCompressorService {
          */
 
         public void deleteTempFiles() {
-
                 File outputFolder = new File(
-                                "compressed-images");
+                                System.getProperty("user.dir")
+                                                + File.separator
+                                                + "compressed-images");
 
                 if (outputFolder.exists()) {
 

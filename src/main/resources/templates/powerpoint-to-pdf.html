@@ -1,362 +1,385 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>PowerPoint To PDF</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    <link rel="stylesheet"
-          th:href="@{/css/powerpoint-to-pdf.css}">
+    <link rel="stylesheet" th:href="@{/css/powerpoint-to-pdf.css}">
 
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
 
-    <div class="container">
+        <div class="container">
 
-         <a class="navbar-brand d-flex align-items-center"
-        href="/">
+            <a class="navbar-brand d-flex align-items-center" href="/">
 
-            <img src="/images/logo.png"
-                alt="ConvertNova"
-                height="50"
-                class="me-2">
+                <img src="/images/logo.png" alt="ConvertNova" height="50" class="me-2">
 
-        </a>
+            </a>
 
-        <button id="darkModeBtn"
-                class="btn btn-outline-dark">
+            <button id="darkModeBtn" class="btn btn-outline-dark">
 
-            🌙 Dark Mode
+                🌙 Dark Mode
 
-        </button>
+            </button>
 
-    </div>
+        </div>
 
-</nav>
+    </nav>
 
-<div class="container py-5">
+    <div class="container py-5">
 
-    <div class="converter-card">
+        <div class="converter-card">
 
-        <h1 class="text-center">
+            <h1 class="text-center">
 
-            PowerPoint To PDF
+                PowerPoint To PDF
 
-        </h1>
+            </h1>
 
-        <p class="text-center text-muted mb-4">
+            <p class="text-center text-muted mb-4">
 
-            Convert PowerPoint presentations into PDF files
+                Convert PowerPoint presentations into PDF files
 
-        </p>
+            </p>
 
-        <div id="uploadSection">
+            <div id="uploadSection">
 
-            <form id="powerPointToPdfForm">
+                <form id="powerPointToPdfForm">
 
-                <div id="summaryCard"
-                     class="summary-card"
-                     style="display:none;">
+                    <div id="summaryCard" class="summary-card" style="display:none;">
 
-                    <div>
+                        <div>
 
-                        <strong>Total Files:</strong>
+                            <strong>Total Files:</strong>
 
-                        <span id="totalFiles">0</span>
+                            <span id="totalFiles">0</span>
 
-                    </div>
+                        </div>
 
-                    <div>
+                        <div>
 
-                        <strong>Total Size:</strong>
+                            <strong>Total Size:</strong>
 
-                        <span id="totalSize">0 MB</span>
+                            <span id="totalSize">0 MB</span>
+
+                        </div>
 
                     </div>
 
-                </div>
+                    <div id="fileListContainer">
 
-                <div id="fileListContainer">
+                    </div>
 
-                </div>
+                    <div id="dropZone" class="upload-area">
 
-                <div id="dropZone"
-                     class="upload-area">
+                        <i class="bi bi-file-earmark-slides-fill upload-icon"></i>
 
-                    <i class="bi bi-file-earmark-slides-fill upload-icon"></i>
+                        <h3>
 
-                    <h3>
+                            Drag & Drop PowerPoint Files Here
 
-                        Drag & Drop PowerPoint Files Here
+                        </h3>
 
-                    </h3>
+                        <p>
 
-                    <p>
+                            PPTX / PPT Files Only
 
-                        PPTX / PPT Files Only
+                        </p>
 
-                    </p>
+                        <input type="file" id="pptFiles" accept=".ppt,.pptx" multiple hidden>
 
-                    <input type="file"
-                           id="pptFiles"
-                           accept=".ppt,.pptx"
-                           multiple
-                           hidden>
+                        <p class="text-muted">
 
-                       <p class="text-muted">
+                            Maximum file size:
+                            50 MB
 
-                    Maximum file size:
-                    50 MB
+                        </p>
 
-                    </p>
-
-                    <button type="button"
-                            class="btn btn-primary btn-lg"
+                        <button type="button" class="btn btn-primary btn-lg"
                             onclick="document.getElementById('pptFiles').click()">
 
-                        Choose PowerPoint Files
+                            Choose PowerPoint Files
 
-                    </button>
+                        </button>
+
+                    </div>
+
+                    <div class="tool-section">
+
+                        <h4>
+
+                            Conversion Mode
+
+                        </h4>
+
+                        <div class="form-check">
+
+                            <input type="radio" name="conversionMode" id="conversionMode" value="PRESERVE" checked
+                                class="form-check-input">
+
+                            <label class="form-check-label" for="conversionMode">
+
+                                Preserve Original Formatting
+
+                            </label>
+
+                        </div>
+
+                        <small class="text-muted">
+
+                            Recommended
+
+                        </small>
+
+                    </div>
+
+                    <div class="tool-section">
+
+                        <h4>
+
+                            PDF Layout
+
+                        </h4>
+
+                        <div class="form-check">
+
+                            <input type="radio" name="pdfLayout" id="pdfLayout" value="ONE" checked
+                                class="form-check-input">
+
+                            <label class="form-check-label" for="pdfLayout">
+
+                                One Slide Per Page
+
+                            </label>
+
+                        </div>
+
+                        <div class="form-check">
+
+                            <input type="radio" name="pdfLayout" id="pdfLayout" value="TWO" class="form-check-input">
+
+                            <label class="form-check-label" for="pdfLayout">
+
+                                Two Slides Per Page
+
+                            </label>
+
+                        </div>
+
+                        <div class="form-check">
+
+                            <input type="radio" name="pdfLayout" id="pdfLayout" value="FOUR" class="form-check-input">
+
+                            <label class="form-check-label" for="pdfLayout">
+
+                                Four Slides Per Page
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="tool-section">
+
+                        <h4>
+
+                            Page Orientation
+
+                        </h4>
+
+                        <div class="form-check">
+
+                            <input type="radio" name="orientation" id="orientation" value="LANDSCAPE" checked
+                                class="form-check-input">
+
+                            <label class="form-check-label" for="orientation">
+
+                                Landscape
+
+                            </label>
+
+                        </div>
+
+                        <div class="form-check">
+
+                            <input type="radio" name="orientation" id="orientation" value="PORTRAIT"
+                                class="form-check-input">
+
+                            <label class="form-check-label" for="orientation">
+
+                                Portrait
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="tool-section">
+
+                        <h4>
+
+                            Output Quality
+
+                        </h4>
+
+                        <div class="form-check">
+
+                            <input type="radio" name="quality" id="quality" value="STANDARD" checked
+                                class="form-check-input">
+
+                            <label class="form-check-label" for="quality">
+
+                                Standard
+
+                            </label>
+
+                        </div>
+
+                        <div class="form-check">
+
+                            <input type="radio" name="quality" id="quality" value="HIGH" class="form-check-input">
+
+                            <label class="form-check-label" for="quality">
+
+                                High Quality
+
+                            </label>
+
+                        </div>
+
+                    </div>
+
+                    <div class="text-center mt-4">
+
+                        <button type="submit" id="convertBtn" class="btn btn-primary btn-lg">
+
+                            Convert To PDF
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div id="progressSection" style="display:none;">
+
+                <h4 class="text-center mb-3">
+
+                    Processing PowerPoint...
+
+                </h4>
+
+                <div class="progress mb-3">
+
+                    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated"
+                        role="progressbar" style="width:0%;">
+
+                        0%
+
+                    </div>
 
                 </div>
 
-                <div class="tool-section">
+            </div>
+
+
+            <div id="resultCard" style="display:none;">
+
+                <div class="alert alert-success">
 
                     <h4>
 
-                        Conversion Mode
+                        ✅ PowerPoint Converted Successfully
 
                     </h4>
-
-                    <div class="form-check">
-
-                        <input type="radio"
-                               name="conversionMode"
-                               value="PRESERVE"
-                               checked
-                               class="form-check-input">
-
-                        <label class="form-check-label">
-
-                            Preserve Original Formatting
-
-                        </label>
-
-                    </div>
-
-                    <small class="text-muted">
-
-                        Recommended
-
-                    </small>
 
                 </div>
 
-                <div class="tool-section">
-
-                    <h4>
-
-                        PDF Layout
-
-                    </h4>
-
-                    <div class="form-check">
-
-                        <input type="radio"
-                               name="pdfLayout"
-                               value="ONE"
-                               checked
-                               class="form-check-input">
-
-                        <label class="form-check-label">
-
-                            One Slide Per Page
-
-                        </label>
-
-                    </div>
-
-                    <div class="form-check">
-
-                        <input type="radio"
-                               name="pdfLayout"
-                               value="TWO"
-                               class="form-check-input">
-
-                        <label class="form-check-label">
-
-                            Two Slides Per Page
-
-                        </label>
-
-                    </div>
-
-                    <div class="form-check">
-
-                        <input type="radio"
-                               name="pdfLayout"
-                               value="FOUR"
-                               class="form-check-input">
-
-                        <label class="form-check-label">
-
-                            Four Slides Per Page
-
-                        </label>
-
-                    </div>
+                <div id="resultFilesContainer">
 
                 </div>
 
-                <div class="tool-section">
+                <div class="result-summary">
 
-                    <h4>
+                    Files:
+                    <span id="resultFiles">0</span>
 
-                        Page Orientation
+                    |
 
-                    </h4>
-
-                    <div class="form-check">
-
-                        <input type="radio"
-                               name="orientation"
-                               value="LANDSCAPE"
-                               checked
-                               class="form-check-input">
-
-                        <label class="form-check-label">
-
-                            Landscape
-
-                        </label>
-
-                    </div>
-
-                    <div class="form-check">
-
-                        <input type="radio"
-                               name="orientation"
-                               value="PORTRAIT"
-                               class="form-check-input">
-
-                        <label class="form-check-label">
-
-                            Portrait
-
-                        </label>
-
-                    </div>
-
-                </div>
-
-                <div class="tool-section">
-
-                    <h4>
-
-                        Output Quality
-
-                    </h4>
-
-                    <div class="form-check">
-
-                        <input type="radio"
-                               name="quality"
-                               value="STANDARD"
-                               checked
-                               class="form-check-input">
-
-                        <label class="form-check-label">
-
-                            Standard
-
-                        </label>
-
-                    </div>
-
-                    <div class="form-check">
-
-                        <input type="radio"
-                               name="quality"
-                               value="HIGH"
-                               class="form-check-input">
-
-                        <label class="form-check-label">
-
-                            High Quality
-
-                        </label>
-
-                    </div>
+                    Converted Successfully:
+                    <span id="resultSuccess">0</span>
 
                 </div>
 
                 <div class="text-center mt-4">
 
-                    <button type="submit"
-                            class="btn btn-primary btn-lg">
+                    <button id="convertMoreBtn" class="btn btn-secondary">
 
-                        Convert To PDF
+                        Convert More
 
                     </button>
 
                 </div>
 
-            </form>
+            </div>
 
         </div>
 
-        <div id="resultCard"
-             style="display:none;">
+    </div>
 
-            <div class="alert alert-success">
+    <!-- POWERPOINT PREVIEW -->
 
-                <h4>
+    <div class="modal fade" id="pptPreviewModal">
 
-                    ✅ PowerPoint Converted Successfully
+        <div class="modal-dialog modal-lg">
 
-                </h4>
+            <div class="modal-content">
 
-            </div>
+                <div class="modal-header">
 
-            <div id="resultFilesContainer">
+                    <h5 class="modal-title">
 
-            </div>
+                        PowerPoint Preview
 
-            <div class="result-summary">
+                    </h5>
 
-                Files:
-                <span id="resultFiles">0</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" title="Close">
+                    </button>
+                </div>
 
-                |
+                <div class="modal-body text-center p-5">
 
-                Converted Successfully:
-                <span id="resultSuccess">0</span>
+                    <i class="bi bi-file-earmark-slides-fill" style="font-size:100px;color:#ea580c;">
+                    </i>
 
-            </div>
+                    <h4 id="previewFileName" class="mt-3">
+                    </h4>
 
-            <div class="text-center mt-4">
+                    <p class="text-muted">
 
-                <button id="convertMoreBtn"
-                        class="btn btn-secondary">
+                        Preview is not available for PowerPoint files.
+                        Convert the file to PDF to preview slides.
 
-                    Convert More
+                    </p>
 
-                </button>
+                </div>
 
             </div>
 
@@ -364,48 +387,33 @@
 
     </div>
 
-</div>
+    <!-- PDF PREVIEW -->
 
-<!-- POWERPOINT PREVIEW -->
+    <div class="modal fade" id="pdfPreviewModal">
 
-<div class="modal fade"
-     id="pptPreviewModal">
+        <div class="modal-dialog modal-xl">
 
-    <div class="modal-dialog modal-lg">
+            <div class="modal-content">
 
-        <div class="modal-content">
+                <div class="modal-header">
 
-            <div class="modal-header">
+                    <h5 class="modal-title">
 
-                <h5 class="modal-title">
+                        PDF Preview
 
-                    PowerPoint Preview
+                    </h5>
 
-                </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" title="Close">
+                    </button>
 
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
+                </div>
 
-            </div>
+                <div class="modal-body p-0">
 
-            <div class="modal-body text-center p-5">
+                    <iframe id="pdfPreviewFrame" width="100%" height="750" style="border:none;">
+                    </iframe>
 
-                <i class="bi bi-file-earmark-slides-fill"
-                   style="font-size:100px;color:#ea580c;">
-                </i>
-
-                <h4 id="previewFileName"
-                    class="mt-3">
-                </h4>
-
-                <p class="text-muted">
-
-                    Preview is not available for PowerPoint files.
-                    Convert the file to PDF to preview slides.
-
-                </p>
+                </div>
 
             </div>
 
@@ -413,55 +421,12 @@
 
     </div>
 
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- PDF PREVIEW -->
+    <script th:src="@{/js/powerpoint-to-pdf.js}"></script>
 
-<div class="modal fade"
-     id="pdfPreviewModal">
-
-    <div class="modal-dialog modal-xl">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <h5 class="modal-title">
-
-                    PDF Preview
-
-                </h5>
-
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
-
-            </div>
-
-            <div class="modal-body p-0">
-
-                <iframe id="pdfPreviewFrame"
-                        width="100%"
-                        height="750"
-                        style="border:none;">
-                </iframe>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
-
-<script th:src="@{/js/powerpoint-to-pdf.js}"></script>
-
-<script src="/js/common-validation.js"></script>
+    <script src="/js/common-validation.js"></script>
 
 </body>
 
 </html>
-

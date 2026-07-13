@@ -116,7 +116,12 @@
 
                             </p>
 
-                            <input type="file" id="pdfFiles" class="d-none" accept=".pdf" multiple>
+                            <label for="pdfFiles" class="visually-hidden">
+                                Select PDF files
+                            </label>
+
+                            <input type="file" id="pdfFiles" name="pdfFiles" class="d-none" accept=".pdf" multiple
+                                title="Select PDF files">
 
                             <p class="text-muted">
 
@@ -274,7 +279,8 @@
 
                     </h5>
 
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" title="Close">
                     </button>
 
                 </div>

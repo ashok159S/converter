@@ -832,20 +832,6 @@ extractMoreBtn.addEventListener(
     }
 );
 
-/* ===========================
-   DELETE FILES ON REFRESH
-=========================== */
-
-window.addEventListener(
-    "beforeunload",
-    function () {
-
-        navigator.sendBeacon(
-            "/delete-extracted-files"
-        );
-
-    }
-);
 
 /* ===========================
    DARK MODE
