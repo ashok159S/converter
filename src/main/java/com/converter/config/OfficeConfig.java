@@ -1,5 +1,7 @@
 package com.converter.config;
 
+import java.io.File;
+
 import org.jodconverter.core.office.OfficeManager;
 import org.jodconverter.local.office.LocalOfficeManager;
 
@@ -12,20 +14,21 @@ public class OfficeConfig {
     @Bean(initMethod = "start", destroyMethod = "stop")
     public OfficeManager officeManager() {
 
-        String os = System.getProperty("os.name").toLowerCase();
+        File officeHome;
 
-        LocalOfficeManager.Builder builder = LocalOfficeManager.builder();
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
 
-        // Only set officeHome on Windows
-        if (os.contains("win")) {
+            officeHome = new File("C:\\Program Files\\LibreOffice");
 
-            builder.officeHome("C:\\Program Files\\LibreOffice");
+        } else {
+
+            officeHome = new File("/usr/lib/libreoffice");
 
         }
 
-        return builder
+        return LocalOfficeManager.builder()
+                .officeHome(officeHome)
                 .install()
                 .build();
     }
-
 }
