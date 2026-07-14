@@ -14,7 +14,17 @@ import java.util.UUID;
 @Service
 public class WordToPdfService {
 
-        private static final String LIBRE_OFFICE_PATH = "C:\\Program Files\\LibreOffice\\program\\soffice.exe";
+        private String getLibreOfficePath() {
+
+                if (System.getProperty("os.name").toLowerCase().contains("win")) {
+
+                        return "C:\\Program Files\\LibreOffice\\program\\soffice.exe";
+
+                }
+
+                return "soffice";
+
+        }
 
         public Map<String, Object> convertWordToPdf(
 
@@ -76,10 +86,9 @@ public class WordToPdfService {
                                         return result;
 
                                 }
-
                                 ProcessBuilder processBuilder = new ProcessBuilder(
 
-                                                LIBRE_OFFICE_PATH,
+                                                getLibreOfficePath(),
 
                                                 "--headless",
 

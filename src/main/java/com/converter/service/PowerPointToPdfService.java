@@ -13,6 +13,15 @@ import java.util.Map;
 @Service
 public class PowerPointToPdfService {
 
+        private String getLibreOfficePath() {
+
+                if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                        return "C:\\Program Files\\LibreOffice\\program\\soffice.exe";
+                }
+
+                return "soffice";
+        }
+
         public Map<String, Object> convertPowerPointToPdf(
 
                         MultipartFile[] pptFiles,
@@ -115,7 +124,7 @@ public class PowerPointToPdfService {
 
                                 ProcessBuilder processBuilder = new ProcessBuilder(
 
-                                                "C:\\Program Files\\LibreOffice\\program\\soffice.exe",
+                                                getLibreOfficePath(),
 
                                                 "--headless",
 
@@ -130,7 +139,6 @@ public class PowerPointToPdfService {
                                                 outputFolder.getAbsolutePath()
 
                                 );
-
                                 processBuilder.redirectErrorStream(
                                                 true);
 
