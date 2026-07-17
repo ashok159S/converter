@@ -1,0 +1,230 @@
+
+/* ===================================
+   FAQ SECTION
+=================================== */
+
+.faq-section {
+
+    padding: 70px 0;
+
+    background: #f8fafc;
+
+}
+
+.faq-section h2 {
+
+    font-size: 2rem;
+
+    font-weight: 700;
+
+    color: #1f2937;
+
+    margin-bottom: 40px;
+
+}
+
+.faq-section .accordion {
+
+    max-width: 900px;
+
+    margin: 0 auto;
+
+}
+
+.faq-section .accordion-item {
+
+    border: none;
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    margin-bottom: 18px;
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+
+}
+
+.faq-section .accordion-button {
+
+    background: #ffffff;
+
+    color: #1f2937;
+
+    font-size: 1rem;
+
+    font-weight: 600;
+
+    padding: 18px 22px;
+
+    box-shadow: none;
+
+}
+
+.faq-section .accordion-button:focus {
+
+    box-shadow: none;
+
+    border-color: transparent;
+
+}
+
+.faq-section .accordion-button:not(.collapsed) {
+
+    background: #0d6efd;
+
+    color: #ffffff;
+
+}
+
+.faq-section .accordion-button::after {
+
+    transition: transform .3s ease;
+
+}
+
+.faq-section .accordion-button:not(.collapsed)::after {
+
+    filter: brightness(0) invert(1);
+
+}
+
+.faq-section .accordion-body {
+
+    background: #ffffff;
+
+    color: #4b5563;
+
+    font-size: 0.96rem;
+
+    line-height: 1.8;
+
+    padding: 20px 22px;
+
+}
+
+/* ===================================
+   TABLET
+=================================== */
+
+@media (max-width:991.98px) {
+
+    .faq-section {
+
+        padding: 60px 25px;
+
+    }
+
+    .faq-section h2 {
+
+        font-size: 1.8rem;
+
+    }
+
+    .faq-section .accordion {
+
+        max-width: 100%;
+
+    }
+
+    .faq-section .accordion-button {
+
+        font-size: .98rem;
+
+        padding: 17px 20px;
+
+    }
+
+    .faq-section .accordion-body {
+
+        font-size: .95rem;
+
+        padding: 18px 20px;
+
+    }
+
+}
+
+/* ===================================
+   MOBILE
+=================================== */
+
+@media (max-width:767.98px) {
+
+    .faq-section {
+
+        padding: 50px 20px;
+
+    }
+
+    .faq-section h2 {
+
+        font-size: 1.6rem;
+
+        margin-bottom: 30px;
+
+    }
+
+    .faq-section .accordion-item {
+
+        border-radius: 10px;
+
+        margin-bottom: 14px;
+
+    }
+
+    .faq-section .accordion-button {
+
+        font-size: .95rem;
+
+        padding: 16px 18px;
+
+    }
+
+    .faq-section .accordion-body {
+
+        font-size: .92rem;
+
+        line-height: 1.7;
+
+        padding: 16px 18px;
+
+    }
+
+}
+
+/* ===================================
+   SMALL MOBILE
+=================================== */
+
+@media (max-width:480px) {
+
+    .faq-section {
+
+        padding: 40px 15px;
+
+    }
+
+    .faq-section h2 {
+
+        font-size: 1.4rem;
+
+    }
+
+    .faq-section .accordion-button {
+
+        font-size: .9rem;
+
+        padding: 15px;
+
+    }
+
+    .faq-section .accordion-body {
+
+        font-size: .88rem;
+
+        padding: 15px;
+
+    }
+
+}

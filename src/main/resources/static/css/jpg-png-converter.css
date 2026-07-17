@@ -120,119 +120,115 @@ h1{
 
     margin:auto;
 
-}
-
-/* ===========================
+}/* ===================================
    UPLOAD AREA
-=========================== */
+=================================== */
 
-.upload-area{
+.upload-area {
 
-    border:2px dashed #2563eb;
+    background: #eff6ff;
 
-    border-radius:20px;
+    border: 2px dashed #2563eb;
 
-    background:#f8fbff;
+    border-radius: 20px;
 
-    text-align:center;
+    padding: 50px 30px;
 
-    padding:60px 20px;
+    text-align: center;
 
-    margin-top:25px;
+    cursor: pointer;
 
-    transition:.3s;
-
-}
-
-.upload-area:hover{
-
-    background:#eef6ff;
+    transition: all .3s ease;
 
 }
 
-.drag-active{
+.upload-area:hover {
 
-    background:#dbeafe;
+    background: #dbeafe;
 
-}
-
-.upload-icon{
-
-    font-size:80px;
-
-    color:#2563eb;
-
-    margin-bottom:15px;
+    border-color: #1d4ed8;
 
 }
 
-.upload-area h3{
+.upload-area.dragover {
 
-    font-size:24px;
+    background: #bfdbfe;
 
-    font-weight:700;
+    border-color: #1e40af;
 
-}
-
-.upload-area p{
-
-    color:#6b7280;
+    transform: scale(1.02);
 
 }
 
-/* ===========================
-   BUTTONS
-=========================== */
+.upload-icon {
 
-.btn-primary{
+    font-size: 70px;
 
-    background:linear-gradient(
-        90deg,
-        #2563eb,
-        #7c3aed
-    );
+    color: #2563eb;
 
-    border:none;
+    margin-bottom: 20px;
 
 }
 
-.btn-primary:hover{
+.upload-area h3 {
 
-    opacity:.9;
+    color: #1d4ed8;
 
-}
+    font-size: 1.7rem;
 
-/* ===========================
-   CONVERT BUTTON
-=========================== */
+    font-weight: 700;
 
-#convertBtn{
-
-    width:320px;
-
-    height:55px;
-
-    font-size:18px;
-
-    font-weight:600;
+    margin-bottom: 10px;
 
 }
 
-/* ===========================
-   PROGRESS
-=========================== */
+.upload-area p {
 
-.progress{
+    color: #475569;
 
-    height:28px;
-
-    border-radius:50px;
+    margin-bottom: 8px;
 
 }
 
-.progress-bar{
+.upload-area .btn-primary {
 
-    font-weight:600;
+    background: #2563eb;
+
+    border: none;
+
+    border-radius: 10px;
+
+    padding: 12px 30px;
+
+    font-weight: 600;
+
+}
+
+.upload-area .btn-primary:hover {
+
+    background: #1d4ed8;
+
+}
+
+.upload-area .btn-outline-primary {
+
+    border: 2px solid #2563eb;
+
+    color: #2563eb;
+
+    border-radius: 10px;
+
+    padding: 12px 30px;
+
+    font-weight: 600;
+
+}
+
+.upload-area .btn-outline-primary:hover {
+
+    background: #2563eb;
+
+    color: #ffffff;
 
 }
 

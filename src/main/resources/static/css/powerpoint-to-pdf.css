@@ -120,58 +120,118 @@ h1 {
 
 }
 
-/* ===========================
+
+/* ===================================
    UPLOAD AREA
-=========================== */
+=================================== */
 
 .upload-area {
 
-    border: 2px dashed #ea580c;
+    background: #eff6ff;
+
+    border: 2px dashed #2563eb;
 
     border-radius: 20px;
 
-    background: #fff7ed;
+    padding: 50px 30px;
 
     text-align: center;
 
-    padding: 60px 20px;
+    cursor: pointer;
 
-    margin-top: 25px;
-
-    transition: .3s;
+    transition: all .3s ease;
 
 }
 
 .upload-area:hover {
 
-    background: #ffedd5;
+    background: #dbeafe;
+
+    border-color: #1d4ed8;
+
+}
+
+.upload-area.dragover {
+
+    background: #bfdbfe;
+
+    border-color: #1e40af;
+
+    transform: scale(1.02);
 
 }
 
 .upload-icon {
 
-    font-size: 80px;
+    font-size: 70px;
 
-    color: #ea580c;
+    color: #2563eb;
 
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 
 }
 
 .upload-area h3 {
 
-    font-size: 24px;
+    color: #1d4ed8;
+
+    font-size: 1.7rem;
 
     font-weight: 700;
+
+    margin-bottom: 10px;
 
 }
 
 .upload-area p {
 
-    color: #6b7280;
+    color: #475569;
+
+    margin-bottom: 8px;
 
 }
 
+.upload-area .btn-primary {
+
+    background: #2563eb;
+
+    border: none;
+
+    border-radius: 10px;
+
+    padding: 12px 30px;
+
+    font-weight: 600;
+
+}
+
+.upload-area .btn-primary:hover {
+
+    background: #1d4ed8;
+
+}
+
+.upload-area .btn-outline-primary {
+
+    border: 2px solid #2563eb;
+
+    color: #2563eb;
+
+    border-radius: 10px;
+
+    padding: 12px 30px;
+
+    font-weight: 600;
+
+}
+
+.upload-area .btn-outline-primary:hover {
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+}
 /* ===========================
    TOOL SECTION
 =========================== */

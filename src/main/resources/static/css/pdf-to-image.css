@@ -31,45 +31,116 @@ h1{
 
 }
 
-/* ===========================
+
+/* ===================================
    UPLOAD AREA
-=========================== */
+=================================== */
 
-.upload-area{
+.upload-area {
 
-    border:2px dashed #2563eb;
+    background: #eff6ff;
 
-    border-radius:20px;
+    border: 2px dashed #2563eb;
 
-    padding:40px 20px;
+    border-radius: 20px;
 
-    min-height:250px;
+    padding: 50px 30px;
 
-    text-align:center;
+    text-align: center;
 
-    background:#f8fbff;
+    cursor: pointer;
 
-}
-
-.upload-area:hover{
-
-    background:#eef6ff;
+    transition: all .3s ease;
 
 }
 
-.drag-active{
+.upload-area:hover {
 
-    background:#dbeafe;
+    background: #dbeafe;
 
-    border-color:#1d4ed8;
+    border-color: #1d4ed8;
 
 }
 
-.upload-icon{
+.upload-area.dragover {
 
-    font-size:50px;
+    background: #bfdbfe;
 
-    margin-bottom:15px;
+    border-color: #1e40af;
+
+    transform: scale(1.02);
+
+}
+
+.upload-icon {
+
+    font-size: 70px;
+
+    color: #2563eb;
+
+    margin-bottom: 20px;
+
+}
+
+.upload-area h3 {
+
+    color: #1d4ed8;
+
+    font-size: 1.7rem;
+
+    font-weight: 700;
+
+    margin-bottom: 10px;
+
+}
+
+.upload-area p {
+
+    color: #475569;
+
+    margin-bottom: 8px;
+
+}
+
+.upload-area .btn-primary {
+
+    background: #2563eb;
+
+    border: none;
+
+    border-radius: 10px;
+
+    padding: 12px 30px;
+
+    font-weight: 600;
+
+}
+
+.upload-area .btn-primary:hover {
+
+    background: #1d4ed8;
+
+}
+
+.upload-area .btn-outline-primary {
+
+    border: 2px solid #2563eb;
+
+    color: #2563eb;
+
+    border-radius: 10px;
+
+    padding: 12px 30px;
+
+    font-weight: 600;
+
+}
+
+.upload-area .btn-outline-primary:hover {
+
+    background: #2563eb;
+
+    color: #ffffff;
 
 }
 

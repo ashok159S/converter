@@ -1,0 +1,213 @@
+/* ===================================
+   STATIC PAGE
+=================================== */
+
+.page-section{
+
+    padding:120px 0 80px;
+
+    background:#f8fafc;
+
+    min-height:100vh;
+
+}
+
+.page-card{
+
+    background:#ffffff;
+
+    border-radius:20px;
+
+    padding:50px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+}
+
+.page-card h1{
+
+    font-size:2.5rem;
+
+    font-weight:800;
+
+    color:#1e293b;
+
+    margin-bottom:15px;
+
+}
+
+.page-card h2{
+
+    font-size:1.45rem;
+
+    font-weight:700;
+
+    color:#2563eb;
+
+    margin-top:35px;
+
+    margin-bottom:15px;
+
+}
+
+.page-card p{
+
+    color:#475569;
+
+    font-size:1rem;
+
+    line-height:1.9;
+
+    margin-bottom:18px;
+
+}
+
+.page-card ul{
+
+    padding-left:22px;
+
+    margin-bottom:20px;
+
+}
+
+.page-card li{
+
+    color:#475569;
+
+    line-height:1.9;
+
+    margin-bottom:10px;
+
+}
+
+.page-card a{
+
+    color:#2563eb;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+}
+
+.page-card a:hover{
+
+    text-decoration:underline;
+
+}
+
+.last-updated{
+
+    color:#64748b;
+
+    font-size:.95rem;
+
+    margin-bottom:25px;
+
+}
+
+/* ===================================
+   TABLET
+=================================== */
+
+@media(max-width:991.98px){
+
+    .page-section{
+
+        padding:110px 20px 70px;
+
+    }
+
+    .page-card{
+
+        padding:40px;
+
+    }
+
+    .page-card h1{
+
+        font-size:2.2rem;
+
+    }
+
+    .page-card h2{
+
+        font-size:1.3rem;
+
+    }
+
+}
+
+/* ===================================
+   MOBILE
+=================================== */
+
+@media(max-width:767.98px){
+
+    .page-section{
+
+        padding:100px 15px 60px;
+
+    }
+
+    .page-card{
+
+        padding:30px 22px;
+
+        border-radius:16px;
+
+    }
+
+    .page-card h1{
+
+        font-size:1.9rem;
+
+    }
+
+    .page-card h2{
+
+        font-size:1.2rem;
+
+    }
+
+    .page-card p{
+
+        font-size:.95rem;
+
+    }
+
+}
+
+/* ===================================
+   SMALL MOBILE
+=================================== */
+
+@media(max-width:480px){
+
+    .page-card{
+
+        padding:25px 18px;
+
+    }
+
+    .page-card h1{
+
+        font-size:1.7rem;
+
+    }
+
+    .page-card h2{
+
+        font-size:1.1rem;
+
+    }
+
+    .page-card p{
+
+        font-size:.92rem;
+
+        line-height:1.8;
+
+    }
+
+}
