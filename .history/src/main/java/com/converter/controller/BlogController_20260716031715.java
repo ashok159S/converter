@@ -6,29 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class BlogController {
 
-    @GetMapping("/blogsection/blog")
+    @GetMapping("/blog")
     public String blog() {
-        return "blogsection/blog";
-    }
-
-    @GetMapping("/blogsection/pdf")
-    public String pdfBlog() {
-        return "blogsection/pdf-blog";
-    }
-
-    @GetMapping("/blogsection/image")
-    public String imageBlog() {
-        return "blogsection/image-blog";
-    }
-
-    @GetMapping("/blogsection/office")
-    public String officeBlog() {
-        return "blogsection/office-blog";
-    }
-
-    @GetMapping("/blogsection/security")
-    public String securityBlog() {
-        return "blogsection/security-blog";
+        return "blog";
     }
 
     @GetMapping("/blog/pdf-merger-guide")
